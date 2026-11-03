@@ -2,9 +2,9 @@
 
 一年级下册与二年级衔接数学互动页面。原始下载文件已原样保存为 `index.html`，当前使用原生 HTML、CSS、JavaScript，无前端框架。
 
-线上地址：https://starzhang-math-wonderland.netlify.app
+线上地址：https://math-wonderland.netlify.app
 
-Netlify 管理：https://app.netlify.com/projects/starzhang-math-wonderland
+Netlify 管理：https://app.netlify.com/projects/math-wonderland
 
 ## 开始开发
 
