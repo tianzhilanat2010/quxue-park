@@ -8,7 +8,7 @@ createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
     // Only expose the current static entry and future public assets.
-    if (pathname !== '/' && pathname !== '/index.html' && !pathname.startsWith('/assets/')) {
+    if (pathname !== '/' && pathname !== '/index.html' && !pathname.startsWith('/assets/') && !pathname.startsWith('/games/')) {
       res.writeHead(404); res.end('Not found'); return;
     }
     let file = resolve(root, '.' + pathname);

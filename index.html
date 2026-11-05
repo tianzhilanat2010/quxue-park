@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>奇妙数学乐园 · 一年级下册与二年级衔接（含乘除法、练习册同款应用题与动态Canvas动画）</title>
+  <title>奇妙数学乐园 · 熊猫博士的冒险岛</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
   <style>
@@ -134,6 +134,8 @@
       height: 3rem;
     }
   </style>
+  <link rel="icon" href="/assets/hero.jpg">
+  <link rel="stylesheet" href="/assets/park.css">
 </head>
 <body class="text-slate-800 pb-12 selection:bg-amber-200">
 
@@ -141,43 +143,46 @@
   <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50 hidden"></canvas>
 
   <!-- Top Navigation Bar -->
-  <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b-4 border-amber-300 shadow-sm">
-    <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-2xl shadow-md border-2 border-white">
-          🐼
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 class="text-lg sm:text-xl font-black tracking-tight text-amber-900">奇妙数学乐园</h1>
-            <span class="px-2 py-0.5 text-xs font-extrabold rounded-full bg-amber-100 text-amber-800 border border-amber-300">升级版 · 含乘除法与真题动画</span>
-          </div>
-          <p class="text-xs text-slate-500 hidden sm:block">两位数加减 · 乘除法平均分 · 买几送几/比单价/火柴棒/植树问题 · 60帧连续动画</p>
-        </div>
-      </div>
-
-      <!-- Mode Switcher & Audio Controls -->
-      <div class="flex items-center gap-2">
-        <button id="navHomeBtn" class="btn-3d px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm bg-amber-100 text-amber-900 border-2 border-amber-300 hover:bg-amber-200 flex items-center gap-1">
-          <span>🏰</span> <span>闯关大厅</span>
-        </button>
-        <button id="navQuizBtn" class="btn-3d px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm bg-sky-100 text-sky-900 border-2 border-sky-300 hover:bg-sky-200 flex items-center gap-1">
-          <span>📝</span> <span>正在做题</span>
-        </button>
-        <button id="navTheaterBtn" class="btn-3d px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm bg-purple-100 text-purple-900 border-2 border-purple-300 hover:bg-purple-200 flex items-center gap-1">
-          <span>🎬</span> <span>动画应用题微课</span>
-        </button>
-        <button id="soundToggleBtn" class="btn-3d px-2.5 py-1.5 rounded-xl font-bold text-xs sm:text-sm bg-emerald-100 text-emerald-800 border-2 border-emerald-300" title="开关音效与语音">
-          🔊 音效开
-        </button>
-      </div>
+  <header class="park-header">
+    <div class="park-nav">
+      <a href="/" class="park-brand"><span class="brand-panda">🐼</span><span>奇妙数学乐园<small>PANDA MATH ADVENTURE</small></span></a>
+      <nav aria-label="主导航">
+        <button id="navHomeBtn" class="park-nav-active">🏠 首页</button>
+        <button id="navQuizBtn">🏆 我的冒险</button>
+        <button data-park-panel="growth">📖 成长图鉴</button>
+        <button data-park-panel="rewards">🎁 星星奖励</button>
+        <button id="navTheaterBtn" class="park-mobile-hidden">📺 动画课堂</button>
+      </nav>
+      <div class="park-account"><span class="star-pill">⭐ <b data-park-stars>0</b> 星星</span><button id="soundToggleBtn" title="开关音效与语音">🔊 音效开</button></div>
     </div>
   </header>
 
-  <main class="max-w-5xl mx-auto px-3 sm:px-6 pt-5 space-y-6">
+  <main class="park-main">
+
+
+<section id="viewHome" class="park-home">
+  <div class="park-welcome">
+    <div class="welcome-copy"><span class="eyebrow">每一天，都有新发现</span><h2>嗨！小勇士 <span>👋</span></h2><p>熊猫博士已经准备好啦！</p><div class="welcome-tags"><span>快乐探索</span><span>每天进步一点点</span></div></div>
+    <div class="panda-portrait"><img src="assets/hero.jpg" alt="熊猫博士带你探索数学乐园"><span>一起出发吧！</span></div>
+    <button class="adventure-cta" data-park-action="daily"><span>🚀</span> 开始今天的冒险 <b>›</b></button>
+    <div class="daily-mission"><div><h3>🎯 今日冒险任务</h3><strong data-daily-label>0/5</strong></div><div class="mission-dots" aria-label="今日答题进度"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i></div><p>完成 5 道题，让努力变成小星星！</p></div>
+  </div>
+  <div class="park-section-heading"><h2>你的冒险，从这里开始</h2><span>探索 · 思考 · 收获成长</span></div>
+  <div class="park-grid">
+    <button class="world-card math-card" data-park-action="math"><div class="world-title"><span class="world-icon">🔢</span><div><h3>数学闯关</h3><p>沿着地图出发，解锁数学宝藏！</p></div><b class="card-arrow">↗</b></div><div class="world-art"><img src="assets/orchard.jpg" alt="充满果实的数学冒险岛"><div class="island-path"><span>1</span><span>2</span><span>3</span><b>🏆</b></div></div><div class="card-foot"><span>⭐ 已完成 <b data-park-exams>0</b> 套闯关</span><span>去探索 →</span></div></button>
+    <article class="world-card language-card"><div class="world-title"><span class="world-icon">📚</span><div><h3>语文乐园</h3><p>读故事、学汉字，发现文字的美！</p></div></div><div class="world-art"><img src="assets/flowershop.jpg" alt="春日花园"><div class="word-tiles"><span>诗</span><span>字</span><span>文</span></div></div><div class="card-foot"><span>🌸 新的故事正在准备中</span><span class="soon-label">即将开放</span></div></article>
+    <a class="world-card game-card" href="/games/cyberhop.html"><div class="world-title"><span class="world-icon">🎮</span><div><h3>趣味游戏</h3><p>动动脑，跳一跳，数学也能很好玩！</p></div><span class="hot-label">新游戏</span></div><div class="game-art"><div class="game-orbit"></div><div class="game-character">🐼</div><div class="hop-tile tile-a">6</div><div class="hop-tile tile-b">12</div><div class="hop-tile tile-c">18</div><div class="game-caption"><span>CYBERHOP 3D</span><strong>星际数学跳跃</strong><small>二年级专项 · 5 条答案通道</small></div></div><div class="card-foot"><span>✦ 加减法 · 乘法 · 两步运算</span><span>开始游戏 →</span></div></a>
+    <button class="world-card challenge-card compact-card" data-park-action="daily"><div class="world-title"><span class="world-icon">📅</span><div><h3>每日挑战</h3><p>每天一小步，越做越聪明！</p></div></div><div class="challenge-body"><div class="calendar-art"><span>今日计划</span><div>✓ ✓ ✓<br><i>□ □</i> ⭐</div></div><div><span class="mini-kicker">今天也要闪闪发光</span><h4>5 道综合题</h4><span class="orange-button">立即挑战 ›</span></div></div></button>
+    <button class="world-card classroom-card compact-card" data-park-action="theater"><div class="world-title"><span class="world-icon">📺</span><div><h3>动画课堂</h3><p>看得见的数学，听得懂的知识！</p></div></div><div class="classroom-body"><div class="chalkboard"><span>3 + 2 = ?</span><p>🍎🍎🍎 + 🍎🍎</p><div>▶ <i></i> 动画精讲</div></div><div class="lesson-chips"><span>🍊 乘除法</span><span>🥢 加减法</span><span>🌱 应用题</span></div></div></button>
+    <button class="world-card parent-card compact-card" data-park-panel="report"><div class="world-title"><span class="world-icon">👨‍👩‍👧</span><div><h3>家长中心</h3><p>看见每一份努力，陪伴每一次成长。</p></div></div><div class="parent-body"><div class="report-art"><span>成长记录</span><div><i></i><i></i><i></i><i></i></div><b>🏅</b></div><div class="parent-links"><span>📊 学习报告　›</span><span>🌱 成长记录　›</span><span>⭐ 我的星星　›</span></div></div></button>
+  </div>
+  <button class="reward-trail" data-park-panel="rewards"><span class="reward-title">🎁 <b>冒险成就</b><small>每一颗星星，都记录着进步</small></span><span class="reward-track"><span data-reward="3">🌱<b>3 星 · 萌芽</b></span><span data-reward="10">🧭<b>10 星 · 探索</b></span><span data-reward="30">🏆<b>30 星 · 勇士</b></span><span data-reward="60">👑<b>60 星 · 大师</b></span></span><span class="reward-message">继续收集星星<br>点亮你的成长徽章！ ›</span></button>
+  <p class="park-footer">为好奇心加油，让成长自然发生。 <span>一年级下册 · 二年级衔接</span></p>
+</section>
+<dialog id="parkDialog" class="park-dialog"><button id="parkDialogClose" class="dialog-close" aria-label="关闭">✕</button><div id="parkDialogContent"></div></dialog>
 
     <!-- ==================== VIEW 1: HOME / ADVENTURE LOBBY ==================== -->
-    <section id="viewHome" class="space-y-6">
+    <section id="viewMath" class="hidden space-y-6">
       <!-- Hero Banner Card -->
       <div class="kid-card overflow-hidden bg-gradient-to-r from-amber-50 via-orange-50 to-sky-50">
         <div class="grid grid-cols-1 md:grid-cols-12 items-center">
@@ -2677,12 +2682,18 @@
     function switchView(viewName) {
       stopActiveCanvasAnim();
       state.view = viewName;
-      ['Home', 'Quiz', 'Result', 'Theater'].forEach((v) => {
+      ['Home', 'Math', 'Quiz', 'Result', 'Theater'].forEach((v) => {
         const el = document.getElementById('view' + v);
         if (el) {
           el.classList.toggle('hidden', v.toLowerCase() !== viewName);
         }
       });
+      document.body.dataset.view = viewName;
+      const activeNav = viewName === 'home' ? 'navHomeBtn' : viewName === 'theater' ? 'navTheaterBtn' : 'navQuizBtn';
+      document.querySelectorAll('.park-nav nav button').forEach(button => {
+        button.classList.toggle('park-nav-active', button.id === activeNav);
+      });
+      if (typeof refreshParkStats === 'function') refreshParkStats();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
@@ -2700,6 +2711,7 @@
 
     function startQuiz(topic, customQuestions) {
       playSound('click');
+      state.quizGraded = false;
       state.currentTopic = topic || 'workbook';
       state.questions = customQuestions || generateQuizSet(state.currentTopic, state.questionCount);
       state.currentIndex = 0;
@@ -2902,6 +2914,8 @@
     // 8. GRADING, CONFETTI & REVIEW RENDERING
     // =========================================================================
     function finishAndGradeQuiz() {
+      if (state.quizGraded) return;
+      state.quizGraded = true;
       if (state.timerInterval) {
         clearInterval(state.timerInterval);
         state.timerInterval = null;
@@ -2925,6 +2939,7 @@
       if (state.stats.bestScore === null || score > state.stats.bestScore) {
         state.stats.bestScore = score;
       }
+      recordParkPractice(Object.values(state.userAnswers).filter(v => v !== '').length);
       saveStats();
 
       document.getElementById('resultScoreBadge').textContent = `${score}分`;
@@ -3462,5 +3477,6 @@
       });
     });
   </script>
+  <script src="/assets/park.js"></script>
 </body>
 </html>
