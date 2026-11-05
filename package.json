@@ -2,7 +2,7 @@
   "name": "math-wonderland",
   "version": "1.0.0",
   "private": true,
-  "description": "奇妙数学乐园：一年级下册与二年级衔接",
+  "description": "熊猫成长乐园：一年级下册与二年级衔接",
   "type": "module",
   "engines": {
     "node": ">=22.13.0"
