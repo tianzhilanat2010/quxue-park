@@ -1091,3 +1091,25 @@ body:before,body:after { display:none; }
 @media(prefers-reduced-motion:reduce) { .game-spark { animation:none; } }
 .brand-panda { overflow:hidden; }
 .brand-panda img { width:100%; height:100%; object-fit:cover; object-position:center 30%; transform:scale(1.6); transform-origin:center 25%; }
+
+/* Independent music playback and a compact volume popover. */
+.music-control { display:flex; align-items:center; border:1px solid #e0e9db; border-radius:24px; background:#f1f5ee; }
+.park-account #musicToggle { border:0; background:transparent; padding-right:6px; white-space:nowrap; }
+.park-account #musicToggle[aria-pressed="true"] { color:#246744; }
+.music-settings { position:relative; }
+.music-settings summary { cursor:pointer; list-style:none; color:#527361; padding:10px 12px 10px 5px; font-size:14px; border-radius:0 24px 24px 0; }
+.music-settings summary::-webkit-details-marker { display:none; }
+.music-settings summary:focus-visible,#musicToggle:focus-visible { outline:2px solid #448c65; outline-offset:3px; }
+.music-panel { position:absolute; top:calc(100% + 14px); right:0; width:240px; padding:20px; border:1px solid #dce8db; background:#fffef9; box-shadow:0 12px 40px #214b4220; border-radius:18px; z-index:60; color:#48604e; }
+.music-panel strong { font-size:15px; }
+.music-panel p { font-size:11px; margin:5px 0 18px; color:#819480; }
+.music-panel label { display:flex; justify-content:space-between; font-size:12px; }
+.music-panel input { display:block; width:100%; margin:12px 0; accent-color:#448c65; cursor:pointer; }
+.music-panel small { font-size:10px; color:#819480; line-height:1.7; }
+@media(max-width:600px) {
+  .park-nav { flex-wrap:wrap; gap:10px; }
+  .park-account { width:100%; justify-content:flex-end; gap:8px; }
+  .park-account button,.park-account #musicToggle { font-size:11px; }
+  .park-back { order:0; margin-left:auto; }
+  .music-panel { right:-65px; }
+}

@@ -147,7 +147,23 @@
     <div class="park-nav">
       <a href="/" class="park-brand"><span class="brand-panda"><img src="/assets/panda-wave-cover.webp" alt="熊猫博士" width="50" height="50"></span><span>熊猫成长乐园<small>PANDA LEARNING ADVENTURE</small></span></a>
       <button id="navHomeBtn" class="park-back" hidden>‹ 返回乐园</button>
-      <div class="park-account"><button class="star-pill" data-park-panel="rewards" aria-label="查看星星成就">⭐ <b data-park-stars>0</b> 星星</button><button id="soundToggleBtn" title="开关音效与语音">🔊 音效开</button></div>
+      <div class="park-account">
+        <button class="star-pill" data-park-panel="rewards" aria-label="查看星星成就">⭐ <b data-park-stars>0</b> 星星</button>
+        <div class="music-control">
+          <button id="musicToggle" aria-label="播放背景音乐" aria-pressed="false"><span aria-hidden="true">♫</span> <span id="musicLabel">音乐关</span></button>
+          <details class="music-settings">
+            <summary aria-label="调整背景音乐音量" title="背景音乐音量">⌄</summary>
+            <div class="music-panel">
+              <strong>森林小漫步</strong><p>轻柔钟琴 · 陪你探索</p>
+              <label for="musicVolume">音乐音量 <output id="musicVolumeValue" for="musicVolume">28%</output></label>
+              <input id="musicVolume" type="range" min="0" max="100" value="28">
+              <small>读题时自动调低，离开页面时暂停。</small>
+            </div>
+          </details>
+        </div>
+        <button id="soundToggleBtn" title="开关音效与语音">🔊 音效开</button>
+        <span id="musicStatus" class="sr-only" role="status"></span>
+      </div>
     </div>
   </header>
 
@@ -3466,5 +3482,6 @@
     });
   </script>
   <script src="/assets/park.js"></script>
+  <script src="/assets/music.js"></script>
 </body>
 </html>
