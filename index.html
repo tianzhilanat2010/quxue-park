@@ -134,7 +134,7 @@
       height: 3rem;
     }
   </style>
-  <link rel="icon" href="/assets/hero.jpg">
+  <link rel="icon" href="/assets/panda-wave-cover.webp">
   <link rel="stylesheet" href="/assets/park.css">
 </head>
 <body class="text-slate-800 pb-12 selection:bg-amber-200">
@@ -145,15 +145,9 @@
   <!-- Top Navigation Bar -->
   <header class="park-header">
     <div class="park-nav">
-      <a href="/" class="park-brand"><span class="brand-panda">🐼</span><span>熊猫成长乐园<small>PANDA LEARNING ADVENTURE</small></span></a>
-      <nav aria-label="主导航">
-        <button id="navHomeBtn" class="park-nav-active">🏠 首页</button>
-        <button id="navQuizBtn">🏆 我的冒险</button>
-        <button data-park-panel="growth">📖 成长图鉴</button>
-        <button data-park-panel="rewards">🎁 星星奖励</button>
-        <button id="navTheaterBtn" class="park-mobile-hidden">📺 动画课堂</button>
-      </nav>
-      <div class="park-account"><span class="star-pill">⭐ <b data-park-stars>0</b> 星星</span><button id="soundToggleBtn" title="开关音效与语音">🔊 音效开</button></div>
+      <a href="/" class="park-brand"><span class="brand-panda"><img src="/assets/panda-wave-cover.webp" alt="熊猫博士" width="50" height="50"></span><span>熊猫成长乐园<small>PANDA LEARNING ADVENTURE</small></span></a>
+      <button id="navHomeBtn" class="park-back" hidden>‹ 返回乐园</button>
+      <div class="park-account"><button class="star-pill" data-park-panel="rewards" aria-label="查看星星成就">⭐ <b data-park-stars>0</b> 星星</button><button id="soundToggleBtn" title="开关音效与语音">🔊 音效开</button></div>
     </div>
   </header>
 
@@ -161,17 +155,28 @@
 
 
 <section id="viewHome" class="park-home">
-  <div class="park-welcome">
-    <div class="welcome-copy"><span class="eyebrow">每一天，都有新发现</span><h2>嗨！小勇士 <span>👋</span></h2><p>熊猫博士已经准备好啦！</p><div class="welcome-tags"><span>快乐探索</span><span>每天进步一点点</span></div></div>
-    <div class="panda-portrait"><img src="assets/hero.jpg" alt="熊猫博士带你探索数学乐园"><span>一起出发吧！</span></div>
-    <button class="adventure-cta" data-park-action="daily"><span>🚀</span> 开始今天的冒险 <b>›</b></button>
-    <div class="daily-mission"><div><h3>🎯 今日冒险任务</h3><strong data-daily-label>0/5</strong></div><div class="mission-dots" aria-label="今日答题进度"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i></div><p>完成 5 道题，让努力变成小星星！</p></div>
+  <div class="welcome-scene">
+    <img class="welcome-landscape motion-art character-animation" src="/assets/panda-wave-cover.webp" data-still="/assets/panda-wave-cover.webp" data-motion="/assets/panda-wave.webp" alt="熊猫博士微笑着眨眼、抬手向你打招呼" fetchpriority="high" width="512" height="512">
+    <div class="scene-soften" aria-hidden="true"></div><div class="character-stage" aria-hidden="true"><span class="stage-star star-one">✦</span><span class="stage-star star-two">✧</span><span class="stage-star star-three">✦</span></div>
+    <div class="welcome-story">
+      <span class="story-kicker"><i></i> 小小好奇心，大大的世界</span>
+      <h1>今天，想探索<br><em>什么新奇事？</em></h1>
+      <p>和熊猫博士一起，算一算、读一读、玩一玩。<br>每一次发现，都是成长的惊喜。</p>
+      <div class="story-actions"><button class="story-start" data-park-action="daily">开始今日冒险 <span>↗</span></button><button class="continue-adventure" id="resumeAdventure" hidden>继续上次答题 →</button></div>
+    </div>
+    <button id="motionToggle" class="motion-toggle" aria-pressed="false">Ⅱ 暂停动画</button>
+    <div class="scene-caption"><span>✦</span> 好奇心，是最棒的超能力</div>
+  </div>
+  <div class="today-ribbon">
+    <div class="today-label"><span class="today-symbol">✦</span><div><strong>今天的小目标</strong><small>每天 5 道题，积累一点点进步</small></div></div>
+    <div class="mission-dots" aria-label="今日答题进度"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i></div>
+    <span class="today-progress"><b data-daily-label>0/5</b> 已完成</span>
   </div>
   <div class="park-section-heading"><h2>你的冒险，从这里开始</h2><span>探索 · 思考 · 收获成长</span></div>
   <div class="park-grid">
     <button class="world-card math-card" data-park-action="math"><div class="world-title"><span class="world-icon">🔢</span><div><h3>数学闯关</h3><p>沿着地图出发，解锁数学宝藏！</p></div><b class="card-arrow">↗</b></div><div class="world-art"><img src="assets/orchard.jpg" alt="充满果实的数学冒险岛"><div class="island-path"><span>1</span><span>2</span><span>3</span><b>🏆</b></div></div><div class="card-foot"><span>⭐ 已完成 <b data-park-exams>0</b> 套闯关</span><span>去探索 →</span></div></button>
     <article class="world-card language-card"><div class="world-title"><span class="world-icon">📚</span><div><h3>语文乐园</h3><p>读故事、学汉字，发现文字的美！</p></div></div><div class="world-art"><img src="assets/flowershop.jpg" alt="春日花园"><div class="word-tiles"><span>诗</span><span>字</span><span>文</span></div></div><div class="card-foot"><span>🌸 新的故事正在准备中</span><span class="soon-label">即将开放</span></div></article>
-    <a class="world-card game-card" href="/games/cyberhop.html"><div class="world-title"><span class="world-icon">🎮</span><div><h3>趣味游戏</h3><p>动动脑，跳一跳，数学也能很好玩！</p></div><span class="hot-label">新游戏</span></div><div class="game-art"><div class="game-orbit"></div><div class="game-character">🐼</div><div class="hop-tile tile-a">6</div><div class="hop-tile tile-b">12</div><div class="hop-tile tile-c">18</div><div class="game-caption"><span>CYBERHOP 3D</span><strong>星际数学跳跃</strong><small>二年级专项 · 5 条答案通道</small></div></div><div class="card-foot"><span>✦ 加减法 · 乘法 · 两步运算</span><span>开始游戏 →</span></div></a>
+    <a class="world-card game-card" href="/games/cyberhop.html"><div class="world-title"><span class="world-icon">🎮</span><div><h3>趣味游戏</h3><p>动动脑，跳一跳，数学也能很好玩！</p></div><span class="hot-label">新游戏</span></div><div class="game-art game-art-illustrated"><span class="game-spark spark-one" aria-hidden="true">✦</span><span class="game-spark spark-two" aria-hidden="true">✦</span><img src="/assets/game-cover.webp" alt="熊猫穿越星空平台的数学冒险" width="600" height="360" loading="lazy"><div class="game-caption"><span>CYBERHOP 3D</span><strong>星际数学跳跃</strong><small>二年级专项 · 5 条答案通道</small></div></div><div class="card-foot"><span>✦ 加减法 · 乘法 · 两步运算</span><span>开始游戏 →</span></div></a>
     <button class="world-card challenge-card compact-card" data-park-action="daily"><div class="world-title"><span class="world-icon">📅</span><div><h3>每日挑战</h3><p>每天一小步，越做越聪明！</p></div></div><div class="challenge-body"><div class="calendar-art"><span>今日计划</span><div>✓ ✓ ✓<br><i>□ □</i> ⭐</div></div><div><span class="mini-kicker">今天也要闪闪发光</span><h4>5 道综合题</h4><span class="orange-button">立即挑战 ›</span></div></div></button>
     <button class="world-card classroom-card compact-card" data-park-action="theater"><div class="world-title"><span class="world-icon">📺</span><div><h3>动画课堂</h3><p>看得见的数学，听得懂的知识！</p></div></div><div class="classroom-body"><div class="chalkboard"><span>3 + 2 = ?</span><p>🍎🍎🍎 + 🍎🍎</p><div>▶ <i></i> 动画精讲</div></div><div class="lesson-chips"><span>🍊 乘除法</span><span>🥢 加减法</span><span>🌱 应用题</span></div></div></button>
     <button class="world-card parent-card compact-card" data-park-panel="report"><div class="world-title"><span class="world-icon">👨‍👩‍👧</span><div><h3>家长中心</h3><p>看见每一份努力，陪伴每一次成长。</p></div></div><div class="parent-body"><div class="report-art"><span>成长记录</span><div><i></i><i></i><i></i><i></i></div><b>🏅</b></div><div class="parent-links"><span>📊 学习报告　›</span><span>🌱 成长记录　›</span><span>⭐ 我的星星　›</span></div></div></button>
@@ -2689,10 +2694,7 @@
         }
       });
       document.body.dataset.view = viewName;
-      const activeNav = viewName === 'home' ? 'navHomeBtn' : viewName === 'theater' ? 'navTheaterBtn' : 'navQuizBtn';
-      document.querySelectorAll('.park-nav nav button').forEach(button => {
-        button.classList.toggle('park-nav-active', button.id === activeNav);
-      });
+      document.getElementById('navHomeBtn').hidden = viewName === 'home';
       if (typeof refreshParkStats === 'function') refreshParkStats();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -3228,20 +3230,6 @@
         playSound('click');
         switchView('home');
       });
-      document.getElementById('navQuizBtn').addEventListener('click', () => {
-        playSound('click');
-        if (state.questions.length === 0) {
-          startQuiz('workbook');
-        } else {
-          switchView('quiz');
-        }
-      });
-      document.getElementById('navTheaterBtn').addEventListener('click', () => {
-        playSound('click');
-        switchView('theater');
-        renderTheaterView(state.theaterActiveIdx);
-      });
-
       document.getElementById('soundToggleBtn').addEventListener('click', (e) => {
         soundEnabled = !soundEnabled;
         e.currentTarget.textContent = soundEnabled ? '🔊 音效开' : '🔇 音效关';

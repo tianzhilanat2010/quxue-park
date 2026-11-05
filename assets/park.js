@@ -11,6 +11,7 @@ function recordParkPractice(count) {
 function refreshParkStats() {
   document.querySelectorAll('[data-park-stars]').forEach(el => el.textContent = state.stats.stars);
   document.querySelectorAll('[data-park-exams]').forEach(el => el.textContent = state.stats.exams);
+  document.getElementById('resumeAdventure').hidden = !state.questions.length || state.quizGraded;
   const count = Math.min(5, readParkDaily());
   document.querySelector('[data-daily-label]').textContent = `${count}/5`;
   document.querySelectorAll('.mission-dots i').forEach((el, i) => { el.classList.toggle('done', i < count); el.textContent = i < count ? '✓' : i + 1; });
@@ -18,6 +19,27 @@ function refreshParkStats() {
 }
 window.addEventListener('DOMContentLoaded', () => {
   refreshParkStats();
+  document.getElementById('resumeAdventure').addEventListener('click', () => switchView('quiz'));
+  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  let motionPaused = reducedMotion.matches;
+  try { motionPaused = reducedMotion.matches || localStorage.getItem('park_motion_paused') === 'true'; } catch {}
+  const motionButton = document.getElementById('motionToggle');
+  function applyMotion() {
+    document.documentElement.classList.toggle('motion-paused', motionPaused);
+    document.querySelectorAll('.motion-art').forEach(img => { img.src = motionPaused ? img.dataset.still : img.dataset.motion; });
+    motionButton.textContent = motionPaused ? '▷ 播放动画' : 'Ⅱ 暂停动画';
+    motionButton.setAttribute('aria-pressed', String(motionPaused));
+  }
+  motionButton.addEventListener('click', () => {
+    motionPaused = !motionPaused;
+    try { localStorage.setItem('park_motion_paused', String(motionPaused)); } catch {}
+    applyMotion();
+  });
+  reducedMotion.addEventListener('change', event => { motionPaused = event.matches; applyMotion(); });
+  document.querySelectorAll('.motion-art').forEach(img => img.addEventListener('error', () => {
+    if (img.getAttribute('src') !== img.dataset.still) img.src = img.dataset.still;
+  }));
+  applyMotion();
   document.querySelectorAll('[data-park-action]').forEach(el => el.addEventListener('click', () => {
     const action = el.dataset.parkAction;
     if (action === 'math') switchView('math');

@@ -999,3 +999,95 @@ button:focus-visible,a:focus-visible {
 .world-card,.adventure-cta {
   transition:none}
 }
+
+/* A calm, illustration-led welcome scene. The cards are the primary navigation. */
+body { background: linear-gradient(180deg,#f0f9fa 0%,#f7fbf6 65%,#edf5e8 100%); color:#213c47; }
+body:before,body:after { display:none; }
+.park-header { background:#fffdf8ed; border-bottom:1px solid #e4ece6; box-shadow:none; backdrop-filter:blur(18px); }
+.park-nav { min-height:84px; padding:14px 28px; flex-wrap:nowrap; }
+.park-brand { font-size:23px; color:#214a43; text-shadow:none; letter-spacing:.5px; }
+.park-brand small { color:#80948c; letter-spacing:2px; font-size:8px; margin-top:5px; }
+.brand-panda { background:#e7f3e6; border:1px solid #d6e8d5; box-shadow:none; border-radius:18px; width:50px; height:50px; font-size:29px; }
+.park-account { margin-left:auto; gap:12px; }
+.park-account button { background:#f1f5ee; color:#496455; border:1px solid #e0e9db; font-size:12px; padding:10px 14px; border-radius:24px; box-shadow:none; }
+.park-account .star-pill { background:#fff7d6; color:#89642c; border:1px solid #f0e6bd; }
+.park-back { padding:9px 15px; color:#527568; border:1px solid #d9e6dc; border-radius:20px; font-size:12px; }
+[hidden] { display:none!important; }
+.park-main { max-width:1440px; padding:24px 28px 36px; }
+.welcome-scene { position:relative; isolation:isolate; height:430px; border-radius:30px; overflow:hidden; background:#e8f4ee; box-shadow:0 12px 40px #2759490a; }
+.welcome-landscape { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:center; z-index:-2; }
+.scene-soften { position:absolute; inset:0; background:linear-gradient(90deg,#f2faf6eb 0%,#f0faf4cf 23%,#eff9f343 43%,transparent 58%); z-index:-1; }
+.welcome-story { padding:48px 52px; max-width:610px; }
+.story-kicker { display:flex; align-items:center; gap:8px; color:#578571; font-size:12px; font-weight:700; letter-spacing:2px; }
+.story-kicker i { width:7px; height:7px; border-radius:50%; background:#6cae7f; box-shadow:0 0 0 4px #6cae7f18; }
+.welcome-story h1 { font-size:46px; line-height:1.27; letter-spacing:1px; font-weight:900; margin:17px 0; color:#214b42; }
+.welcome-story h1 em { color:#448c65; font-style:normal; }
+.welcome-story p { font-size:14px; line-height:1.9; color:#627a6c; }
+.story-actions { display:flex; align-items:center; gap:16px; margin-top:24px; }
+.story-start { background:#2b7357; color:#fffdf1; border:1px solid #266549; border-radius:16px; padding:14px 22px; box-shadow:0 4px 0 #1d523b; font-size:15px; font-weight:800; transition:transform .2s,box-shadow .2s; }
+.story-start span { display:inline-block; margin-left:16px; color:#c5e7b9; font-size:20px; }
+.story-start:hover { transform:translateY(-2px); box-shadow:0 6px 0 #1d523b; }
+.continue-adventure { font-size:12px; color:#527361; text-decoration:underline; text-underline-offset:5px; }
+.motion-toggle { position:absolute; right:18px; top:18px; padding:7px 12px; border:1px solid #ffffffa6; background:#ffffffc9; border-radius:18px; color:#45634e; font-size:11px; backdrop-filter:blur(10px); }
+.scene-caption { position:absolute; right:28px; bottom:22px; color:#49663b; font-size:11px; letter-spacing:1px; background:#fffdf4bd; padding:8px 14px; border-radius:24px; backdrop-filter:blur(10px); }
+.scene-caption span { color:#daab45; margin-right:5px; }
+.today-ribbon { margin:14px 0 26px; display:flex; align-items:center; gap:28px; padding:17px 24px; border:1px solid #e1e9dc; background:#fffef9; border-radius:20px; }
+.today-label { display:flex; align-items:center; gap:13px; }
+.today-symbol { width:38px; height:38px; background:#fff1c8; color:#c4a044; border-radius:13px; display:grid; place-items:center; font-size:25px; }
+.today-label strong { display:block; font-size:13px; color:#48604e; }
+.today-label small { display:block; font-size:10px; color:#94a08d; margin-top:3px; }
+.today-ribbon .mission-dots { width:220px; flex:none; margin:0 0 0 auto; }
+.today-ribbon .mission-dots:before { background:#edf0e6; }
+.today-ribbon .mission-dots i { border-color:#dde7d6; color:#a4b099; background:#fcfdf9; }
+.today-ribbon .mission-dots i.done { color:white; background:#6fa873; border-color:#609363; }
+.today-progress { color:#9ba691; font-size:11px; white-space:nowrap; }
+.today-progress b { color:#60805b; font-size:17px; margin-right:6px; }
+.park-section-heading { margin:25px 4px 17px; color:#2f5145; }
+.park-section-heading h2 { font-size:20px; letter-spacing:.5px; }
+.park-section-heading>span { color:#8b9a8c; }
+.park-grid { background:transparent; padding:0; border:0; gap:22px; box-shadow:none; }
+.world-card { border-width:3px; box-shadow:0 3px 0 var(--card-shadow),0 8px 22px #3856410b; }
+.world-title h3 { text-shadow:none; font-size:25px; }
+.game-art-illustrated { height:200px; }
+.game-art-illustrated>img { width:100%; height:100%; object-fit:cover; }
+.game-art-illustrated:after { content:''; position:absolute; inset:0; background:linear-gradient(transparent 45%,#27224a9c); }
+.game-art-illustrated .game-caption { top:auto; bottom:13px; right:14px; z-index:1; }
+.game-art-illustrated .game-caption strong { font-size:22px; }
+.world-art img { animation:world-breathe 12s ease-in-out infinite alternate; transform-origin:center; }
+.word-tiles span { animation:letter-hover 5s ease-in-out infinite; }
+.word-tiles span:nth-child(2) { animation-delay:-1.7s; }
+.word-tiles span:last-child { animation-delay:-3.3s; }
+.island-path b { animation:treasure-glow 4s ease-in-out infinite; }
+.report-art i { animation:chart-shimmer 5s ease-in-out infinite; }
+.report-art i:nth-child(2) { animation-delay:-1s; }
+.report-art i:nth-child(3) { animation-delay:-2s; }
+.report-art i:nth-child(4) { animation-delay:-3s; }
+@keyframes world-breathe { from { scale:1; } to { scale:1.045; } }
+@keyframes letter-hover { 0%,100% { translate:0 0; } 50% { translate:0 -7px; } }
+@keyframes treasure-glow { 0%,100% { filter:drop-shadow(0 3px 4px #a6743c66); } 50% { filter:drop-shadow(0 0 14px #fff0a8); } }
+@keyframes chart-shimmer { 0%,100% { opacity:1; } 50% { opacity:.65; } }
+.motion-paused *, .motion-paused *:before, .motion-paused *:after { animation-play-state:paused!important; }
+@media(max-width:1100px) { .welcome-scene { height:400px; } .welcome-story { padding:38px 34px; } .welcome-story h1 { font-size:40px; } .welcome-landscape { object-position:58% center; } .scene-soften { background:linear-gradient(90deg,#f2faf6f5,#f0faf4c9 30%,#eff9f340 55%,transparent 75%); } }
+@media(max-width:800px) { .park-nav { min-height:74px; padding:12px 18px; } .park-brand { font-size:20px; } .park-brand small { font-size:7px; letter-spacing:1px; } .brand-panda { width:43px; height:43px; } .park-main { padding:16px 18px 28px; } .welcome-scene { height:450px; } .welcome-story { padding:30px; } .welcome-story h1 { font-size:36px; } .welcome-story p { font-size:12px; } .welcome-landscape { object-position:62% center; } .scene-caption { display:none; } .today-ribbon { flex-wrap:wrap; gap:14px; padding:15px 18px; } .today-label { width:100%; } .today-ribbon .mission-dots { margin-left:0; flex:1; max-width:270px; } .world-title h3 { font-size:23px; } }
+@media(max-width:490px) { .park-nav { gap:8px; padding:12px 14px; flex-wrap:wrap; } .park-brand { font-size:18px; gap:7px; } .park-brand small { font-size:6px; letter-spacing:.8px; } .brand-panda { width:38px; height:40px; font-size:25px; } .park-account { gap:6px; } .park-account button { padding:8px; } .park-account .star-pill { font-size:11px; } .park-back { order:3; margin-top:2px; } .park-main { padding:12px 12px 26px; } .welcome-scene { height:530px; border-radius:24px; } .welcome-landscape { height:310px; top:auto; bottom:0; object-position:right center; object-fit:cover; } .scene-soften { background:linear-gradient(#f0f8f1 0,#f0f8f1 42%,#f0f8f100 62%); } .welcome-story { padding:27px 24px; } .story-kicker { font-size:10px; letter-spacing:1px; } .welcome-story h1 { font-size:33px; margin:13px 0 10px; line-height:1.2; } .welcome-story p { font-size:11px; } .story-actions { margin-top:16px; gap:10px; } .story-start { padding:10px 15px; font-size:12px; border-radius:13px; } .story-start span { font-size:16px; margin-left:10px; } .continue-adventure { font-size:10px; } .motion-toggle { top:auto; bottom:12px; right:12px; } .today-ribbon { margin-top:12px; margin-bottom:24px; } .park-section-heading h2 { font-size:18px; } .park-section-heading>span { font-size:8px; } .game-art-illustrated { height:210px; } }
+@media(prefers-reduced-motion:reduce) { .world-art img,.word-tiles span,.island-path b,.report-art i { animation:none; } }
+
+/* Character motion uses distinct drawn poses; the scene and camera stay still. */
+.welcome-scene { background:linear-gradient(100deg,#f0f8f1 0%,#edf9ed 45%,#e8fbe9 65%); }
+.welcome-landscape.character-animation { inset:auto 7% 0 auto; width:auto; max-width:51%; height:100%; aspect-ratio:357 / 358; object-fit:contain; object-position:center bottom; z-index:-1; mask-image:linear-gradient(90deg,transparent 0%,#000 12%,#000 88%,transparent 100%); }
+.scene-soften { z-index:-2; background:none; }
+.character-stage { position:absolute; right:4%; top:8%; width:44%; height:82%; pointer-events:none; z-index:0; }
+.stage-star { position:absolute; color:#d9b96a; text-shadow:0 0 18px #fff2a1; }
+.star-one { top:22%; left:8%; font-size:34px; }
+.star-two { top:8%; right:16%; font-size:27px; }
+.star-three { bottom:15%; right:10%; font-size:19px; }
+.game-spark { position:absolute; z-index:2; color:#fff3ad; text-shadow:0 0 8px #fff; font-size:22px; animation:sparkle 3.4s ease-in-out infinite; pointer-events:none; }
+.spark-one { top:18%; right:20%; }
+.spark-two { top:58%; left:18%; animation-delay:-1.7s; font-size:15px; }
+@keyframes sparkle { 0%,100% { opacity:.25; scale:.7; } 45%,55% { opacity:1; scale:1.1; } }
+.world-art img,.word-tiles span,.report-art i { animation:none; }
+@media(max-width:800px) { .welcome-landscape.character-animation { max-width:54%; right:2%; } .welcome-story { position:relative; z-index:1; } }
+@media(max-width:490px) { .welcome-landscape.character-animation { height:275px; width:100%; max-width:100%; right:0; bottom:0; mask-image:linear-gradient(180deg,transparent 0%,#000 12%,#000 94%,transparent 100%); } .character-stage { right:0; top:auto; bottom:0; width:100%; height:260px; } .scene-soften { background:none; } .scene-caption { display:none; } }
+@media(prefers-reduced-motion:reduce) { .game-spark { animation:none; } }
+.brand-panda { overflow:hidden; }
+.brand-panda img { width:100%; height:100%; object-fit:cover; object-position:center 30%; transform:scale(1.6); transform-origin:center 25%; }
