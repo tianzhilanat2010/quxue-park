@@ -3,259 +3,47 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>CyberHop 3D Pro - 二年级星际数学矩阵</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap');
-
-    * {
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-user-select: none;
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-    }
-
-    body, html {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: radial-gradient(circle at 50% 15%, #1e1b4b 0%, #090d16 65%, #020409 100%);
-      color: #ffffff;
-    }
-
-    #canvas-container {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-    }
-
-    /* ThreeUI 高级多层毛玻璃拟态 */
-    .glass-panel {
-      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.3);
-    }
-
-    .glass-btn {
-      background: linear-gradient(145deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.85) 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(148, 163, 184, 0.28);
-      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.25);
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .glass-btn:hover:not(:disabled) {
-      transform: translateY(-6px) scale(1.05);
-      border-color: rgba(56, 189, 248, 0.85);
-      box-shadow: 0 18px 40px rgba(56, 189, 248, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.6);
-    }
-
-    .glass-btn:active:not(:disabled) {
-      transform: translateY(1px) scale(0.96);
-    }
-
-    /* 剧烈惩罚屏幕震动 */
-    @keyframes heavyShake {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      10% { transform: translate(-18px, -12px) rotate(-2.5deg); }
-      20% { transform: translate(18px, 10px) rotate(2.5deg); }
-      30% { transform: translate(-16px, 12px) rotate(-2deg); }
-      40% { transform: translate(14px, -10px) rotate(2deg); }
-      55% { transform: translate(-10px, 8px) rotate(-1.2deg); }
-      70% { transform: translate(8px, -6px) rotate(1deg); }
-      85% { transform: translate(-4px, 3px) rotate(-0.5deg); }
-    }
-
-    .shake-heavy {
-      animation: heavyShake 0.65s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-    }
-
-    /* 倒计时危急脉冲 */
-    @keyframes dangerPulse {
-      0%, 100% { box-shadow: 0 0 25px rgba(239, 68, 68, 0.35), inset 0 0 15px rgba(239, 68, 68, 0.25); border-color: rgba(239, 68, 68, 0.8); }
-      50% { box-shadow: 0 0 50px rgba(239, 68, 68, 0.85), inset 0 0 30px rgba(239, 68, 68, 0.55); border-color: rgba(254, 202, 202, 1); transform: scale(1.03); }
-    }
-
-    .urgent-card {
-      animation: dangerPulse 0.5s infinite ease-in-out;
-    }
-
-    /* 飘字奖惩动画 */
-    @keyframes floatUpFade {
-      0% { opacity: 0; transform: translateY(20px) scale(0.6); }
-      18% { opacity: 1; transform: translateY(-8px) scale(1.15); }
-      80% { opacity: 1; transform: translateY(-55px) scale(1); }
-      100% { opacity: 0; transform: translateY(-85px) scale(0.9); }
-    }
-
-    .floating-reward {
-      animation: floatUpFade 1.25s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      pointer-events: none;
-    }
-
-    .ambient-orb {
-      position: fixed;
-      border-radius: 9999px;
-      filter: blur(100px);
-      opacity: 0.32;
-      pointer-events: none;
-      z-index: 0;
-    }
-  </style>
+  <link rel="icon" href="../assets/panda-wave-cover.webp">
+  <title>熊猫博士跳跳乐 · 熊猫成长乐园</title>
+  <script src="vendor/three.min.js"></script>
+  <script src="panda-world.js"></script>
+  <link rel="stylesheet" href="panda-game.css">
 </head>
 <body>
-<a href="/" aria-label="返回熊猫成长乐园" style="position:fixed;left:12px;top:50%;z-index:60;text-decoration:none;color:white;background:#182849e8;border:1px solid #7dd3fc;border-radius:16px;padding:10px 12px;font-size:13px;font-weight:700;box-shadow:0 4px 16px #0006">‹ 返回乐园</a>
-  <!-- 环境光晕 -->
-  <div class="ambient-orb w-96 h-96 bg-indigo-600 -top-24 -left-24"></div>
-  <div class="ambient-orb w-96 h-96 bg-cyan-500 bottom-8 right-8"></div>
-  <div class="ambient-orb w-80 h-80 bg-fuchsia-600 top-1/4 right-1/3"></div>
-
-  <!-- 惩罚红色高压电击遮罩 + 屏幕玻璃裂纹 SVG -->
-  <div id="damage-overlay" class="fixed inset-0 pointer-events-none z-30 opacity-0 transition-opacity duration-200 flex items-center justify-center"
-       style="background: radial-gradient(circle, rgba(220,38,38,0.15) 20%, rgba(185,28,28,0.75) 100%);">
-    <svg id="crack-svg" class="w-full h-full opacity-80" viewBox="0 0 1000 1000" preserveAspectRatio="none">
-      <g stroke="rgba(255,255,255,0.75)" stroke-width="2.5" fill="none" stroke-linecap="round">
-        <path d="M500,500 L380,320 L220,280 L80,120" />
-        <path d="M380,320 L420,180 L350,40" />
-        <path d="M500,500 L680,390 L850,420 L960,310" />
-        <path d="M680,390 L740,210 L890,90" />
-        <path d="M500,500 L580,690 L520,880 L610,980" />
-        <path d="M580,690 L790,780 L940,910" />
-        <path d="M500,500 L310,620 L140,740 L30,890" />
-        <path d="M310,620 L260,820 L120,950" />
-      </g>
-    </svg>
-  </div>
-
-  <!-- 3D 渲染容器 -->
-  <div id="canvas-container"></div>
-
-  <!-- 浮动奖惩文字容器 -->
-  <div id="floating-text-container" class="fixed inset-0 pointer-events-none z-40 flex items-center justify-center"></div>
-
-  <!-- 顶部 HUD 与二年级数学题卡 -->
-  <div class="fixed top-0 left-0 right-0 z-20 p-3 sm:p-5 flex flex-col items-center pointer-events-none">
-
-    <!-- 顶部状态胶囊栏 -->
-    <div class="w-full max-w-6xl flex flex-wrap items-center justify-between gap-2 pointer-events-auto">
-      <div class="flex items-center gap-2 sm:gap-3">
-        <div class="glass-panel px-3.5 py-2 rounded-2xl flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
-          <span class="font-black tracking-wider bg-gradient-to-r from-cyan-300 via-indigo-300 to-fuchsia-300 bg-clip-text text-transparent text-xs sm:text-base">
-            CYBERHOP 3D · 二年级精英版
-          </span>
-        </div>
-
-        <!-- 二年级专项题库切换 -->
-        <select id="mode-select" class="glass-panel px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold text-cyan-100 outline-none cursor-pointer bg-slate-900/80 hover:border-cyan-400/60 transition">
-          <option value="grade2_term1" selected>🌱 二年级上学期 (100以内加减/表内乘法/简单乘加)</option>
-          <option value="grade2_mixed">🔥 二年级下/进阶综合 (乘加/连加减/括号)</option>
-          <option value="mul_add_sub">⚡ 乘加与乘减两步运算 (如 6×7-15)</option>
-          <option value="chain_100">🚀 100以内连加连减与括号 (如 82-(26+18))</option>
-          <option value="mul_div_adv">🌌 表内乘除法进阶与逆运算</option>
-        </select>
-
-        <!-- 角色形象选择器 -->
-        <select id="char-select" class="glass-panel px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold text-pink-200 outline-none cursor-pointer bg-slate-900/80 hover:border-pink-400/60 transition">
-          <option value="spongebob" selected>🧽 海绵宝宝 (SpongeBob)</option>
-          <option value="patrick">⭐ 派大星 (Patrick Star)</option>
-          <option value="mecha">🤖 赛博机甲 (Cyber Mecha)</option>
-        </select>
-
-        <!-- 限时速度档位 -->
-        <select id="speed-select" class="glass-panel px-3 py-2 rounded-2xl text-xs sm:text-sm font-bold text-amber-200 outline-none cursor-pointer bg-slate-900/80 hover:border-amber-400/60 transition">
-          <option value="30" selected>⏱️ 标准限时 (30秒/题)</option>
-          <option value="20">⚡ 进阶紧迫 (20秒/题)</option>
-          <option value="45">🛡️ 稳健思考 (45秒/题)</option>
-        </select>
-      </div>
-
-      <!-- 右侧分数、连击与生命 -->
-      <div class="flex items-center gap-2">
-        <div class="glass-panel px-4 py-1.5 rounded-2xl flex items-center gap-3 sm:gap-4 text-xs sm:text-sm font-bold">
-          <div class="flex items-center gap-1" title="护盾能量">
-            <span id="hearts-display" class="text-sm sm:text-base tracking-tight">❤️❤️❤️</span>
-          </div>
-          <div class="h-4 w-[1px] bg-white/15"></div>
-          <div class="flex items-center gap-1.5">
-            <span class="text-slate-400">总分</span>
-            <span id="score-display" class="text-cyan-300 text-base sm:text-xl font-black transition-transform">100</span>
-          </div>
-          <div class="h-4 w-[1px] bg-white/15"></div>
-          <div class="flex items-center gap-1">
-            <span class="text-amber-300">🔥连击</span>
-            <span id="streak-display" class="text-amber-400 text-base sm:text-xl font-black">x0</span>
-          </div>
-        </div>
-
-        <button id="sound-btn" class="glass-panel p-2.5 rounded-2xl hover:border-cyan-400/50 transition text-sm" title="音效开关">
-          🔊
-        </button>
-      </div>
+  <div id="canvas-container" aria-label="熊猫博士在云朵花园中跳跃"></div>
+  <div id="damage-overlay" aria-hidden="true"></div>
+  <div id="floating-text-container" aria-live="polite"></div>
+  <header class="game-header">
+    <a class="home-link" href="../index.html" aria-label="返回熊猫成长乐园">‹ 返回乐园</a>
+    <div class="game-brand"><img class="brand-icon" src="../assets/panda-wave-cover.webp" alt="熊猫博士"><div><strong>熊猫博士跳跳乐</strong><small>PANDA'S GARDEN ADVENTURE</small></div></div>
+    <div class="game-stats"><span id="hearts-display" aria-label="爱心">❤️❤️❤️</span><span>星光积分 <b id="score-display">100</b></span><span class="streak-label">连对 <b id="streak-display">x0</b></span></div>
+    <button id="sound-btn" title="音效开关" aria-label="切换游戏音效">🔊</button>
+    <details class="game-settings"><summary>⚙ 设置</summary><div class="settings-panel">
+      <label for="mode-select">练习内容</label><select id="mode-select">
+        <option value="grade2_term1">二年级上 · 加减与乘法</option><option value="grade2_mixed">二年级进阶 · 综合运算</option><option value="mul_add_sub">乘加与乘减</option><option value="chain_100">连加减与括号</option><option value="mul_div_adv">乘除法与逆运算</option>
+      </select>
+      <label for="char-select">博士的新衣服</label><select id="char-select"><option value="blue">天空蓝博士</option><option value="mint">薄荷绿博士</option><option value="peach">蜜桃粉博士</option></select>
+      <label for="speed-select">思考时间</label><select id="speed-select"><option value="30">30 秒 · 轻快挑战</option><option value="45">45 秒 · 慢慢思考</option><option value="20">20 秒 · 进阶挑战</option></select>
+    </div></details>
+  </header>
+  <section id="question-card" class="question-card">
+    <div class="question-meta"><span id="level-badge">花园第 1 站</span><span id="mode-badge">数学小冒险</span><span id="timer-text">30.0s</span></div>
+    <div id="question-text">准备好一起出发了吗？</div>
+    <div class="timer-track"><div id="timer-bar"></div></div>
+    <p>找到正确答案，陪熊猫博士跳到下一座小岛</p>
+  </section>
+  <div class="garden-caption"><span>✦ 云朵花园</span><small>一步一步，把好奇变成小小的进步</small></div>
+  <footer class="answer-dock">
+    <p>点小岛或选下面的答案 <span>· 键盘 1–5 也能跳跃</span></p>
+    <div class="answer-grid">
+<button id="opt-btn-0" onclick="handleChoice(0)"><small>小岛 1</small><strong id="opt-val-0">?</strong><span>跳这里 ↗</span></button>
+<button id="opt-btn-1" onclick="handleChoice(1)"><small>小岛 2</small><strong id="opt-val-1">?</strong><span>跳这里 ↗</span></button>
+<button id="opt-btn-2" onclick="handleChoice(2)"><small>小岛 3</small><strong id="opt-val-2">?</strong><span>跳这里 ↗</span></button>
+<button id="opt-btn-3" onclick="handleChoice(3)"><small>小岛 4</small><strong id="opt-val-3">?</strong><span>跳这里 ↗</span></button>
+<button id="opt-btn-4" onclick="handleChoice(4)"><small>小岛 5</small><strong id="opt-val-4">?</strong><span>跳这里 ↗</span></button>
     </div>
-
-    <!-- 中央悬浮数学题卡 + 紧迫倒计时激光条 -->
-    <div id="question-card" class="glass-panel mt-3 px-6 py-3.5 sm:px-12 sm:py-5 rounded-3xl pointer-events-auto text-center relative overflow-hidden transition-all duration-200 min-w-[310px] sm:min-w-[460px]">
-      <div class="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-cyan-300/90 mb-1.5">
-        <span id="level-badge">跃迁矩阵 #1</span>
-        <span id="mode-badge" class="px-2 py-0.5 rounded-full bg-white/10 text-indigo-200">乘加乘减混合</span>
-        <span id="timer-text" class="text-amber-300 font-mono text-sm">30.0s</span>
-      </div>
-
-      <div id="question-text" class="text-3xl sm:text-5xl font-black tracking-tight text-white drop-shadow-[0_4px_24px_rgba(56,189,248,0.5)] my-1">
-        7 × 8 - 19 = ?
-      </div>
-
-      <!-- 底部能量倒计时进度条 -->
-      <div class="w-full h-2.5 bg-slate-950/80 rounded-full overflow-hidden mt-3 border border-white/10 p-0.5">
-        <div id="timer-bar" class="h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 transition-all duration-75" style="width: 100%;"></div>
-      </div>
-      <div class="text-[11px] text-rose-300/85 mt-1.5 font-semibold">
-        ⚠️ 答错或超时将触发天谴雷击、扣除 <span class="text-rose-400 font-black">25分</span> 并重排全部方格！
-      </div>
-    </div>
-  </div>
-
-  <!-- 底部 5列 矩阵跳跃按钮 -->
-  <div class="fixed bottom-0 left-0 right-0 z-20 p-3 sm:p-5 flex flex-col items-center pointer-events-none">
-    <div class="text-xs text-slate-300/90 mb-2 font-semibold tracking-wide bg-slate-950/70 px-4 py-1 rounded-full border border-white/15 backdrop-blur-md">
-      💡 点击 3D 悬浮方格、下方按钮 或 按数字键 <kbd class="px-1.5 py-0.5 bg-white/15 rounded text-cyan-300">1</kbd> - <kbd class="px-1.5 py-0.5 bg-white/15 rounded text-cyan-300">5</kbd> 立即跃迁
-    </div>
-
-    <div class="w-full max-w-4xl grid grid-cols-5 gap-2 sm:gap-3.5 pointer-events-auto">
-      <button id="opt-btn-0" onclick="handleChoice(0)" class="glass-btn py-2.5 sm:py-3.5 rounded-2xl flex flex-col items-center justify-center group">
-        <span class="text-[10px] sm:text-xs font-bold text-cyan-300/80 mb-0.5">通道 [1]</span>
-        <span id="opt-val-0" class="text-xl sm:text-3xl font-black text-white group-hover:text-cyan-300">37</span>
-      </button>
-
-      <button id="opt-btn-1" onclick="handleChoice(1)" class="glass-btn py-2.5 sm:py-3.5 rounded-2xl flex flex-col items-center justify-center group">
-        <span class="text-[10px] sm:text-xs font-bold text-sky-300/80 mb-0.5">通道 [2]</span>
-        <span id="opt-val-1" class="text-xl sm:text-3xl font-black text-white group-hover:text-sky-300">47</span>
-      </button>
-
-      <button id="opt-btn-2" onclick="handleChoice(2)" class="glass-btn py-2.5 sm:py-3.5 rounded-2xl flex flex-col items-center justify-center group">
-        <span class="text-[10px] sm:text-xs font-bold text-indigo-300/80 mb-0.5">通道 [3]</span>
-        <span id="opt-val-2" class="text-xl sm:text-3xl font-black text-white group-hover:text-indigo-300">39</span>
-      </button>
-
-      <button id="opt-btn-3" onclick="handleChoice(3)" class="glass-btn py-2.5 sm:py-3.5 rounded-2xl flex flex-col items-center justify-center group">
-        <span class="text-[10px] sm:text-xs font-bold text-purple-300/80 mb-0.5">通道 [4]</span>
-        <span id="opt-val-3" class="text-xl sm:text-3xl font-black text-white group-hover:text-purple-300">27</span>
-      </button>
-
-      <button id="opt-btn-4" onclick="handleChoice(4)" class="glass-btn py-2.5 sm:py-3.5 rounded-2xl flex flex-col items-center justify-center group">
-        <span class="text-[10px] sm:text-xs font-bold text-fuchsia-300/80 mb-0.5">通道 [5]</span>
-        <span id="opt-val-4" class="text-xl sm:text-3xl font-black text-white group-hover:text-fuchsia-300">35</span>
-      </button>
-    </div>
-  </div>
-
+    <small class="game-rule">答错或超时扣 25 分，回到原地再试一次；爱心用完会补满。</small>
+  </footer>
   <script>
     /**************************************************************
      * 1. 强化版 Web Audio 合成音效 (含倒计时急促滴答、雷击爆炸声)
@@ -299,10 +87,10 @@
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
-        osc.type = urgent ? 'square' : 'triangle';
+        osc.type = 'sine';
         osc.frequency.setValueAtTime(urgent ? 880 : 520, now);
         osc.frequency.exponentialRampToValueAtTime(urgent ? 440 : 300, now + 0.06);
-        gain.gain.setValueAtTime(urgent ? 0.18 : 0.08, now);
+        gain.gain.setValueAtTime(urgent ? 0.07 : 0.04, now);
         gain.gain.exponentialRampToValueAtTime(0.005, now + 0.065);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
@@ -331,49 +119,9 @@
         });
       }
 
-      // 强烈雷击与崩塌低音炮惩罚音效
       playThunderPenalty() {
-        if (!this.enabled) return;
-        this.init();
-        const now = this.ctx.currentTime;
-
-        // 1. 白噪音雷击爆裂
-        const bufferSize = this.ctx.sampleRate * 0.45;
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-          data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (this.ctx.sampleRate * 0.15));
-        }
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(420, now);
-
-        const noiseGain = this.ctx.createGain();
-        noiseGain.gain.setValueAtTime(0.45, now);
-        noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.44);
-
-        noise.connect(filter);
-        filter.connect(noiseGain);
-        noiseGain.connect(this.ctx.destination);
-        noise.start(now);
-
-        // 2. 双锯齿波警报下坠音
-        [190, 135, 92].forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(freq, now + idx * 0.11);
-          osc.frequency.linearRampToValueAtTime(freq * 0.55, now + idx * 0.11 + 0.25);
-          gain.gain.setValueAtTime(0.26, now + idx * 0.11);
-          gain.gain.exponentialRampToValueAtTime(0.008, now + idx * 0.11 + 0.26);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(now + idx * 0.11);
-          osc.stop(now + idx * 0.11 + 0.27);
-        });
+        if(!this.enabled)return;this.init();
+        [392,330].forEach((f,i)=>{const o=this.ctx.createOscillator(),g=this.ctx.createGain(),t=this.ctx.currentTime+i*.12;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.09,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.connect(g);g.connect(this.ctx.destination);o.start(t);o.stop(t+.31);});
       }
     }
 
@@ -383,8 +131,10 @@
      * 2. 二年级数学高迷惑度5选项题库生成器
      **************************************************************/
     const NUM_LANES = 5;
-    const LANE_X = [-5.8, -2.9, 0, 2.9, 5.8];
-    const ROW_SPACING = 5.6;
+    let laneSpacing=window.innerWidth<650?2.15:2.9;
+    const LANE_X = [-2,-1,0,1,2].map(i=>i*laneSpacing);
+    let pendingRecovery=null;
+    const ROW_SPACING = 9.6;
 
     let currentMode = 'grade2_term1';
     let score = 100; // 初始100分，方便直观感受扣分惩罚
@@ -566,13 +316,14 @@
     }
 
     /**************************************************************
-     * 3. Three.js 酷炫 3D 场景增强 (网格地面、星尘流、高光材质、雷电特效)
+     * 3. 卡通花园场景与熊猫博士
      **************************************************************/
     const container = document.getElementById('canvas-container');
     const scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2(0x070a14, 0.022);
+    scene.background = new THREE.Color(0xe4f2e9);
+    scene.fog = new THREE.Fog(0xe4f2e9, 32, 100);
 
-    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 160);
+    const camera = new THREE.PerspectiveCamera(window.innerWidth<650?60:50, window.innerWidth / window.innerHeight, 0.1, 160);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -580,834 +331,41 @@
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
 
-    const ambientLight = new THREE.AmbientLight(0xc084fc, 0.8);
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.12;
+    const ambientLight = new THREE.HemisphereLight(0xfffcf1, 0x94b9a5, .85);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.25);
-    dirLight.position.set(14, 26, 18);
+    const dirLight = new THREE.DirectionalLight(0xfff3d3, 1.1);
+    dirLight.position.set(-8, 16, 12);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
     dirLight.shadow.mapSize.height = 1024;
-    scene.add(dirLight);
+    dirLight.shadow.camera.left=-18; dirLight.shadow.camera.right=18;
+    dirLight.shadow.camera.top=18; dirLight.shadow.camera.bottom=-18;
+    dirLight.shadow.bias=-.001; scene.add(dirLight);
 
-    const playerLight = new THREE.PointLight(0x38bdf8, 2.2, 28);
+    const playerLight = new THREE.PointLight(0xfff1cf, .18, 14);
     scene.add(playerLight);
-
-    const lightningLight = new THREE.PointLight(0xef4444, 0, 50);
+    const lightningLight = new THREE.PointLight(0xffd5ae, 0, 12);
     scene.add(lightningLight);
-
-    const gridHelper = new THREE.GridHelper(160, 80, 0x38bdf8, 0x1e1b4b);
-    gridHelper.position.y = -3.8;
-    gridHelper.material.transparent = true;
-    gridHelper.material.opacity = 0.35;
-    scene.add(gridHelper);
-
-    const starCount = 450;
-    const starGeo = new THREE.BufferGeometry();
-    const starPositions = new Float32Array(starCount * 3);
-    for (let i = 0; i < starCount; i++) {
-      starPositions[i * 3] = (Math.random() - 0.5) * 70;
-      starPositions[i * 3 + 1] = (Math.random() - 0.3) * 35;
-      starPositions[i * 3 + 2] = -Math.random() * 120 + 20;
-    }
-    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
-    const starMat = new THREE.PointsMaterial({
-      color: 0x7dd3fc,
-      size: 0.22,
-      transparent: true,
-      opacity: 0.75
-    });
-    const starField = new THREE.Points(starGeo, starMat);
-    scene.add(starField);
-
     function createNumberTexture(text, state = 'normal') {
-      const canvas = document.createElement('canvas');
-      canvas.width = 512;
-      canvas.height = 512;
-      const ctx = canvas.getContext('2d');
-
-      const palettes = {
-        start: { bg1: '#091930', bg2: '#050b14', border: '#38bdf8', accent: '#7dd3fc', text: '#38bdf8', glow: '#0284c7' },
-        normal: { bg1: '#181342', bg2: '#09071a', border: '#818cf8', accent: '#c084fc', text: '#ffffff', glow: '#6366f1' },
-        urgent: { bg1: '#4c0519', bg2: '#1f030b', border: '#fb7185', accent: '#f43f5e', text: '#ffe4e6', glow: '#e11d48' },
-        correct: { bg1: '#064e3b', bg2: '#022c22', border: '#34d399', accent: '#6ee7b7', text: '#ecfdf5', glow: '#10b981' },
-        wrong: { bg1: '#7f1d1d', bg2: '#2a0606', border: '#ef4444', accent: '#fca5a5', text: '#fecaca', glow: '#dc2626' }
-      };
-      const p = palettes[state] || palettes.normal;
-
-      // 1. 深邃科技感径向底色
-      const grad = ctx.createRadialGradient(256, 256, 30, 256, 256, 320);
-      grad.addColorStop(0, p.bg1);
-      grad.addColorStop(1, p.bg2);
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.roundRect(12, 12, 488, 488, 72);
-      ctx.fill();
-
-      // 2. 蜂巢微网格暗纹与科幻电路线
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
-      ctx.lineWidth = 2;
-      for (let i = 48; i < 464; i += 32) {
-        ctx.beginPath();
-        ctx.moveTo(40, i); ctx.lineTo(472, i);
-        ctx.moveTo(i, 40); ctx.lineTo(i, 472);
-        ctx.stroke();
-      }
-
-      // 3. 外圈双层发光霓虹装甲框
-      ctx.lineWidth = 14;
-      ctx.strokeStyle = p.border;
-      ctx.shadowColor = p.glow;
-      ctx.shadowBlur = 28;
-      ctx.beginPath();
-      ctx.roundRect(18, 18, 476, 476, 64);
-      ctx.stroke();
-
-      // 4. 内圈八角科技能量环与四角准星刻度
-      ctx.shadowBlur = 10;
-      ctx.strokeStyle = p.accent;
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.arc(256, 256, 178, 0, Math.PI * 2);
-      ctx.stroke();
-
-      ctx.setLineDash([18, 14]);
-      ctx.lineWidth = 3;
-      ctx.beginPath();
-      ctx.arc(256, 256, 196, 0, Math.PI * 2);
-      ctx.stroke();
-      ctx.setLineDash([]);
-
-      // 四角L型高光导轨
-      const corners = [[52, 52, 1, 1], [460, 52, -1, 1], [52, 460, 1, -1], [460, 460, -1, -1]];
-      ctx.lineWidth = 8;
-      ctx.strokeStyle = '#ffffff';
-      corners.forEach(([cx, cy, dx, dy]) => {
-        ctx.beginPath();
-        ctx.moveTo(cx, cy + dy * 42);
-        ctx.lineTo(cx, cy);
-        ctx.lineTo(cx + dx * 42, cy);
-        ctx.stroke();
-      });
-
-      // 5. 中心立体发光数字
-      ctx.fillStyle = p.text;
-      ctx.font = '900 205px Inter, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.shadowColor = p.border;
-      ctx.shadowBlur = 40;
-      ctx.fillText(String(text), 256, 266);
-
-      const texture = new THREE.CanvasTexture(canvas);
-      texture.anisotropy = 4;
-      return texture;
+      const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
+      const ctx=canvas.getContext('2d');
+      const palettes={normal:['#fff9e5','#43634a'],start:['#e2f0d2','#42654d'],urgent:['#fff0d1','#b47737'],correct:['#dff2c9','#3c7851']};
+      const [bg,ink]=palettes[state]||palettes.normal;
+      ctx.fillStyle=bg;ctx.fillRect(0,0,512,512);
+      ctx.strokeStyle='#d6dfb5';ctx.lineWidth=12;ctx.beginPath();ctx.roundRect(22,22,468,468,80);ctx.stroke();
+      ctx.fillStyle=ink;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`900 ${String(text).length>3?100:220}px sans-serif`;ctx.fillText(String(text),256,264);
+      const tex=new THREE.CanvasTexture(canvas);tex.encoding=THREE.sRGBEncoding;tex.anisotropy=4;return tex;
     }
-
-    // 生成海绵宝宝多孔海绵高清材质纹理
-    function createSpongeTexture() {
-      const c = document.createElement('canvas');
-      c.width = 256;
-      c.height = 256;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#fde047';
-      ctx.fillRect(0, 0, 256, 256);
-
-      // 细腻海绵气孔
-      const pores = [
-        [45, 50, 14], [195, 42, 18], [120, 85, 10],
-        [55, 160, 16], [210, 155, 12], [150, 210, 15],
-        [85, 220, 9], [30, 110, 8], [225, 95, 10]
-      ];
-      pores.forEach(([x, y, r]) => {
-        ctx.fillStyle = '#ca8a04';
-        ctx.beginPath();
-        ctx.arc(x, y, r, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#eab308';
-        ctx.beginPath();
-        ctx.arc(x + 2, y + 2, r * 0.78, 0, Math.PI * 2);
-        ctx.fill();
-      });
-      const tex = new THREE.CanvasTexture(c);
-      return tex;
-    }
-
-    // 生成派大星沙滩花短裤纹理
-    function createPatrickPantsTexture() {
-      const c = document.createElement('canvas');
-      c.width = 256;
-      c.height = 128;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#a3e635';
-      ctx.fillRect(0, 0, 256, 128);
-
-      // 紫色夏威夷花朵图案
-      ctx.fillStyle = '#9333ea';
-      const flowers = [[50, 65], [135, 50], [210, 75], [90, 105], [175, 100]];
-      flowers.forEach(([fx, fy]) => {
-        for (let a = 0; a < 5; a++) {
-          const ang = (a * Math.PI * 2) / 5;
-          ctx.beginPath();
-          ctx.arc(fx + Math.cos(ang) * 10, fy + Math.sin(ang) * 10, 7, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
-      // 腰部紫黑条纹
-      ctx.fillStyle = '#581c87';
-      ctx.fillRect(0, 0, 256, 16);
-      return new THREE.CanvasTexture(c);
-    }
-
-    // 生成派大星颗粒皮肤纹理
-    function createPatrickSkinTexture() {
-      const c = document.createElement('canvas');
-      c.width = 256;
-      c.height = 256;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#fb7185';
-      ctx.fillRect(0, 0, 256, 256);
-      ctx.fillStyle = '#f43f5e';
-      for (let i = 0; i < 45; i++) {
-        ctx.beginPath();
-        ctx.arc((i * 53) % 256, (i * 97) % 256, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      return new THREE.CanvasTexture(c);
-    }
-
-    // 1. 细腻版 3D 海绵宝宝 (SpongeBob SquarePants Rig)
-    function buildSpongeBobRig() {
-      const root = new THREE.Group();
-
-      const spongeTex = createSpongeTexture();
-      const bodyMat = new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
-        map: spongeTex,
-        roughness: 0.45,
-        metalness: 0.05,
-        clearcoat: 0.15
-      });
-      const yellowLimbMat = new THREE.MeshStandardMaterial({ color: 0xfde047, roughness: 0.4 });
-      const shirtMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
-      const pantsMat = new THREE.MeshStandardMaterial({ color: 0x78350f, roughness: 0.5 });
-      const tieMat = new THREE.MeshStandardMaterial({ color: 0xef4444, roughness: 0.25 });
-      const shoeMat = new THREE.MeshPhysicalMaterial({ color: 0x111827, roughness: 0.15, clearcoat: 0.9 });
-      const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const irisMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-      const pupilMat = new THREE.MeshBasicMaterial({ color: 0x090d16 });
-      const blushMat = new THREE.MeshBasicMaterial({ color: 0xfb7185 });
-
-      // 骨盆节点
-      const pelvis = new THREE.Group();
-      pelvis.position.y = 0.78;
-      root.add(pelvis);
-
-      // 棕色方裤子 + 黑色皮带
-      const pantsMesh = new THREE.Mesh(new THREE.BoxGeometry(1.18, 0.28, 0.62), pantsMat);
-      pantsMesh.castShadow = true;
-      pelvis.add(pantsMesh);
-
-      // 白衬衫领口层
-      const shirtMesh = new THREE.Mesh(new THREE.BoxGeometry(1.17, 0.18, 0.61), shirtMat);
-      shirtMesh.position.y = 0.22;
-      pelvis.add(shirtMesh);
-
-      // 红领带 (钻石菱形造型)
-      const tieTop = new THREE.Mesh(new THREE.OctahedronGeometry(0.09, 0), tieMat);
-      tieTop.position.set(0, 0.24, -0.32);
-      const tieBottom = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.28, 4), tieMat);
-      tieBottom.rotation.x = Math.PI;
-      tieBottom.rotation.y = Math.PI / 4;
-      tieBottom.position.set(0, 0.08, -0.32);
-      pelvis.add(tieTop, tieBottom);
-
-      // 脊椎与海绵主体 (带微微波浪圆角感的多段叠加)
-      const spine = new THREE.Group();
-      spine.position.y = 0.31;
-      pelvis.add(spine);
-
-      const spongeBody = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.18, 0.6), bodyMat);
-      spongeBody.position.y = 0.59;
-      spongeBody.castShadow = true;
-      spine.add(spongeBody);
-
-      // 头部表情组 (挂载在 spine 上方便整体晃动)
-      const headGroup = new THREE.Group();
-      headGroup.position.y = 0.65;
-      spine.add(headGroup);
-
-      // 标志性大眼睛 (双圆球 + 蓝虹膜 + 黑瞳孔 + 3根黑色睫毛)
-      [-0.25, 0.25].forEach((ox) => {
-        const eyeGroup = new THREE.Group();
-        eyeGroup.position.set(ox, 0.14, -0.28);
-
-        const whiteBall = new THREE.Mesh(new THREE.SphereGeometry(0.24, 24, 24), eyeWhiteMat);
-        whiteBall.scale.set(1, 1, 0.45);
-        eyeGroup.add(whiteBall);
-
-        const iris = new THREE.Mesh(new THREE.SphereGeometry(0.12, 20, 20), irisMat);
-        iris.scale.set(1, 1, 0.4);
-        iris.position.z = -0.09;
-        eyeGroup.add(iris);
-
-        const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), pupilMat);
-        pupil.scale.set(1, 1, 0.4);
-        pupil.position.z = -0.115;
-        eyeGroup.add(pupil);
-
-        // 3根俏皮睫毛
-        [-0.28, 0, 0.28].forEach((rotZ) => {
-          const lash = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.1, 0.03), pupilMat);
-          lash.position.set( Math.sin(rotZ) * 0.2, 0.25, -0.02);
-          lash.rotation.z = -rotZ;
-          eyeGroup.add(lash);
-        });
-
-        headGroup.add(eyeGroup);
-      });
-
-      // 翘挺的长鼻子
-      const noseGeo = new THREE.CylinderGeometry(0.045, 0.065, 0.36, 16);
-      const noseMesh = new THREE.Mesh(noseGeo, yellowLimbMat);
-      noseMesh.rotation.x = Math.PI / 2 - 0.18;
-      noseMesh.position.set(0, 0.02, -0.44);
-      headGroup.add(noseMesh);
-
-      const noseTip = new THREE.Mesh(new THREE.SphereGeometry(0.065, 16, 16), yellowLimbMat);
-      noseTip.position.set(0, 0.05, -0.61);
-      headGroup.add(noseTip);
-
-      // 两侧红润脸颊与雀斑 + 开心弧形大嘴 + 两颗标志性大白门牙
-      [-0.4, 0.4].forEach((cx) => {
-        const cheek = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), yellowLimbMat);
-        cheek.position.set(cx, -0.1, -0.3);
-        headGroup.add(cheek);
-
-        const blush = new THREE.Mesh(new THREE.SphereGeometry(0.045, 12, 12), blushMat);
-        blush.position.set(cx * 1.05, -0.06, -0.39);
-        headGroup.add(blush);
-      });
-
-      // 微笑嘴弧
-      const smileCurve = new THREE.TorusGeometry(0.28, 0.024, 12, 24, Math.PI);
-      const smileMesh = new THREE.Mesh(smileCurve, pupilMat);
-      smileMesh.rotation.z = Math.PI;
-      smileMesh.position.set(0, -0.08, -0.31);
-      headGroup.add(smileMesh);
-
-      // 两颗大门牙
-      [-0.08, 0.08].forEach((tx) => {
-        const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.15, 0.04), eyeWhiteMat);
-        tooth.position.set(tx, -0.26, -0.31);
-        headGroup.add(tooth);
-      });
-
-      // 左右手臂骨骼 (白袖口 + 细长黄手臂 + 小手掌)
-      function createSpongeArm(side) {
-        const shoulder = new THREE.Group();
-        shoulder.position.set(side * 0.68, 0.42, 0);
-
-        const sleeve = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.22, 14), shirtMat);
-        sleeve.position.y = -0.05;
-        shoulder.add(sleeve);
-
-        const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.35, 12), yellowLimbMat);
-        upperArm.position.y = -0.24;
-        shoulder.add(upperArm);
-
-        const elbow = new THREE.Group();
-        elbow.position.y = -0.4;
-        shoulder.add(elbow);
-
-        const forearm = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.05, 0.3, 12), yellowLimbMat);
-        forearm.position.y = -0.15;
-        elbow.add(forearm);
-
-        const hand = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), yellowLimbMat);
-        hand.position.y = -0.32;
-        elbow.add(hand);
-
-        return { shoulder, elbow };
-      }
-
-      const leftArmRig = createSpongeArm(-1);
-      const rightArmRig = createSpongeArm(1);
-      spine.add(leftArmRig.shoulder, rightArmRig.shoulder);
-
-      // 左右腿部骨骼 (黄细腿 + 蓝红条纹白长袜 + 亮黑圆头皮鞋)
-      function createSpongeLeg(side) {
-        const hip = new THREE.Group();
-        hip.position.set(side * 0.28, -0.12, 0);
-
-        const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.32, 12), yellowLimbMat);
-        thigh.position.y = -0.16;
-        hip.add(thigh);
-
-        const knee = new THREE.Group();
-        knee.position.y = -0.32;
-        hip.add(knee);
-
-        // 条纹长筒白袜
-        const sock = new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.28, 12), shirtMat);
-        sock.position.y = -0.14;
-        knee.add(sock);
-
-        const stripeBlue = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.035, 12), irisMat);
-        stripeBlue.position.y = -0.06;
-        const stripeRed = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.035, 12), tieMat);
-        stripeRed.position.y = -0.12;
-        knee.add(stripeBlue, stripeRed);
-
-        const ankle = new THREE.Group();
-        ankle.position.y = -0.28;
-        knee.add(ankle);
-
-        // 圆头亮黑皮鞋
-        const shoeBack = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.14, 0.26), shoeMat);
-        shoeBack.position.set(0, -0.04, -0.04);
-        const shoeToe = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), shoeMat);
-        shoeToe.position.set(0, -0.03, -0.16);
-        ankle.add(shoeBack, shoeToe);
-
-        return { hip, knee, ankle };
-      }
-
-      const leftLegRig = createSpongeLeg(-1);
-      const rightLegRig = createSpongeLeg(1);
-      pelvis.add(leftLegRig.hip, rightLegRig.hip);
-
-      // 隐藏光翼占位（保持统一动画接口）
-      const leftWingPivot = new THREE.Group();
-      const rightWingPivot = new THREE.Group();
-      const chestCore = new THREE.Group();
-
-      // 脚底海洋泡泡光环
-      const ringGeo = new THREE.RingGeometry(0.48, 0.62, 24);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0xfde047, side: THREE.DoubleSide, transparent: true, opacity: 0.75 });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.04;
-      root.add(ring);
-
-      root.userData = {
-        charType: 'spongebob',
-        pelvis,
-        spine,
-        headGroup,
-        leftArmRig,
-        rightArmRig,
-        leftLegRig,
-        rightLegRig,
-        leftWingPivot,
-        rightWingPivot,
-        chestCore,
-        ring,
-        armorMat: bodyMat,
-        accentMat: yellowLimbMat,
-        glowMat: irisMat,
-        coreMat: tieMat,
-        wingMat: ringMat,
-        ringMat,
-        defaultBodyHex: 0xffffff,
-        defaultAccentHex: 0xfde047,
-        defaultGlowHex: 0x38bdf8
-      };
-      return root;
-    }
-
-    // 2. 细腻版 3D 派大星 (Patrick Star Rig)
-    function buildPatrickRig() {
-      const root = new THREE.Group();
-
-      const skinTex = createPatrickSkinTexture();
-      const pantsTex = createPatrickPantsTexture();
-
-      const skinMat = new THREE.MeshPhysicalMaterial({
-        color: 0xffffff,
-        map: skinTex,
-        roughness: 0.5,
-        clearcoat: 0.1
-      });
-      const pinkLimbMat = new THREE.MeshStandardMaterial({ color: 0xfb7185, roughness: 0.45 });
-      const pantsMat = new THREE.MeshStandardMaterial({ map: pantsTex, roughness: 0.4 });
-      const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const pupilMat = new THREE.MeshBasicMaterial({ color: 0x090d16 });
-      const browMat = new THREE.MeshBasicMaterial({ color: 0x090d16 });
-      const mouthMat = new THREE.MeshBasicMaterial({ color: 0x881337 });
-      const tongueMat = new THREE.MeshBasicMaterial({ color: 0xfda4af });
-
-      // 骨盆节点
-      const pelvis = new THREE.Group();
-      pelvis.position.y = 0.72;
-      root.add(pelvis);
-
-      // 绿紫花沙滩短裤 (圆润下半身)
-      const pantsMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.66, 0.56, 0.46, 24), pantsMat);
-      pantsMesh.castShadow = true;
-      pelvis.add(pantsMesh);
-
-      // 脊椎与圆滚滚大肚腩 + 尖头海星身体 (使用 Lathe 旋转曲面打造顺滑胖海星躯干)
-      const spine = new THREE.Group();
-      spine.position.y = 0.18;
-      pelvis.add(spine);
-
-      const lathePoints = [
-        new THREE.Vector2(0.58, 0.0),
-        new THREE.Vector2(0.72, 0.28), // 圆滚滚大肚腩
-        new THREE.Vector2(0.65, 0.62),
-        new THREE.Vector2(0.48, 0.98),
-        new THREE.Vector2(0.32, 1.35),
-        new THREE.Vector2(0.14, 1.65),
-        new THREE.Vector2(0.0, 1.76)   // 海星圆润尖顶
-      ];
-      const starTorsoGeo = new THREE.LatheGeometry(lathePoints, 28);
-      const starTorso = new THREE.Mesh(starTorsoGeo, skinMat);
-      starTorso.scale.set(1.0, 1.0, 0.78);
-      starTorso.castShadow = true;
-      spine.add(starTorso);
-
-      // 可爱肚脐眼
-      const navel = new THREE.Mesh(new THREE.TorusGeometry(0.055, 0.018, 10, 18), mouthMat);
-      navel.position.set(0, 0.28, -0.55);
-      spine.add(navel);
-
-      // 头部表情组
-      const headGroup = new THREE.Group();
-      headGroup.position.y = 0.92;
-      spine.add(headGroup);
-
-      // 派大星紧挨着的椭圆形大眼睛 + 经典Z字形粗黑浓眉
-      [-0.14, 0.14].forEach((ox, idx) => {
-        const eyeGroup = new THREE.Group();
-        eyeGroup.position.set(ox, 0.12, -0.35);
-
-        const whiteBall = new THREE.Mesh(new THREE.SphereGeometry(0.15, 20, 20), eyeWhiteMat);
-        whiteBall.scale.set(0.95, 1.35, 0.5);
-        eyeGroup.add(whiteBall);
-
-        const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.055, 14, 14), pupilMat);
-        pupil.position.set(0, 0, -0.075);
-        eyeGroup.add(pupil);
-
-        // 粗黑眉毛
-        const brow = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.055, 0.04), browMat);
-        brow.position.set(0, 0.25, -0.02);
-        brow.rotation.z = idx === 0 ? 0.18 : -0.18;
-        eyeGroup.add(brow);
-
-        headGroup.add(eyeGroup);
-      });
-
-      // 憨厚大笑嘴巴 + 粉嫩舌头
-      const mouthMesh = new THREE.Mesh(new THREE.SphereGeometry(0.24, 20, 16), mouthMat);
-      mouthMesh.scale.set(1.2, 0.65, 0.35);
-      mouthMesh.position.set(0, -0.18, -0.4);
-      headGroup.add(mouthMesh);
-
-      const tongueMesh = new THREE.Mesh(new THREE.SphereGeometry(0.14, 16, 12), tongueMat);
-      tongueMesh.scale.set(1.1, 0.45, 0.4);
-      tongueMesh.position.set(0, -0.23, -0.44);
-      headGroup.add(tongueMesh);
-
-      // 两侧圆锥形海星肉感手臂骨骼
-      function createPatrickArm(side) {
-        const shoulder = new THREE.Group();
-        shoulder.position.set(side * 0.58, 0.56, 0);
-
-        const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.22, 0.45, 18), pinkLimbMat);
-        upperArm.position.y = -0.18;
-        upperArm.castShadow = true;
-        shoulder.add(upperArm);
-
-        const elbow = new THREE.Group();
-        elbow.position.y = -0.36;
-        shoulder.add(elbow);
-
-        const forearm = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.46, 18), pinkLimbMat);
-        forearm.rotation.x = Math.PI;
-        forearm.position.y = -0.18;
-        elbow.add(forearm);
-
-        return { shoulder, elbow };
-      }
-
-      const leftArmRig = createPatrickArm(-1);
-      const rightArmRig = createPatrickArm(1);
-      spine.add(leftArmRig.shoulder, rightArmRig.shoulder);
-
-      // 海星圆锥短胖腿骨骼
-      function createPatrickLeg(side) {
-        const hip = new THREE.Group();
-        hip.position.set(side * 0.3, -0.16, 0);
-
-        // 绿裤腿段
-        const pantLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.2, 0.24, 16), pantsMat);
-        pantLeg.position.y = -0.1;
-        hip.add(pantLeg);
-
-        const knee = new THREE.Group();
-        knee.position.y = -0.22;
-        hip.add(knee);
-
-        const footCone = new THREE.Mesh(new THREE.ConeGeometry(0.19, 0.38, 18), pinkLimbMat);
-        footCone.rotation.x = Math.PI;
-        footCone.position.y = -0.16;
-        knee.add(footCone);
-
-        const ankle = new THREE.Group();
-        ankle.position.y = -0.32;
-        knee.add(ankle);
-
-        return { hip, knee, ankle };
-      }
-
-      const leftLegRig = createPatrickLeg(-1);
-      const rightLegRig = createPatrickLeg(1);
-      pelvis.add(leftLegRig.hip, rightLegRig.hip);
-
-      const leftWingPivot = new THREE.Group();
-      const rightWingPivot = new THREE.Group();
-      const chestCore = new THREE.Group();
-
-      // 脚底五角海星光环
-      const ringGeo = new THREE.RingGeometry(0.48, 0.64, 5);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0xfb7185, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.04;
-      root.add(ring);
-
-      root.userData = {
-        charType: 'patrick',
-        pelvis,
-        spine,
-        headGroup,
-        leftArmRig,
-        rightArmRig,
-        leftLegRig,
-        rightLegRig,
-        leftWingPivot,
-        rightWingPivot,
-        chestCore,
-        ring,
-        armorMat: skinMat,
-        accentMat: pinkLimbMat,
-        glowMat: eyeWhiteMat,
-        coreMat: tongueMat,
-        wingMat: ringMat,
-        ringMat,
-        defaultBodyHex: 0xffffff,
-        defaultAccentHex: 0xfb7185,
-        defaultGlowHex: 0xffffff
-      };
-      return root;
-    }
-
-    // 3. 赛博光翼机甲英雄 (Cyber Mecha Rig)
-    function buildMechaRig() {
-      const root = new THREE.Group();
-
-      const armorMat = new THREE.MeshPhysicalMaterial({
-        color: 0xf8fafc,
-        metalness: 0.45,
-        roughness: 0.18,
-        clearcoat: 1.0
-      });
-      const darkJointMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.3 });
-      const accentMat = new THREE.MeshPhysicalMaterial({
-        color: 0x38bdf8,
-        metalness: 0.6,
-        roughness: 0.2,
-        emissive: 0x0284c7,
-        emissiveIntensity: 0.45
-      });
-      const glowMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-      const coreMat = new THREE.MeshBasicMaterial({ color: 0x22d3ee });
-
-      const pelvis = new THREE.Group();
-      pelvis.position.y = 0.95;
-      root.add(pelvis);
-
-      const hipMesh = new THREE.Mesh(new THREE.BoxGeometry(0.68, 0.26, 0.48), darkJointMat);
-      pelvis.add(hipMesh);
-
-      const spine = new THREE.Group();
-      spine.position.y = 0.14;
-      pelvis.add(spine);
-
-      const torsoMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.48, 0.34, 0.72, 6), armorMat);
-      torsoMesh.position.y = 0.38;
-      spine.add(torsoMesh);
-
-      const chestCore = new THREE.Mesh(new THREE.OctahedronGeometry(0.14, 1), coreMat);
-      chestCore.position.set(0, 0.42, -0.39);
-      spine.add(chestCore);
-
-      const wingsGroup = new THREE.Group();
-      wingsGroup.position.set(0, 0.48, 0.32);
-      spine.add(wingsGroup);
-      const leftWingPivot = new THREE.Group();
-      const rightWingPivot = new THREE.Group();
-      wingsGroup.add(leftWingPivot, rightWingPivot);
-
-      const wingBladeGeo = new THREE.ConeGeometry(0.18, 1.25, 4);
-      const wingMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.82 });
-      for (let w = 0; w < 2; w++) {
-        const bladeL = new THREE.Mesh(wingBladeGeo, wingMat);
-        bladeL.position.set(-0.55 - w * 0.28, 0.25 - w * 0.18, 0.1);
-        bladeL.rotation.z = Math.PI * 0.32 + w * 0.18;
-        leftWingPivot.add(bladeL);
-
-        const bladeR = new THREE.Mesh(wingBladeGeo, wingMat);
-        bladeR.position.set(0.55 + w * 0.28, 0.25 - w * 0.18, 0.1);
-        bladeR.rotation.z = -Math.PI * 0.32 - w * 0.18;
-        rightWingPivot.add(bladeR);
-      }
-
-      const headGroup = new THREE.Group();
-      headGroup.position.y = 0.78;
-      spine.add(headGroup);
-
-      const helmetMesh = new THREE.Mesh(new THREE.BoxGeometry(0.66, 0.56, 0.64), armorMat);
-      helmetMesh.position.y = 0.28;
-      headGroup.add(helmetMesh);
-
-      const visorMesh = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.26, 0.1), new THREE.MeshBasicMaterial({ color: 0x060913 }));
-      visorMesh.position.set(0, 0.28, -0.31);
-      headGroup.add(visorMesh);
-
-      const eyeGeo = new THREE.BoxGeometry(0.14, 0.07, 0.04);
-      const leftEye = new THREE.Mesh(eyeGeo, glowMat);
-      leftEye.position.set(-0.14, 0.29, -0.36);
-      const rightEye = new THREE.Mesh(eyeGeo, glowMat);
-      rightEye.position.set(0.14, 0.29, -0.36);
-      headGroup.add(leftEye, rightEye);
-
-      function createArmRig(side) {
-        const shoulder = new THREE.Group();
-        shoulder.position.set(side * 0.56, 0.62, 0);
-        const pauldron = new THREE.Mesh(new THREE.OctahedronGeometry(0.22, 1), accentMat);
-        shoulder.add(pauldron);
-        const upperArm = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.085, 0.38, 10), darkJointMat);
-        upperArm.position.y = -0.22;
-        shoulder.add(upperArm);
-        const elbow = new THREE.Group();
-        elbow.position.y = -0.4;
-        shoulder.add(elbow);
-        const forearm = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.38, 0.2), armorMat);
-        forearm.position.y = -0.2;
-        elbow.add(forearm);
-        return { shoulder, elbow };
-      }
-
-      const leftArmRig = createArmRig(-1);
-      const rightArmRig = createArmRig(1);
-      spine.add(leftArmRig.shoulder, rightArmRig.shoulder);
-
-      function createLegRig(side) {
-        const hip = new THREE.Group();
-        hip.position.set(side * 0.24, -0.08, 0);
-        const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.1, 0.44, 10), armorMat);
-        thigh.position.y = -0.22;
-        hip.add(thigh);
-        const knee = new THREE.Group();
-        knee.position.y = -0.44;
-        hip.add(knee);
-        const shin = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.44, 0.24), darkJointMat);
-        shin.position.y = -0.22;
-        knee.add(shin);
-        const ankle = new THREE.Group();
-        ankle.position.y = -0.44;
-        knee.add(ankle);
-        const foot = new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.12, 0.42), accentMat);
-        foot.position.set(0, -0.04, -0.06);
-        ankle.add(foot);
-        return { hip, knee, ankle };
-      }
-
-      const leftLegRig = createLegRig(-1);
-      const rightLegRig = createLegRig(1);
-      pelvis.add(leftLegRig.hip, rightLegRig.hip);
-
-      const ringGeo = new THREE.RingGeometry(0.45, 0.58, 6);
-      const ringMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8, side: THREE.DoubleSide, transparent: true, opacity: 0.75 });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.rotation.x = Math.PI / 2;
-      ring.position.y = 0.04;
-      root.add(ring);
-
-      root.userData = {
-        charType: 'mecha',
-        pelvis,
-        spine,
-        headGroup,
-        leftArmRig,
-        rightArmRig,
-        leftLegRig,
-        rightLegRig,
-        leftWingPivot,
-        rightWingPivot,
-        chestCore,
-        ring,
-        armorMat,
-        accentMat,
-        glowMat,
-        coreMat,
-        wingMat,
-        ringMat,
-        defaultBodyHex: 0xf8fafc,
-        defaultAccentHex: 0x38bdf8,
-        defaultGlowHex: 0x38bdf8
-      };
-      return root;
-    }
-
-    let currentCharacterType = 'spongebob';
-    let player = buildSpongeBobRig();
-    scene.add(player);
-
-    // 实时切换 3D 角色模型
+    let player=buildPandaRig('blue');scene.add(player);
     function switchCharacterModel(type) {
-      currentCharacterType = type;
-      const oldPos = player.position.clone();
-      const oldRot = player.rotation.clone();
-      scene.remove(player);
-
-      if (type === 'spongebob') {
-        player = buildSpongeBobRig();
-      } else if (type === 'patrick') {
-        player = buildPatrickRig();
-      } else {
-        player = buildMechaRig();
-      }
-
-      player.position.copy(oldPos);
-      player.rotation.copy(oldRot);
-      scene.add(player);
-      spawnShockwave(oldPos, 0xfde047);
+      const old=player;player=buildPandaRig(type);player.position.copy(old.position);player.rotation.copy(old.rotation);
+      scene.remove(old);disposeGardenObject(old);scene.add(player);
     }
-
-    function setRobotMood(mood) {
-      const { armorMat, accentMat, glowMat, ringMat, defaultBodyHex, defaultAccentHex, defaultGlowHex } = player.userData;
-      if (mood === 'shocked') {
-        armorMat.color.setHex(0x334155);
-        accentMat.color.setHex(0xef4444);
-        glowMat.color.setHex(0xef4444);
-        ringMat.color.setHex(0xef4444);
-      } else if (mood === 'happy') {
-        armorMat.color.setHex(defaultBodyHex);
-        accentMat.color.setHex(defaultAccentHex);
-        glowMat.color.setHex(0x34d399);
-        ringMat.color.setHex(0x34d399);
-      } else {
-        armorMat.color.setHex(defaultBodyHex);
-        accentMat.color.setHex(defaultAccentHex);
-        glowMat.color.setHex(defaultGlowHex);
-        ringMat.color.setHex(defaultAccentHex);
-      }
-    }
-
+    function setRobotMood(mood) { player.userData.mood=mood; }
     const activeTiles = [];
     const particles = [];
     const shockwaves = [];
@@ -1415,168 +373,35 @@
     const ambientShapes = [];
 
     function initAmbientShapes() {
-      const geos = [
-        new THREE.IcosahedronGeometry(1.1, 0),
-        new THREE.OctahedronGeometry(0.95, 0),
-        new THREE.TorusGeometry(0.85, 0.24, 14, 32),
-        new THREE.ConeGeometry(0.8, 1.6, 6)
-      ];
-      const colors = [0x38bdf8, 0x818cf8, 0xe879f9, 0x2dd4bf, 0xf43f5e];
-
-      for (let i = 0; i < 32; i++) {
-        const geo = geos[i % geos.length];
-        const mat = new THREE.MeshPhysicalMaterial({
-          color: colors[i % colors.length],
-          roughness: 0.2,
-          metalness: 0.65,
-          clearcoat: 0.6,
-          transparent: true,
-          opacity: 0.65
-        });
-        const mesh = new THREE.Mesh(geo, mat);
-        const side = i % 2 === 0 ? -1 : 1;
-        mesh.position.set(
-          side * randInt(9, 19),
-          randInt(-3, 7),
-          -i * 3.8 + 6
-        );
-        mesh.rotation.set(Math.random() * Math.PI, Math.random() * Math.PI, 0);
-        mesh.userData = {
-          rotSpeedX: (Math.random() - 0.5) * 0.018,
-          rotSpeedY: (Math.random() - 0.5) * 0.018
-        };
-        scene.add(mesh);
-        ambientShapes.push(mesh);
+      for(let i=0;i<22;i++) {
+        const cloud=i%3!==0,mesh=makeGardenProp(cloud?'cloud':'tree',i);
+        mesh.position.set((i%2?-1:1)*(10+(i%4)*2.7),cloud?2+(i%4)*1.1:-2,-Math.floor(i/2)*10-4);
+        mesh.userData.baseY=mesh.position.y;mesh.userData.phase=i;mesh.userData.cloud=cloud;
+        mesh.scale.setScalar(cloud?1.1+(i%3)*.3:1.5);
+        scene.add(mesh);ambientShapes.push(mesh);
       }
     }
     initAmbientShapes();
-
-    // 创建超炫酷多层全息能量矩阵方格 (3D Holo-Tech Platform)
-    function createTile(x, z, label, isStart = false, optionIndex = -1) {
-      const group = new THREE.Group();
-      group.position.set(x, 0, z);
-
-      const primaryColor = isStart ? 0x38bdf8 : 0x818cf8;
-      const topTex = createNumberTexture(label, isStart ? 'start' : 'normal');
-
-      // 1. 中心玻璃钢化数字主面板
-      const sideMat = new THREE.MeshPhysicalMaterial({
-        color: 0x0f172a,
-        roughness: 0.2,
-        metalness: 0.85,
-        clearcoat: 0.9
-      });
-      const topMat = new THREE.MeshStandardMaterial({
-        map: topTex,
-        roughness: 0.15,
-        metalness: 0.2,
-        emissive: primaryColor,
-        emissiveMap: topTex,
-        emissiveIntensity: 0.32
-      });
-
-      const materials = [sideMat, sideMat, topMat, sideMat, sideMat, sideMat];
-      const boxGeo = new THREE.BoxGeometry(2.15, 0.42, 2.15);
-      const boxMesh = new THREE.Mesh(boxGeo, materials);
-      boxMesh.position.y = -0.21;
-      boxMesh.receiveShadow = true;
-      boxMesh.castShadow = true;
-      group.add(boxMesh);
-
-      // 2. 外围装甲斜切护框 (Octagonal Mech Frame)
-      const frameGeo = new THREE.CylinderGeometry(1.68, 1.45, 0.36, 8);
-      const frameMat = new THREE.MeshStandardMaterial({
-        color: 0x1e1b4b,
-        metalness: 0.8,
-        roughness: 0.25
-      });
-      const frameMesh = new THREE.Mesh(frameGeo, frameMat);
-      frameMesh.position.y = -0.24;
-      frameMesh.rotation.y = Math.PI / 8;
-      group.add(frameMesh);
-
-      // 3. 动态自转六边形全息能量环 (Rotating Holo Ring)
-      const holoRingGeo = new THREE.TorusGeometry(1.56, 0.045, 10, 6);
-      const holoRingMat = new THREE.MeshBasicMaterial({
-        color: primaryColor,
-        transparent: true,
-        opacity: 0.85
-      });
-      const glowMesh = new THREE.Mesh(holoRingGeo, holoRingMat);
-      glowMesh.rotation.x = Math.PI / 2;
-      glowMesh.position.y = -0.18;
-      group.add(glowMesh);
-
-      // 4. 四角悬浮能量水晶柱 (4 Corner Floating Pylons)
-      const pylons = new THREE.Group();
-      const pylonGeo = new THREE.OctahedronGeometry(0.16, 0);
-      const pylonMat = new THREE.MeshBasicMaterial({ color: isStart ? 0x22d3ee : 0xc084fc });
-      const offsets = [[-1.12, -1.12], [1.12, -1.12], [-1.12, 1.12], [1.12, 1.12]];
-      offsets.forEach(([ox, oz]) => {
-        const pMesh = new THREE.Mesh(pylonGeo, pylonMat);
-        pMesh.position.set(ox, 0.08, oz);
-        pylons.add(pMesh);
-      });
-      group.add(pylons);
-
-      // 5. 底部反重力能量椎体核心 (Anti-Gravity Thruster Core)
-      const thrusterGeo = new THREE.ConeGeometry(0.95, 0.75, 6);
-      const thrusterMat = new THREE.MeshBasicMaterial({
-        color: primaryColor,
-        wireframe: true,
-        transparent: true,
-        opacity: 0.45
-      });
-      const thrusterMesh = new THREE.Mesh(thrusterGeo, thrusterMat);
-      thrusterMesh.rotation.x = Math.PI;
-      thrusterMesh.position.y = -0.78;
-      group.add(thrusterMesh);
-
-      group.userData = {
-        boxMesh,
-        glowMesh,
-        pylons,
-        pylonMat,
-        thrusterMesh,
-        topMat,
-        label,
-        optionIndex,
-        broken: false,
-        urgentMode: false,
-        phase: Math.random() * Math.PI * 2
-      };
-
-      scene.add(group);
-      activeTiles.push(group);
-      return group;
-    }
-
-    function spawnLightningStrike(pos) {
-      const points = [];
-      let currY = 16;
-      while (currY >= 0) {
-        points.push(new THREE.Vector3(
-          pos.x + (currY > 0.5 ? (Math.random() - 0.5) * 1.6 : 0),
-          currY,
-          pos.z + (currY > 0.5 ? (Math.random() - 0.5) * 1.6 : 0)
-        ));
-        currY -= 1.3;
+    function createTile(x,z,label,isStart=false,optionIndex=-1) {
+      const group=new THREE.Group();group.position.set(x,0,z);group.scale.setScalar(window.innerWidth<650?.72:1);
+      const cream=pandaMaterial(0xe8d8b1),grass=pandaMaterial(0x9fc982),soil=pandaMaterial(0xc7ad85);
+      const topMat=pandaMaterial(0xffffff,{map:createNumberTexture(label,isStart?'start':'normal')});
+      const boxMesh=new THREE.Mesh(new THREE.BoxGeometry(2.08,.16,2.08),[cream,cream,topMat,cream,cream,cream]);
+      boxMesh.position.y=-.08;boxMesh.receiveShadow=true;group.add(boxMesh);
+      const edge=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.47,.34,48),grass);edge.position.y=-.30;edge.receiveShadow=true;edge.castShadow=true;group.add(edge);
+      const rock=new THREE.Mesh(new THREE.CylinderGeometry(1.46,.82,.85,9),soil);rock.position.y=-.84;group.add(rock);
+      const glowMesh=new THREE.Mesh(new THREE.TorusGeometry(1.46,.045,8,48),pandaMaterial(0xd3e6b6));
+      glowMesh.rotation.x=Math.PI/2;glowMesh.position.y=-.12;group.add(glowMesh);
+      const pylons=new THREE.Group(),pylonMat=pandaMaterial(0xffe6a1);group.add(pylons);
+      for(const side of [-1,1]) {
+        const flower=new THREE.Group();flower.position.set(side*1.15,0,-.72);
+        pandaBall(flower,pandaMaterial(0x6a9e65),[0,.08,0],[.04,.15,.04]);
+        for(let j=0;j<5;j++){const a=j*Math.PI*2/5;pandaBall(flower,pylonMat,[Math.cos(a)*.11,.23,Math.sin(a)*.11],[.08,.045,.08]);}
+        pandaBall(flower,pandaMaterial(0xe4b44b),[0,.25,0],[.07,.05,.07]);pylons.add(flower);
       }
-      const curve = new THREE.CatmullRomCurve3(points);
-      const tubeGeo = new THREE.TubeGeometry(curve, 20, 0.16, 8, false);
-      const tubeMat = new THREE.MeshBasicMaterial({
-        color: 0xfca5a5,
-        transparent: true,
-        opacity: 1
-      });
-      const bolt = new THREE.Mesh(tubeGeo, tubeMat);
-      scene.add(bolt);
-      lightningBolts.push({ mesh: bolt, life: 1.0 });
-
-      lightningLight.position.set(pos.x, 4, pos.z);
-      lightningLight.intensity = 6.5;
+      group.userData={boxMesh,glowMesh,pylons,pylonMat,topMat,label,optionIndex,broken:false,urgentMode:false,phase:0};
+      scene.add(group);activeTiles.push(group);return group;
     }
-
     function spawnParticles(pos, colorHex, count = 35, isShatter = false) {
       for (let i = 0; i < count; i++) {
         const size = isShatter ? randInt(24, 48) / 100 : randInt(14, 28) / 100;
@@ -1585,13 +410,13 @@
           : new THREE.OctahedronGeometry(size, 0);
 
         const palette = isShatter
-          ? [0xef4444, 0xdc2626, 0x1e293b, 0xfca5a5, 0xf97316]
-          : [0x34d399, 0x38bdf8, 0xfbbf24, 0xe879f9, 0xa7f3d0];
+          ? [0xe7b87c, 0xdc2626, 0x1e293b, 0xfca5a5, 0xf97316]
+          : [0x34d399, 0x8bbbae, 0xfbbf24, 0xe879f9, 0xa7f3d0];
 
         const mat = new THREE.MeshStandardMaterial({
           color: colorHex || palette[i % palette.length],
-          roughness: 0.2,
-          metalness: 0.6,
+          roughness: 0.85,
+          metalness: 0,
           emissive: isShatter ? 0x7f1d1d : 0x064e3b,
           emissiveIntensity: 0.4
         });
@@ -1637,18 +462,14 @@
     function showFloatingReward(text, isPositive = true) {
       const container = document.getElementById('floating-text-container');
       const el = document.createElement('div');
-      el.className = `floating-reward text-3xl sm:text-5xl font-black tracking-tight px-6 py-2.5 rounded-2xl ${
-        isPositive
-          ? 'text-emerald-300 drop-shadow-[0_8px_28px_rgba(16,185,129,0.85)]'
-          : 'text-rose-400 drop-shadow-[0_8px_32px_rgba(244,63,94,0.95)]'
-      }`;
+      el.className = `floating-reward ${isPositive?'positive':'retry'}`;
       el.innerText = text;
       container.appendChild(el);
       setTimeout(() => el.remove(), 1250);
     }
 
     /**************************************************************
-     * 4. 游戏核心逻辑（防排除法重排机制 + 扣分 + 限时坍塌）
+     * 4. 答题、计分与重新尝试
      **************************************************************/
     let currentRowTiles = [];
 
@@ -1657,7 +478,7 @@
       scoreEl.innerText = score;
       document.getElementById('streak-display').innerText = `x${streak}`;
       document.getElementById('hearts-display').innerText = '❤️'.repeat(hearts) + '🖤'.repeat(Math.max(0, 3 - hearts));
-      document.getElementById('level-badge').innerText = `跃迁矩阵 #${currentStep + 1}`;
+      document.getElementById('level-badge').innerText = `花园第 ${currentStep + 1} 站`;
     }
 
     function reshuffleCurrentRowOptions() {
@@ -1675,10 +496,11 @@
         tile.visible = true;
         tile.position.y = -2.2;
         const newTex = createNumberTexture(val, 'normal');
+        tile.userData.boxMesh.material[2].map.dispose();
         tile.userData.boxMesh.material[2].map = newTex;
         tile.userData.boxMesh.material[2].emissiveMap = newTex;
-        tile.userData.pylonMat.color.setHex(0xc084fc);
-        tile.userData.glowMesh.material.color.setHex(0x6366f1);
+        tile.userData.pylonMat.color.setHex(0xffe6a1);
+        tile.userData.glowMesh.material.color.setHex(0xd3e6b6);
 
         const btnVal = document.getElementById(`opt-val-${idx}`);
         const btn = document.getElementById(`opt-btn-${idx}`);
@@ -1712,13 +534,16 @@
 
       while (activeTiles.length > 22) {
         const old = activeTiles.shift();
-        scene.remove(old);
+        scene.remove(old);disposeGardenObject(old);
       }
 
       updateHUD();
     }
 
+    let gameEpoch=0;
     function resetGame() {
+      gameEpoch++;
+      jumpAnim=null;pendingRecovery=null;
       score = 100;
       streak = 0;
       hearts = 3;
@@ -1726,10 +551,10 @@
       isAnimating = false;
       setRobotMood('normal');
 
-      activeTiles.forEach(t => scene.remove(t));
+      activeTiles.forEach(t => {scene.remove(t);disposeGardenObject(t);});
       activeTiles.length = 0;
 
-      createTile(0, 0, 'START', true, -1);
+      createTile(0, 0, '出发', true, -1);
       player.position.set(0, 0, 0);
       player.rotation.set(0, 0, 0);
 
@@ -1745,20 +570,20 @@
       sfx.playThunderPenalty();
       setRobotMood('shocked');
 
-      spawnLightningStrike(strikePos);
-      spawnParticles(strikePos, null, 42, true);
-      spawnShockwave(strikePos, 0xef4444);
 
-      document.body.classList.add('shake-heavy');
+      spawnParticles(strikePos, 0xf3cb83, 18, false);
+      spawnShockwave(strikePos, 0xf3cb83);
+
+
       const overlay = document.getElementById('damage-overlay');
       overlay.style.opacity = '1';
       setTimeout(() => {
-        document.body.classList.remove('shake-heavy');
+
         overlay.style.opacity = '0';
       }, 650);
 
       if (hearts === 0) {
-        showFloatingReward(`⚡ 护盾击穿！-${penaltyPoints}分 · 重新充能`, false);
+        showFloatingReward(`再试一次！-${penaltyPoints}分 · 爱心补满`, false);
         hearts = 3;
       } else {
         showFloatingReward(`${reasonText} -${penaltyPoints}分！选项已重排`, false);
@@ -1766,24 +591,26 @@
 
       updateHUD();
 
+      const epoch=gameEpoch;
+      pendingRecovery={strikePos,returnPos};
       let fallT = 0;
       const recoverInterval = setInterval(() => {
+        if(epoch!==gameEpoch){clearInterval(recoverInterval);return;}
         fallT += 0.065;
         if (fallT < 0.55) {
-          player.position.y -= 0.26;
-          player.rotation.z += 0.38;
-          player.rotation.x += 0.25;
+          player.position.y = Math.sin(fallT / .55 * Math.PI) * .35;
+          player.rotation.z = Math.sin(fallT * 14) * .06;
         } else if (fallT < 1.0) {
           const t = (fallT - 0.55) / 0.45;
           player.position.lerpVectors(strikePos, returnPos, t);
           player.position.y = Math.sin(t * Math.PI) * 2.4;
           player.rotation.set(0, 0, 0);
         } else {
-          clearInterval(recoverInterval);
+          clearInterval(recoverInterval);pendingRecovery=null;
           player.position.copy(returnPos);
           player.rotation.set(0, 0, 0);
           setRobotMood('normal');
-          spawnShockwave(returnPos, 0x38bdf8);
+          spawnShockwave(returnPos, 0x8bbbae);
 
           reshuffleCurrentRowOptions();
           timeRemaining = maxTimePerQuestion;
@@ -1815,7 +642,7 @@
         optionIdx,
         isCorrect,
         progress: 0,
-        duration: 0.42
+        duration: 0.95
       };
     };
 
@@ -1832,6 +659,7 @@
         sfx.playSuccess(streak);
         setRobotMood('happy');
         const okTex = createNumberTexture(targetTile.userData.label, 'correct');
+        targetTile.userData.boxMesh.material[2].map.dispose();
         targetTile.userData.boxMesh.material[2].map = okTex;
         targetTile.userData.boxMesh.material[2].emissiveMap = okTex;
         targetTile.userData.pylonMat.color.setHex(0x34d399);
@@ -1847,7 +675,9 @@
           }
         });
 
+        const epoch=gameEpoch;
         setTimeout(() => {
+          if(epoch!==gameEpoch)return;
           setRobotMood('normal');
           spawnNextQuestionRow();
           isAnimating = false;
@@ -1855,7 +685,7 @@
       } else {
         targetTile.userData.broken = true;
         targetTile.visible = false;
-        executeHeavyPenalty(endPos, startPos, '💥 算错雷击');
+        executeHeavyPenalty(endPos, startPos, '再想一想');
       }
     }
 
@@ -1866,11 +696,11 @@
       currentRowTiles.forEach(tile => {
         tile.userData.broken = true;
         tile.visible = false;
-        spawnParticles(tile.position, 0xef4444, 10, true);
+        spawnParticles(tile.position, 0xe7b87c, 10, true);
       });
 
       const currentPos = player.position.clone();
-      executeHeavyPenalty(currentPos, currentPos, '⏰ 超时坍塌');
+      executeHeavyPenalty(currentPos, currentPos, '慢慢来，再试一次');
     }
 
     /**************************************************************
@@ -1880,7 +710,7 @@
     const pointer = new THREE.Vector2();
 
     window.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('button') || e.target.closest('select')) return;
+      if (e.target.closest('button,select,a,details')) return;
       pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
       pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(pointer, camera);
@@ -1899,6 +729,7 @@
     });
 
     window.addEventListener('keydown', (e) => {
+      if (e.target.closest('select,input,button,summary') || e.repeat) return;
       if (['1', '2', '3', '4', '5'].includes(e.key)) {
         handleChoice(parseInt(e.key, 10) - 1);
       }
@@ -1924,7 +755,16 @@
     });
 
     window.addEventListener('resize', () => {
+      const spacing=window.innerWidth<650?2.15:2.9,factor=spacing/laneSpacing;
+      if(factor!==1) {
+        laneSpacing=spacing;LANE_X.forEach((_,i)=>LANE_X[i]=(i-2)*spacing);
+        activeTiles.forEach(tile=>{tile.position.x*=factor;tile.scale.setScalar(window.innerWidth<650?.72:1);});
+        player.position.x*=factor;
+        if(jumpAnim){jumpAnim.startPos.x*=factor;jumpAnim.endPos.x*=factor;}
+        if(pendingRecovery){new Set([pendingRecovery.strikePos,pendingRecovery.returnPos]).forEach(pos=>pos.x*=factor);}
+      }
       camera.aspect = window.innerWidth / window.innerHeight;
+      camera.fov=window.innerWidth<650?60:50;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
@@ -1939,7 +779,7 @@
       const dt = Math.min(clock.getDelta(), 0.1);
       const elapsed = clock.getElapsedTime();
 
-      if (!isAnimating && currentQuestion) {
+      if (!isAnimating && currentQuestion && !document.hidden && !document.querySelector('.game-settings').open) {
         timeRemaining = Math.max(0, timeRemaining - dt);
         const pct = (timeRemaining / maxTimePerQuestion) * 100;
         const timerBar = document.getElementById('timer-bar');
@@ -1968,9 +808,10 @@
             if (!tile.userData.broken && !tile.userData.urgentMode) {
               tile.userData.urgentMode = true;
               const urgTex = createNumberTexture(tile.userData.label, 'urgent');
+              tile.userData.boxMesh.material[2].map.dispose();
               tile.userData.boxMesh.material[2].map = urgTex;
               tile.userData.boxMesh.material[2].emissiveMap = urgTex;
-              tile.userData.glowMesh.material.color.setHex(0xef4444);
+              tile.userData.glowMesh.material.color.setHex(0xe7b87c);
             }
           });
         } else {
@@ -1983,110 +824,30 @@
         }
       }
 
-      // 骨骼动画控制器 (Skeletal Rig Animation State Machine)
-      const rig = player.userData;
-      rig.chestCore.rotation.y += 0.08;
-      rig.chestCore.rotation.x += 0.05;
-      rig.ring.rotation.z -= 0.04;
-      rig.ring.scale.setScalar(1 + Math.sin(elapsed * 7) * 0.1);
-
-      // 能量光翼扇动骨骼动画
-      const wingFlap = Math.sin(elapsed * (jumpAnim ? 18 : 6)) * 0.22;
-      rig.leftWingPivot.rotation.y = wingFlap;
-      rig.rightWingPivot.rotation.y = -wingFlap;
-
-      if (!jumpAnim && !isAnimating) {
-        // 待机战斗呼吸姿态 (Idle Combat Stance)
-        const breath = Math.sin(elapsed * 4.5);
-        const sway = Math.cos(elapsed * 2.25);
-
-        const basePelvisY = rig.charType === 'patrick' ? 0.72 : (rig.charType === 'spongebob' ? 0.78 : 0.92);
-        rig.pelvis.position.y = basePelvisY + Math.abs(breath) * 0.09;
-        rig.pelvis.rotation.set(0, sway * 0.1, 0);
-        rig.spine.rotation.x = 0.08 + breath * 0.04;
-        rig.headGroup.rotation.y = -sway * 0.15;
-        rig.headGroup.rotation.x = Math.sin(elapsed * 3) * 0.06;
-
-        // 双臂自然摆动屈肘
-        rig.leftArmRig.shoulder.rotation.x = -0.25 + breath * 0.18;
-        rig.leftArmRig.shoulder.rotation.z = 0.18 + Math.abs(breath) * 0.08;
-        rig.leftArmRig.elbow.rotation.x = -0.65 - breath * 0.12;
-
-        rig.rightArmRig.shoulder.rotation.x = 0.25 - breath * 0.18;
-        rig.rightArmRig.shoulder.rotation.z = -0.18 - Math.abs(breath) * 0.08;
-        rig.rightArmRig.elbow.rotation.x = -0.65 + breath * 0.12;
-
-        // 双腿微曲蓄力缓冲姿态
-        rig.leftLegRig.hip.rotation.x = -0.22 - Math.abs(breath) * 0.1;
-        rig.leftLegRig.knee.rotation.x = 0.44 + Math.abs(breath) * 0.2;
-        rig.leftLegRig.ankle.rotation.x = -0.22;
-
-        rig.rightLegRig.hip.rotation.x = -0.18 - Math.abs(breath) * 0.1;
-        rig.rightLegRig.knee.rotation.x = 0.36 + Math.abs(breath) * 0.2;
-        rig.rightLegRig.ankle.rotation.x = -0.18;
-      }
-
+      animatePanda(player,elapsed,dt,jumpAnim?jumpAnim.progress:null,isAnimating&&!jumpAnim);
       if (jumpAnim) {
         jumpAnim.progress += dt / jumpAnim.duration;
         const t = Math.min(jumpAnim.progress, 1);
 
-        player.position.lerpVectors(jumpAnim.startPos, jumpAnim.endPos, t);
-        player.position.y = Math.sin(t * Math.PI) * 3.1;
-
-        // 空中360度英雄空翻 + 四肢骨骼动态舒展与收腿
-        rig.pelvis.rotation.x = -t * Math.PI * 2;
-        const airPose = Math.sin(t * Math.PI);
-        rig.spine.rotation.x = 0.25 * airPose;
-
-        // 起跳双臂后掠蓄力 -> 空中张开 -> 落地缓冲
-        rig.leftArmRig.shoulder.rotation.x = -1.8 * airPose;
-        rig.leftArmRig.shoulder.rotation.z = 0.65 * airPose;
-        rig.leftArmRig.elbow.rotation.x = -0.9 * airPose;
-
-        rig.rightArmRig.shoulder.rotation.x = -1.8 * airPose;
-        rig.rightArmRig.shoulder.rotation.z = -0.65 * airPose;
-        rig.rightArmRig.elbow.rotation.x = -0.9 * airPose;
-
-        // 空中帅气一前一后凌空飞跃腿姿
-        rig.leftLegRig.hip.rotation.x = -0.95 * airPose;
-        rig.leftLegRig.knee.rotation.x = 1.45 * airPose;
-        rig.rightLegRig.hip.rotation.x = 0.45 * airPose;
-        rig.rightLegRig.knee.rotation.x = 0.85 * airPose;
-
+        const flight=Math.max(0,(t-.16)/.84);
+        const travel=flight*flight*(3-2*flight);
+        player.position.lerpVectors(jumpAnim.startPos,jumpAnim.endPos,travel);
+        player.position.y=Math.sin(flight*Math.PI)*1.55;
+        player.rotation.y=Math.sin(flight*Math.PI)*Math.sign(jumpAnim.endPos.x-jumpAnim.startPos.x)*.30;
         if (t >= 1) {
           player.position.copy(jumpAnim.endPos);
           player.rotation.set(0, 0, 0);
-          rig.pelvis.rotation.set(0, 0, 0);
+          player.userData.pelvis.rotation.set(0,0,0);
+          player.userData.landing=1;
           const finished = jumpAnim;
           jumpAnim = null;
           onJumpLanded(finished);
         }
       }
 
-      // 3D 全息矩阵方格多重动态特效 (外环旋转、四角水晶上下浮动、底部推进器呼吸)
-      activeTiles.forEach(tile => {
-        if (!tile.userData.broken) {
-          let targetY = Math.sin(elapsed * 2.8 + tile.userData.phase) * 0.1;
-          tile.userData.glowMesh.rotation.z += tile.userData.urgentMode ? 0.08 : 0.025;
-          tile.userData.thrusterMesh.rotation.y -= 0.04;
-
-          // 四角悬浮水晶自转与呼吸升降
-          tile.userData.pylons.children.forEach((pMesh, idx) => {
-            pMesh.rotation.y += 0.06;
-            pMesh.position.y = 0.12 + Math.sin(elapsed * 5 + idx + tile.userData.phase) * 0.08;
-          });
-
-          if (tile.userData.urgentMode) {
-            tile.position.x = LANE_X[tile.userData.optionIndex] + (Math.random() - 0.5) * 0.16;
-            targetY -= 0.25;
-            tile.userData.pylonMat.color.setHex(0xef4444);
-          } else if (tile.userData.optionIndex >= 0) {
-            tile.position.x = LANE_X[tile.userData.optionIndex];
-          }
-          tile.position.y += (targetY - tile.position.y) * 0.14;
-        }
+      activeTiles.forEach(tile=>{
+        if(!tile.userData.broken){tile.position.y+=(0-tile.position.y)*Math.min(1,dt*10);}
       });
-
       for (let i = lightningBolts.length - 1; i >= 0; i--) {
         const b = lightningBolts[i];
         b.life -= 0.06;
@@ -2126,28 +887,18 @@
         }
       }
 
-      const positions = starGeo.attributes.position.array;
-      for (let i = 0; i < starCount; i++) {
-        positions[i * 3 + 2] += 0.18;
-        if (positions[i * 3 + 2] > player.position.z + 15) {
-          positions[i * 3 + 2] = player.position.z - 105;
-        }
-      }
-      starGeo.attributes.position.needsUpdate = true;
-      gridHelper.position.z = Math.floor(player.position.z / 4) * 4;
-
-      ambientShapes.forEach(mesh => {
-        mesh.rotation.x += mesh.userData.rotSpeedX;
-        mesh.rotation.y += mesh.userData.rotSpeedY;
+      ambientShapes.forEach(mesh=>{
+        mesh.position.y=mesh.userData.baseY+Math.sin(elapsed*.35+mesh.userData.phase)*.18;
+        if(mesh.position.z>player.position.z+20)mesh.position.z-=110;
       });
-
       const desiredCamPos = new THREE.Vector3(
         player.position.x * 0.38,
-        6.8,
-        player.position.z + 8.8
+        window.innerWidth < 650 ? 8.5 : 7.6,
+        player.position.z + (window.innerWidth < 650 ? 15.5 : 10.8)
       );
       camera.position.lerp(desiredCamPos, 0.08);
-      camera.lookAt(player.position.x * 0.22, 0.5, player.position.z - 3.6);
+      camera.lookAt(player.position.x * 0.22, window.innerWidth < 650 ? 1 : 1.35, player.position.z - 2.4);
+      dirLight.position.set(player.position.x-8,16,player.position.z+12);dirLight.target.position.copy(player.position);dirLight.target.updateMatrixWorld();
 
       playerLight.position.set(player.position.x, player.position.y + 4.5, player.position.z);
 
@@ -2155,6 +906,7 @@
     }
 
     resetGame();
+    camera.position.set(0,window.innerWidth<650?8.5:7.6,window.innerWidth<650?15.5:10.8);
     animate();
   </script>
 </body>
