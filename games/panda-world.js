@@ -36,6 +36,7 @@ function buildPandaRig(outfit = 'blue') {
   pandaBall(spine, cream, [0,.43,.27], [.54,.59,.33]);
   const cape = new THREE.Mesh(new THREE.CylinderGeometry(.35,.76,.94,32,1,true,Math.PI/2,Math.PI),blue);
   cape.position.set(0,.45,-.04); cape.material.side=THREE.DoubleSide; cape.castShadow=true; spine.add(cape);
+  const backBadge=pandaStar(gold,.20);backBadge.position.set(0,0,-.57);backBadge.rotation.y=Math.PI;cape.add(backBadge);
   pandaCurve(spine,[[-.48,.84,.2],[-.25,.93,.44],[0,.85,.49],[.25,.93,.44],[.48,.84,.2]],blue,.07);
   for (const side of [-1,1]) pandaBall(spine,blue,[side*.12,.83,.58],[.16,.10,.09]).rotation.z=side*.25;
   pandaBall(spine,gold,[0,.82,.64],[.065,.065,.045]);
@@ -91,6 +92,13 @@ function buildPandaRig(outfit = 'blue') {
   root.userData={pelvis,spine,headGroup,cape,tassel,eyes,leftArmRig:arm(-1),rightArmRig:arm(1),leftLegRig:leg(-1),rightLegRig:leg(1),mood:'normal',landing:0};
   return root;
 }
+function pandaHeading(start, end) {
+  return Math.atan2(end.x-start.x,end.z-start.z);
+}
+function pandaTurn(from,to,amount) {
+  const delta=THREE.MathUtils.euclideanModulo(to-from+Math.PI,Math.PI*2)-Math.PI;
+  return from+delta*amount;
+}
 function animatePanda(player, elapsed, dt, jumpProgress, recovering) {
   const r=player.userData;
   const breath=Math.sin(elapsed*2.5), air=jumpProgress===null?0:Math.sin(Math.PI*Math.max(0,(jumpProgress-.16)/.84));
@@ -99,13 +107,13 @@ function animatePanda(player, elapsed, dt, jumpProgress, recovering) {
   const squash=crouch*.16+r.landing*.13;
   r.pelvis.position.y=.64-squash+breath*.015;
   r.pelvis.scale.set(1+squash*.28,1-squash*.25,1+squash*.28);
-  r.pelvis.rotation.x=-air*.16;
+  r.pelvis.rotation.x=air*.20+crouch*.10;
   r.pelvis.rotation.z=recovering?Math.sin(elapsed*10)*.08:air*.08;
   r.spine.rotation.x=breath*.012;
-  r.headGroup.rotation.set(-air*.09,Math.sin(elapsed*.65)*.10,Math.sin(elapsed*.9)*.025);
+  r.headGroup.rotation.set(air*.04,Math.sin(elapsed*.65)*.10,Math.sin(elapsed*.9)*.025);
   const phase=elapsed%4.6,blink=phase>4.32?Math.max(.07,Math.abs(phase-4.46)/.14):1;
   r.eyes.forEach(eye=>eye.scale.y=blink);
-  r.cape.rotation.x=-.07-air*.42+Math.sin(elapsed*2)*.025;
+  r.cape.rotation.x=.04+air*.24+Math.sin(elapsed*2)*.025;
   r.tassel.rotation.z=Math.sin(elapsed*3)*.035+air*.13;
   for(const [side,arm,leg] of [[-1,r.leftArmRig,r.leftLegRig],[1,r.rightArmRig,r.rightLegRig]]) {
     arm.shoulder.rotation.set(-air*.65+breath*.035,0,side*(.10+air*.80));

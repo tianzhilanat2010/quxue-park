@@ -556,7 +556,7 @@
 
       createTile(0, 0, '出发', true, -1);
       player.position.set(0, 0, 0);
-      player.rotation.set(0, 0, 0);
+      player.rotation.set(0, Math.PI, 0);
 
       spawnNextQuestionRow();
     }
@@ -593,6 +593,8 @@
 
       const epoch=gameEpoch;
       pendingRecovery={strikePos,returnPos};
+      const recoveryYaw=player.rotation.y;
+      const returnHeading=strikePos.distanceTo(returnPos)>.01?pandaHeading(strikePos,returnPos):Math.PI;
       let fallT = 0;
       const recoverInterval = setInterval(() => {
         if(epoch!==gameEpoch){clearInterval(recoverInterval);return;}
@@ -600,15 +602,17 @@
         if (fallT < 0.55) {
           player.position.y = Math.sin(fallT / .55 * Math.PI) * .35;
           player.rotation.z = Math.sin(fallT * 14) * .06;
+          player.rotation.y=pandaTurn(recoveryYaw,returnHeading,Math.min(fallT/.45,1));
         } else if (fallT < 1.0) {
           const t = (fallT - 0.55) / 0.45;
           player.position.lerpVectors(strikePos, returnPos, t);
-          player.position.y = Math.sin(t * Math.PI) * 2.4;
-          player.rotation.set(0, 0, 0);
+          player.position.y = 4*1.2*t*(1-t);
+          player.rotation.set(0, returnHeading, 0);
         } else {
           clearInterval(recoverInterval);pendingRecovery=null;
           player.position.copy(returnPos);
-          player.rotation.set(0, 0, 0);
+          player.rotation.set(0, returnHeading, 0);
+          player.userData.landing=1;
           setRobotMood('normal');
           spawnShockwave(returnPos, 0x8bbbae);
 
@@ -642,6 +646,8 @@
         optionIdx,
         isCorrect,
         progress: 0,
+        startYaw: player.rotation.y,
+        heading: pandaHeading(startPos,endPos),
         duration: 0.95
       };
     };
@@ -824,19 +830,21 @@
         }
       }
 
+      if(!jumpAnim&&!isAnimating)player.rotation.y=pandaTurn(player.rotation.y,Math.PI,1-Math.exp(-dt*5));
       animatePanda(player,elapsed,dt,jumpAnim?jumpAnim.progress:null,isAnimating&&!jumpAnim);
       if (jumpAnim) {
         jumpAnim.progress += dt / jumpAnim.duration;
         const t = Math.min(jumpAnim.progress, 1);
 
         const flight=Math.max(0,(t-.16)/.84);
-        const travel=flight*flight*(3-2*flight);
+        const travel=flight;
         player.position.lerpVectors(jumpAnim.startPos,jumpAnim.endPos,travel);
-        player.position.y=Math.sin(flight*Math.PI)*1.55;
-        player.rotation.y=Math.sin(flight*Math.PI)*Math.sign(jumpAnim.endPos.x-jumpAnim.startPos.x)*.30;
+        player.position.y=4*1.55*flight*(1-flight);
+        const turn=Math.min(t/.16,1);
+        player.rotation.y=pandaTurn(jumpAnim.startYaw,jumpAnim.heading,turn*turn*(3-2*turn));
         if (t >= 1) {
           player.position.copy(jumpAnim.endPos);
-          player.rotation.set(0, 0, 0);
+          player.rotation.set(0, jumpAnim.heading, 0);
           player.userData.pelvis.rotation.set(0,0,0);
           player.userData.landing=1;
           const finished = jumpAnim;

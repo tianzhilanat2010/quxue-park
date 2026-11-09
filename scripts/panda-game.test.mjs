@@ -38,3 +38,19 @@ test('outfits preserve position and timer pauses in settings and hidden pages',(
  h.run("document.querySelector('.game-settings').open=true");const t=h.run('timeRemaining');h.frames(90);assert.equal(h.run('timeRemaining'),t);
  h.run("document.querySelector('.game-settings').open=false;document.hidden=true");h.frames(90);assert.equal(h.run('timeRemaining'),t);
 });
+
+test('back view faces the destination before lift-off and keeps its heading through landing',()=>{
+ const h=game();assert.equal(h.run('player.rotation.y'),Math.PI);
+ h.run('handleChoice(4)');h.frames(9);
+ assert.equal(h.run('player.position.z'),0);
+ h.frames(6);
+ assert.ok(h.run('player.position.z')<0);
+ assert.ok(h.run('Math.abs(Math.sin(player.rotation.y)-Math.sin(jumpAnim.heading))')<1e-8);
+ assert.ok(h.run('Math.cos(player.rotation.y)')<0);
+ h.run("switchCharacterModel('mint')");assert.ok(h.run('Math.cos(player.rotation.y)')<0);
+});
+test('sideways turns take the short route across the back-facing angle',()=>{
+ const h=game();h.run('handleChoice(0)');h.frames(8);
+ assert.ok(h.run('Math.cos(player.rotation.y)')<0);
+ assert.ok(h.run('Math.sin(player.rotation.y)')<0);
+});
