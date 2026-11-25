@@ -4,9 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>中国儿童百科全书 · 会动的互动百科馆</title>
-  <link rel="stylesheet" href="styles.css?v=20261125.8" />
+  <link rel="stylesheet" href="styles.css?v=20261125.9" />
 </head>
 <body>
+  <div class="reader-scenery" aria-hidden="true" data-html2canvas-ignore>
+    <span data-scene="open-ocean"></span>
+    <span data-scene="reef"></span>
+    <span data-scene="deep-sea"></span>
+    <span data-scene="woodland"></span>
+    <span data-scene="space"></span>
+  </div>
   <header class="topbar">
     <div class="topbar-inner">
       <a class="brand" href="#top">
@@ -46,7 +53,7 @@
     </section>
 
     <section id="shelf" class="main-wrap shelf-section" aria-labelledby="shelfTitle">
-      <h2 id="shelfTitle" tabindex="-1" class="folio-heading">四册目录</h2>
+      <h2 id="shelfTitle" tabindex="-1" class="folio-heading">分册目录</h2>
       <div id="volumeCards" class="volume-cards" aria-label="按分册浏览"></div>
 
       <section id="entries" aria-labelledby="entriesTitle">
@@ -150,6 +157,7 @@
             <h4 class="fun-fact-head">你知道吗？</h4>
             <p id="readerFunFact"></p>
           </aside>
+          <a id="readerSource" class="reader-source hidden" target="_blank" rel="noopener"></a>
         </div>
         <div>
           <div id="plateNotes">
@@ -189,7 +197,7 @@
       <div class="dialog-body">
         <div class="progress-banner">
           <div class="progress-text">
-            <strong id="progressSummary">已探索 0 / 12 篇百科</strong>
+            <strong id="progressSummary">已探索 0 篇百科</strong>
             <small>每读完并答对一道百科小闯关，即可点亮对应的探索徽章！</small>
           </div>
           <div class="progress-bar-track"><div id="progressBarFill" class="progress-bar-fill"></div></div>
@@ -240,16 +248,16 @@
   <footer class="site-footer">
     <span>中国儿童百科全书</span>
     <div class="footer-tools">
-      <button id="openBadgesBtn" class="quiet-link" type="button">探索徽章 <span id="badgeCount" class="badge-pill">0/12</span></button>
+      <button id="openBadgesBtn" class="quiet-link" type="button">探索徽章 <span id="badgeCount" class="badge-pill">0</span></button>
       <button id="openStudioBtn" class="quiet-link" type="button">插画工坊</button>
     </div>
   </footer>
 
-  <script src="data.js"></script>
+  <script src="data.js?v=20261125.9"></script>
   <script src="labs.js"></script>
   <script src="page-curl.js"></script>
   <script src="book-shape.js?v=20261125.6"></script>
   <script src="book-turn.js?v=20261125.8"></script>
-  <script src="app.js?v=20261125.8"></script>
+  <script src="app.js?v=20261125.9"></script>
 </body>
 </html>

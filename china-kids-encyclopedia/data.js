@@ -1,9 +1,10 @@
 // 《中国儿童百科全书 · 会动的互动百科馆》知识库
-// 致敬经典四册体系：《地球家园》《科学技术》《人类社会》《文化生活》
+// 按地球家园、海洋世界、科学技术、人类社会和文化生活分册。
 
 window.ENCYCLOPEDIA_VOLUMES = [
   { id: 'all', name: '全部百科', icon: '📚', color: '#0c261f' },
   { id: 'earth', name: '地球家园', icon: '🌍', color: '#1f8a5b' },
+  { id: 'ocean', name: '海洋世界', icon: '🐋', color: '#227389' },
   { id: 'science', name: '科学技术', icon: '🚀', color: '#2563eb' },
   { id: 'society', name: '人类社会', icon: '🏯', color: '#c2591a' },
   { id: 'culture', name: '文化生活', icon: '🎭', color: '#b4235a' }
@@ -74,6 +75,7 @@ window.ENCYCLOPEDIA_ENTRIES = [
   },
   {
     id: 'leaf-factory',
+    habitat: 'woodland',
     motion: { src: 'assets/motion/leaf-factory.mp4', caption: '显微示意。观察两侧的保卫细胞变鼓时，中间的气孔怎样慢慢张开。' },
     volume: 'earth',
     volumeName: '地球家园',
@@ -136,6 +138,7 @@ window.ENCYCLOPEDIA_ENTRIES = [
   },
   {
     id: 'butterfly-life',
+    habitat: 'woodland',
     motion: { src: 'assets/motion/butterfly-life.mp4', caption: '观察蝴蝶停在花上时，怎样收拢和展开翅膀。' },
     volume: 'earth',
     volumeName: '地球家园',
@@ -197,7 +200,190 @@ window.ENCYCLOPEDIA_ENTRIES = [
     }
   },
   {
+    id: 'bee-pollination',
+    volume: 'earth',
+    volumeName: '地球家园',
+    category: '昆虫与植物',
+    habitat: 'woodland',
+    emoji: '🐝',
+    title: '蜜蜂怎样传粉？',
+    subtitle: '跟着一只采蜜的蜜蜂，看花粉怎样搭上便车。',
+    badgeName: '花园观察员',
+    lead: '蜜蜂落到花上找花蜜时，身上的细毛常会沾上花粉。它飞到下一朵同种植物的花上，有些花粉就留在那里，帮助植物结出种子。',
+    sections: [
+      { h: '花朵里的食物', p: '花蜜含有糖，可以给蜜蜂提供飞行所需的能量。花粉也能提供蜜蜂生长需要的营养。' },
+      { h: '花粉从哪里到哪里？', p: '花药会产生花粉，柱头能接住花粉。蜜蜂碰过花药，又碰到合适的柱头，就可能把花粉送到目的地。' },
+      { h: '从花到种子', p: '传粉是许多植物结种子的重要一步。苹果树、南瓜等植物的花常有昆虫来访。' }
+    ],
+    funFact: '蝴蝶、一些甲虫和苍蝇也能帮花传粉。有些花的花粉由风带走。',
+    hotspots: [
+      { title: '花药会产生花粉', desc: '看一朵花的中央。雄蕊顶端常有一个装着花粉的小结构，叫花药。' },
+      { title: '身上的细毛', desc: '蜜蜂在花上走动时，像粉末一样的花粉容易挂在细毛上。' },
+      { title: '柱头接住花粉', desc: '落在合适柱头上的花粉才有机会帮助这朵花形成种子。' }
+    ],
+    quiz: {
+      q: '蜜蜂在两朵花之间飞来飞去，可能帮植物搬运什么？',
+      options: ['泥土', '花粉', '树叶', '种子'],
+      answer: 1,
+      explain: '蜜蜂身上的细毛会挂住花粉，把其中一些带到下一朵花上。'
+    },
+    source: { label: '美国农业部 · 昆虫与传粉者', url: 'https://www.nrcs.usda.gov/conservation-basics/animals/insects-pollinators' }
+  },
+  {
+    id: 'forest-fungi',
+    volume: 'earth',
+    volumeName: '地球家园',
+    category: '森林生态',
+    habitat: 'woodland',
+    emoji: '🍄',
+    title: '森林里的分解者',
+    subtitle: '倒下的木头上长出小蘑菇，里面正发生什么？',
+    badgeName: '森林观察员',
+    lead: '在潮湿的林地，倒下的树干会慢慢变软。有些真菌能把木头中复杂的物质分解成较简单的物质。树干虽然倒下了，却成了许多小生物的新家。',
+    sections: [
+      { h: '藏在木头里的菌丝', p: '真菌能长出细细的菌丝。有些菌丝在朽木内部延伸，靠分解木材获得营养。' },
+      { h: '露在外面的蘑菇', p: '我们看见的许多蘑菇只是这类真菌的一部分。它们能产生孢子，帮助真菌扩散到别处。' },
+      { h: '大自然的循环', p: '真菌与其他分解者一起让朽木慢慢腐烂。一部分养分回到环境里，能被新的生物利用。' }
+    ],
+    funFact: '一根倒木里可能同时住着多种真菌。不同种类出现的时间和擅长分解的物质也会不同。',
+    hotspots: [
+      { title: '倒木是一处小栖息地', desc: '林荫下的朽木内部常常保持湿润，给真菌和小动物提供了藏身处。' },
+      { title: '菌丝向里生长', desc: '菌丝像细线一样伸展，真菌能从木材中获取它需要的物质。' },
+      { title: '孢子可以扩散', desc: '许多蘑菇会释放肉眼不易看见的小孢子，风可以把它们送走。' }
+    ],
+    quiz: {
+      q: '长在朽木里的这类真菌，在森林中做了什么？',
+      options: ['让树枝重新发芽', '把木头变成石头', '分解木材', '制造阳光'],
+      answer: 2,
+      explain: '有些真菌会分解朽木，从中得到营养，也帮助一部分养分回到环境中。'
+    },
+    source: { label: '美国林务局 · 森林里的木材分解', url: 'https://research.fs.usda.gov/treesearch/54715' }
+  },
+  {
+    id: 'blue-whale',
+    motion: { src: 'assets/motion/blue-whale.mp4', caption: '看蓝鲸张嘴时，喉部的褶皱怎样伸展开。' },
+    volume: 'ocean',
+    volumeName: '海洋世界',
+    category: '海洋哺乳动物',
+    habitat: 'open-ocean',
+    emoji: '🐋',
+    title: '蓝鲸怎样吃饭？',
+    subtitle: '地球上最大的动物，为什么爱吃小小的磷虾？',
+    badgeName: '远洋观察员',
+    lead: '蓝鲸发现一群磷虾时，会张大嘴吞进海水和磷虾。它用舌头把水往外推，口中的鲸须把磷虾留了下来。一大口水就这样变成了一口食物。',
+    sections: [
+      { h: '一张会伸展的大嘴', p: '蓝鲸喉部有一道道褶皱。它张嘴吞水时，这些褶皱能伸开，给海水和磷虾腾出空间。' },
+      { h: '鲸须像筛子', p: '蓝鲸上颌长着成排鲸须。水从鲸须间流走，小小的磷虾被留在嘴里。' },
+      { h: '游到水面换气', p: '蓝鲸是哺乳动物，用肺呼吸。它要游到水面，通过头顶的一对呼吸孔换气。' }
+    ],
+    funFact: '蓝鲸是已知最大的动物。它的食物却主要是成群的小磷虾。',
+    hotspots: [
+      { title: '喉褶能张开', desc: '从下巴延向腹部的线条是喉褶，帮助蓝鲸一下子吞进大量海水。' },
+      { title: '鲸须留住磷虾', desc: '鲸须从上颌垂下，一排排细密的毛边能过滤食物。' },
+      { title: '尾鳍上下摆动', desc: '宽大的尾鳍上下摆动，推动蓝鲸在海水中前进。' }
+    ],
+    quiz: {
+      q: '蓝鲸把海水推出嘴里时，靠什么留住磷虾？',
+      options: ['鲸须', '尾鳍', '呼吸孔', '背鳍'],
+      answer: 0,
+      explain: '鲸须就像筛子。海水能从缝隙流走，磷虾会被留在嘴里。'
+    },
+    source: { label: '美国国家海洋和大气管理局 · 蓝鲸', url: 'https://www.fisheries.noaa.gov/species/blue-whale' }
+  },
+  {
+    id: 'coral-reef',
+    volume: 'ocean',
+    volumeName: '海洋世界',
+    category: '浅海生态',
+    habitat: 'reef',
+    emoji: '🪸',
+    title: '珊瑚是动物吗？',
+    subtitle: '那些像树枝和花朵的珊瑚，原来住着许多小动物。',
+    badgeName: '珊瑚礁观察员',
+    lead: '仔细看珊瑚，你会发现一个个伸出短触手的小家伙。它们叫珊瑚虫，是动物。许多造礁珊瑚虫生活在一起，造出的硬骨骼一点点累积，形成珊瑚礁。',
+    sections: [
+      { h: '触手会捉食物', p: '珊瑚虫的触手围在嘴旁，能捕捉经过的小生物和食物颗粒。' },
+      { h: '小藻和珊瑚一起生活', p: '许多造礁珊瑚体内住着微小的共生藻。藻在光照下制造养分，可以分给珊瑚。' },
+      { h: '珊瑚为什么会变白？', p: '海水过热等变化会让珊瑚受到压力，失去共生藻，露出白色的骨骼颜色。条件改善后，有些珊瑚能恢复。' }
+    ],
+    funFact: '珊瑚礁的缝隙能给许多鱼、虾和其他海洋动物提供躲藏的地方。',
+    hotspots: [
+      { title: '小小的珊瑚虫', desc: '每只珊瑚虫的嘴旁都有一圈触手，常常要凑近才能看清。' },
+      { title: '碳酸钙骨骼', desc: '造礁石珊瑚在身体下方建造坚硬的骨骼，这些骨骼是珊瑚礁的重要部分。' },
+      { title: '礁鱼的藏身处', desc: '枝杈和缝隙可以让体形小的礁鱼躲开大鱼。' }
+    ],
+    quiz: {
+      q: '造礁珊瑚虫属于哪一类？',
+      options: ['植物', '石头', '真菌', '动物'],
+      answer: 3,
+      explain: '珊瑚虫是有嘴和触手的小动物，它建造的骨骼可以形成礁。'
+    },
+    source: { label: '美国国家海洋和大气管理局 · 珊瑚礁', url: 'https://oceanservice.noaa.gov/facts/coralmadeof.html' }
+  },
+  {
+    id: 'octopus-camouflage',
+    motion: { src: 'assets/motion/octopus-camouflage.mp4', caption: '观察章鱼的皮肤怎样从暖褐色变成接近礁石的灰褐斑纹。' },
+    volume: 'ocean',
+    volumeName: '海洋世界',
+    category: '海底伪装',
+    habitat: 'reef',
+    emoji: '🐙',
+    title: '章鱼的隐身术',
+    subtitle: '岩石旁的斑纹动了一下。你能找到章鱼吗？',
+    badgeName: '海底侦察员',
+    lead: '章鱼趴在岩石旁时，皮肤可以出现和周围相近的色斑。有些章鱼还能把皮肤鼓出小突起，让自己看起来更像一块粗糙的岩石。',
+    sections: [
+      { h: '皮肤里有许多小色囊', p: '章鱼皮肤里有很多能伸缩的色素囊。周围的小肌肉把色囊拉开时，颜色就更显眼。' },
+      { h: '皮肤还能变得粗糙', p: '有些章鱼能控制皮肤上的小突起。它从平滑变粗糙后，轮廓更容易和岩石融在一起。' },
+      { h: '八条腕帮它行动', p: '腕上的吸盘可以抓住表面，章鱼能用腕沿着海底爬行，也能钻进岩石缝里。' }
+    ],
+    funFact: '变换体色也能用来传递信号。有时章鱼会刻意显得醒目。',
+    hotspots: [
+      { title: '可伸缩的色素囊', desc: '色素囊扩大时，其中的色彩更容易被看见。不同色斑一起变化，能形成新的花纹。' },
+      { title: '皮肤上的小突起', desc: '一些章鱼会把皮肤鼓起，模仿岩石表面的凹凸。' },
+      { title: '腕和吸盘', desc: '多条腕可以分别弯曲，吸盘帮助章鱼在礁石上稳稳移动。' }
+    ],
+    quiz: {
+      q: '章鱼怎样让自己更像粗糙的岩石？',
+      options: ['用尾鳍搅动沙子', '改变体色，并鼓起皮肤小突起', '让所有吸盘发光', '换上一层贝壳'],
+      answer: 1,
+      explain: '改变花纹和皮肤的凹凸，能让一些章鱼更难被发现。'
+    },
+    source: { label: '史密森尼海洋馆 · 章鱼怎样变色', url: 'https://ocean.si.edu/ocean-life/invertebrates/how-octopuses-and-squids-change-color' }
+  },
+  {
+    id: 'deep-sea-light',
+    volume: 'ocean',
+    volumeName: '海洋世界',
+    category: '深海生物',
+    habitat: 'deep-sea',
+    emoji: '🐟',
+    title: '深海里的小灯',
+    subtitle: '阳光很难到达的水里，一盏小灯在游动。',
+    badgeName: '深海观察员',
+    lead: '在幽暗的深海里，某些生物身上会出现一小点亮光。这叫生物发光。一些雌性深海鮟鱇鱼把发光的诱饵伸到嘴前，等小动物靠近。',
+    sections: [
+      { h: '光从哪里来？', p: '生物发光来自生物体内的化学反应。有些动物能自己发光，有些动物靠住在身体里的发光细菌。' },
+      { h: '像钓竿一样的诱饵', p: '一些雌性深海鮟鱇鱼的头顶长有一根细长的结构。末端的亮点能吸引小虾等猎物靠近。' },
+      { h: '发光还有哪些用处？', p: '不同生物的亮光可能用来找同伴、引开天敌或寻找食物。要看发光的是谁，以及它什么时候亮起来。' }
+    ],
+    funFact: '有些深海动物遇到危险，会放出一团短暂的光来分散天敌的注意力。',
+    hotspots: [
+      { title: '亮点在嘴前摆动', desc: '一些雌性深海鮟鱇鱼会把诱饵举在嘴前，让小动物误以为那儿有食物。' },
+      { title: '光来自身体里的反应', desc: '生物发光会消耗能量，在黑暗的水里很容易被看见。' },
+      { title: '深海的暗色皮肤', desc: '一些鮟鱇鱼的皮肤颜色很暗，靠近猎物时只有小诱饵格外显眼。' }
+    ],
+    quiz: {
+      q: '一些雌性深海鮟鱇鱼头顶的小灯能做什么？',
+      options: ['让海水变暖', '给全海洋照明', '吸引小猎物靠近', '把水变成空气'],
+      answer: 2,
+      explain: '这盏小灯像钓鱼用的诱饵，能够把小猎物引到嘴边。'
+    },
+    source: { label: '蒙特雷湾水族馆研究所 · 深海鮟鱇鱼', url: 'https://www.mbari.org/animal/deep-sea-anglerfish/' }
+  },
+  {
     id: 'solar-system',
+    habitat: 'space',
     motion: { src: 'assets/motion/solar-system.mp4', caption: '公转示意，大小与距离经过简化。地球绕太阳一圈大约需要一年。' },
     volume: 'science',
     volumeName: '科学技术',

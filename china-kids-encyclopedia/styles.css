@@ -246,7 +246,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .folio-heading::before, .folio-heading::after { content: ""; flex: 1; border-top: 1px solid var(--book-rule); }
 .volume-cards {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
   margin-bottom: 34px;
 }
@@ -309,13 +309,42 @@ button, a { -webkit-tap-highlight-color: transparent; }
 
 body.reading #top, body.reading .site-footer { display: none; }
 body.reading {
+  isolation: isolate;
   background:
     linear-gradient(180deg, #e5d2b517, #361c1240),
     url("assets/book/reading-desk.webp") center top / cover fixed #a47145;
 }
+.reader-scenery {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+.reading .reader-scenery { display: block; }
+.reader-scenery span {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #0a223222, #0c16263d), var(--scene-image) center / cover no-repeat;
+  opacity: 0;
+  transition: opacity .5s ease;
+}
+.reader-scenery [data-scene="open-ocean"] { --scene-image: url("assets/book/habitats/open-ocean.webp"); }
+.reader-scenery [data-scene="reef"] { --scene-image: url("assets/book/habitats/reef.webp"); }
+.reader-scenery [data-scene="deep-sea"] { --scene-image: url("assets/book/habitats/deep-sea.webp"); }
+.reader-scenery [data-scene="woodland"] { --scene-image: url("assets/book/habitats/woodland.webp"); }
+.reader-scenery [data-scene="space"] { --scene-image: url("assets/illustrations/solar-system.webp"); }
+.reading[data-habitat="open-ocean"] [data-scene="open-ocean"],
+.reading[data-habitat="reef"] [data-scene="reef"],
+.reading[data-habitat="deep-sea"] [data-scene="deep-sea"],
+.reading[data-habitat="woodland"] [data-scene="woodland"],
+.reading[data-habitat="space"] [data-scene="space"] { opacity: 1; }
 .reading .topbar {
   background: linear-gradient(90deg, #f3e8d53b, #f9f1e4ee 12%, #f9f1e4f5 87%, #e9d7bd49);
   border-bottom-color: #ac8a5466;
+}
+.reading[data-habitat]:not([data-habitat=""]) .topbar {
+  background: linear-gradient(90deg, #f5eedbd9, #faf3e8f4 16%, #faf3e8f4 84%, #f5eedbd9);
 }
 .reading .topbar-inner {
   width: min(calc(100% - 13vw), 1388px);
@@ -571,7 +600,8 @@ body.reading {
 .manual-motion .plate-motion.is-visible { pointer-events: auto; }
 .plate-stage[data-entry="rocket-launch"] { --motion-position: 84% center; }
 .plate-stage:is([data-entry="butterfly-life"], [data-entry="dino-world"], [data-entry="human-heart"],
-  [data-entry="peking-opera"], [data-entry="solar-system"]) {
+  [data-entry="peking-opera"], [data-entry="solar-system"], [data-entry="blue-whale"],
+  [data-entry="octopus-camouflage"]) {
   --motion-fit: contain;
   --motion-matte: #f2e6ce;
 }
@@ -648,6 +678,7 @@ body.reading {
 .fun-fact-box { margin: 20px 0 10px; padding-left: 11px; border-left: 2px solid #b59763; }
 .fun-fact-box h4 { margin: 0 0 4px; font: 800 20px var(--book-serif); }
 .fun-fact-box p { margin: 0; font-size: 14px; }
+.reader-source { display: inline-block; margin-top: 4px; color: #37594b; font-size: 13px; text-underline-offset: .2em; }
 .quiz-box { margin-top: 20px; border-top: 1px solid var(--book-rule); padding-top: 12px; }
 .quiz-head { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
 .quiz-head h4 { font: 800 20px var(--book-serif); margin: 0; }

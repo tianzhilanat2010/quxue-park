@@ -9,6 +9,7 @@
   const BOOKMARKS_KEY = 'china_kids_ency_bookmarks_v1';
   const volumeArtwork = {
     earth: 'leaf-factory',
+    ocean: 'coral-reef',
     science: 'rocket-launch',
     society: 'great-wall',
     culture: 'peking-opera'
@@ -263,6 +264,7 @@
     entryVideo.removeAttribute('src');
     entryVideo.load();
     state.currentEntry = e;
+    if (!turnController) document.body.dataset.habitat = e.habitat ?? '';
 
     document.getElementById('readerVolumeBadge').textContent = e.volumeName;
     const isVolcano = e.id === 'volcano-erupt';
@@ -305,7 +307,13 @@
     plateImg.alt = e.title;
     const animated = hasMotion(e);
     document.getElementById('tabMotion').classList.toggle('hidden', !animated);
+    document.getElementById('tabLab').classList.toggle('hidden', !e.labType);
     platePlay.classList.toggle('hidden', !animated);
+    const source = document.getElementById('readerSource');
+    source.classList.toggle('hidden', !e.source);
+    source.textContent = e.source?.label ?? '';
+    if (e.source) source.href = e.source.url;
+    else source.removeAttribute('href');
     document.getElementById('prevEntryBtn').disabled = index === 0;
     document.getElementById('nextEntryBtn').disabled = index === ENTRIES.length - 1;
     document.getElementById('readerPageNumber').textContent = `第 ${index + 1} / ${ENTRIES.length} 篇`;
@@ -346,7 +354,7 @@
 
   function switchVisualTab(tab) {
     const entry = state.currentEntry;
-    if (!entry || (tab === 'motion' && !hasMotion(entry))) return;
+    if (!entry || (tab === 'motion' && !hasMotion(entry)) || (tab === 'lab' && !entry.labType)) return;
     window.EncyclopediaLabs.stop();
     if (tab !== 'motion') stopPlateMotion();
     visualTab = tab;
@@ -572,6 +580,7 @@
       stopSpeech();
       state.currentEntry = null;
       document.body.classList.remove('reading');
+      delete document.body.dataset.habitat;
       if (restoreFocus) {
         window.scrollTo(0, previousScroll);
         const target = readerOpener?.isConnected ? readerOpener : document.getElementById('entriesTitle');
@@ -615,6 +624,7 @@
     if (controller.signal.aborted) return;
     stopTurn();
     if (!swapped) swap();
+    document.body.dataset.habitat = next.habitat ?? '';
     document.getElementById('readerTitle').focus({ preventScroll: true });
     if (!animated) {
       pageAnimation = readerSpread.animate([{ opacity: 0.65 }, { opacity: 1 }], {
