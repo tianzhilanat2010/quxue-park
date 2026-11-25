@@ -6,3 +6,7 @@ dist/
 !.env.example
 .DS_Store
 *.log
+
+.wrangler/
+.dev.vars*
+sites/little-field-guide/.openai/

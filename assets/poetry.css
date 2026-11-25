@@ -1,0 +1,97 @@
+/* A quiet reading room inside the playful learning park. */
+#poemModalOverlay { background:rgba(24,47,43,.65); backdrop-filter:blur(9px); }
+body:has(#poemModalOverlay:not(.hidden)) .cursor-sparkle { display:none; }
+#poemModalOverlay .poetry-dialog { max-width:1180px; padding:26px; background:#faf8f0; border:1px solid #fdfbf3; border-radius:28px; box-shadow:0 30px 100px #102c3866; }
+.poetry-dialog-header { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:0 0 19px; border-bottom:1px solid #dedecf; }
+.poetry-dialog-kicker { margin:0 0 5px; font-size:10px; font-weight:800; color:#829085; letter-spacing:2px; }
+.poetry-dialog-header h3 { color:#294c44; font-size:24px; font-weight:800; margin:0; }
+.poetry-dialog-header p:last-child { margin-top:6px; color:#829085; font-size:12px; }
+.poetry-dialog-actions { display:flex; gap:8px; align-items:center; flex-shrink:0; }
+.poetry-dialog-actions button { padding:10px 15px; border-radius:12px; font-size:12px; font-weight:800; }
+#poemStartQuizBtn { color:#58764f; background:#e6edda; border:1px solid #d1dfc5; box-shadow:none; }
+#closePoemModalBtn { color:#7d8273; background:#eeede2; border:1px solid #e0e1d2; }
+#poemSelectorBar { gap:6px; padding:3px 0; }
+#poemSelectorBar .poem-tab-btn { background:transparent; border:1px solid transparent; color:#748078; padding:8px 11px; border-radius:10px; font-size:12px; font-weight:600; box-shadow:none; transform:none; }
+#poemSelectorBar .poem-tab-btn[aria-selected="true"] { color:#355c4b; background:#e4ecdc; border-color:#cfddc4; }
+#poemSelectorBar .poem-tab-btn:hover { background:#edf1e5; color:#355c4b; }
+.poetry-grade-row { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+.poetry-grade-filters { display:flex; gap:7px; flex-wrap:wrap; }
+.poetry-grade-btn { border:1px solid #dce3d3; border-radius:11px; background:#fffdf6; color:#70816d; padding:9px 13px; font-size:12px; font-weight:700; cursor:pointer; }
+.poetry-grade-btn span { margin-left:5px; font-size:10px; opacity:.8; }
+.poetry-grade-btn[aria-pressed="true"] { background:#4d775e; border-color:#4d775e; color:#fffdf2; }
+.poetry-filter-summary { font-size:11px; color:#8c9683; }
+#poemSpotlightStage { background:none; border:0; box-shadow:none; padding:0; }
+.poetry-book { display:grid; grid-template-columns:minmax(0,1.4fr) minmax(350px,1fr); overflow:hidden; border-radius:20px; border:1px solid #e3dfcc; background:#fffdf6; box-shadow:0 8px 25px #5e725708; }
+.poetry-art-column { min-width:0; padding:18px; background:#f0f1e6; }
+.poetry-art-heading { display:flex; justify-content:space-between; align-items:center; padding:0 2px 12px; color:#78907b; font-size:11px; letter-spacing:2px; }
+.poetry-art-heading span:first-child { color:#406754; font-weight:800; }
+.poetry-canvas-shell { position:relative; overflow:hidden; border-radius:12px; background:#e5e5d7; box-shadow:0 3px 14px #374d3a14; }
+.poetry-art-canvas { width:100%; height:auto; aspect-ratio:16/9; display:block; }
+.poetry-art-status { position:absolute; left:12px; bottom:12px; max-width:calc(100% - 24px); border-radius:8px; padding:6px 10px; color:#fff; font-size:11px; background:#2f4e4cc9; pointer-events:none; }
+.poetry-art-status[hidden] { display:none; }
+.poetry-scene-note { min-height:70px; display:flex; gap:12px; align-items:flex-start; padding:16px 2px 0; }
+.poetry-seal { writing-mode:vertical-rl; flex-shrink:0; padding:5px 2px; border:1px solid #a36c57; border-radius:3px; color:#a36c57; font-size:10px; font-family:serif; letter-spacing:3px; line-height:1.3; }
+.poetry-scene-note p { margin:0; color:#537060; line-height:1.9; font-size:13px; }
+.poetry-scene-tools { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:9px; color:#8c988a; font-size:10px; }
+.poetry-scene-tools button { flex-shrink:0; min-height:32px; padding:6px 10px; background:#fffdf5b3; color:#66846e; border:1px solid #dce2d4; border-radius:9px; cursor:pointer; }
+.poetry-verse-column { display:flex; flex-direction:column; justify-content:center; align-items:center; padding:26px 17px; text-align:center; background:radial-gradient(ellipse at 100% 0,#f3edd57a,transparent 80%); }
+.poetry-eyebrow { font-size:10px; color:#92917c; letter-spacing:2px; }
+.poetry-verse-column h4 { margin:12px 0 5px; font-family:'Noto Serif SC','Songti SC',serif; font-size:27px; color:#294c43; font-weight:800; letter-spacing:3px; line-height:1.5; }
+.poetry-author { margin:0 0 17px; font-size:12px; color:#90957d; }
+.poetry-verses { width:100%; display:flex; flex-direction:column; gap:8px; }
+.poetry-verse { width:100%; padding:10px 5px; border-radius:10px; background:transparent; border:1px solid transparent; cursor:pointer; transition:background .2s,border-color .2s; }
+.poetry-verse.is-active { background:#eef1e380; border-color:#e0e6d1; }
+.poetry-pinyin { display:block; font-size:11px; color:#b09b71; word-spacing:1px; line-height:1.9; }
+.poetry-line { display:block; font-family:'Noto Serif SC','Songti SC',serif; font-weight:700; font-size:20px; line-height:1.8; letter-spacing:1px; color:#40534a; }
+.poetry-listen-buttons { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:22px; }
+.poetry-listen-buttons button { padding:11px 14px; border-radius:11px; font-size:12px; font-weight:800; cursor:pointer; }
+.poetry-listen-primary { background:#49775f; color:#fffdf2; border:1px solid #49775f; box-shadow:0 3px 0 #375a48; }
+.poetry-listen-secondary { background:transparent; color:#758170; border:1px solid #d9decc; }
+.poetry-reading-tip { font-size:10px; color:#a6a48e; margin-top:13px; }
+.poetry-explain-grid { display:grid; grid-template-columns:1.1fr 1fr; gap:14px; margin-top:14px; }
+.poetry-explain { border:1px solid #e3e6d5; border-radius:14px; padding:16px 18px; background:#ffffff80; }
+.poetry-explain h5 { font-size:12px; color:#6d846d; font-weight:800; margin:0 0 8px; }
+.poetry-explain p { color:#738271; font-size:12px; line-height:1.9; margin:0; }
+.poetry-remember { background:#f3eddd80; border-color:#e7dfc8; }
+.poetry-remember h5 { color:#a1865b; }
+.poetry-dialog button:focus-visible { outline:3px solid #7b9c81; outline-offset:3px; }
+.music-panel select { width:100%; font:inherit; font-size:12px; color:#40634f; border:1px solid #d4dfce; background:#f5f8ee; border-radius:9px; padding:9px 7px; margin:8px 0 17px; }
+.music-credits { margin-top:12px; padding-top:9px; border-top:1px solid #e7ebdf; font-size:10px; color:#9ba692; }
+.music-credits summary { cursor:pointer; }
+.music-credits p { font-size:9px; line-height:1.8; margin:8px 0 0; }
+.music-credits a { text-decoration:underline; }
+@media (max-width:850px) {
+  .poetry-book { grid-template-columns:minmax(0,1.1fr) minmax(300px,1fr); }
+  .poetry-art-column { padding:14px; }
+  .poetry-verse-column { padding:20px 12px; }
+  .poetry-line { font-size:18px; }
+  .poetry-pinyin { font-size:10px; }
+  .poetry-scene-tools > span { display:none; }
+}
+@media (max-width:650px) {
+  #poemModalOverlay { padding:8px; }
+  #poemModalOverlay .poetry-dialog { padding:16px 12px; border-radius:20px; max-height:95dvh; }
+  .poetry-dialog-header { align-items:flex-start; gap:8px; padding-bottom:14px; }
+  .poetry-dialog-header h3 { font-size:20px; }
+  .poetry-dialog-header p:last-child { font-size:10px; max-width:200px; line-height:1.7; }
+  .poetry-dialog-kicker { letter-spacing:1px; font-size:8px; }
+  .poetry-dialog-actions { flex-direction:column-reverse; gap:6px; align-items:flex-end; }
+  .poetry-dialog-actions button { padding:7px 10px; font-size:10px; }
+  #poemSelectorBar { display:flex; flex-wrap:nowrap; overflow-x:auto; padding:1px 0 6px; }
+  #poemSelectorBar .poem-tab-btn { flex-shrink:0; padding:7px 10px; font-size:11px; }
+  .poetry-grade-row { gap:8px; }
+  .poetry-grade-filters { gap:5px; }
+  .poetry-grade-btn { padding:8px; font-size:11px; }
+  .poetry-grade-btn span { margin-left:2px; font-size:9px; }
+  .poetry-book { grid-template-columns:minmax(0,1fr); border-radius:15px; }
+  .poetry-art-column { padding:12px; }
+  .poetry-art-heading { padding-bottom:9px; font-size:10px; }
+  .poetry-scene-note { min-height:0; padding-top:12px; }
+  .poetry-scene-note p { font-size:12px; }
+  .poetry-scene-tools { justify-content:flex-end; margin-top:4px; }
+  .poetry-verse-column { padding:23px 12px; }
+  .poetry-verse-column h4 { font-size:25px; }
+  .poetry-line { font-size:19px; letter-spacing:0; }
+  .poetry-explain-grid { grid-template-columns:minmax(0,1fr); gap:8px; }
+  .poetry-explain { padding:13px; }
+}

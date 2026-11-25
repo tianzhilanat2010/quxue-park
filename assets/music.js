@@ -4,8 +4,15 @@
   const slider = document.getElementById('musicVolume');
   const output = document.getElementById('musicVolumeValue');
   const status = document.getElementById('musicStatus');
+  const trackSelect = document.getElementById('musicTrack');
   const control = document.querySelector('.music-control');
-  const audio = new Audio('/assets/audio/forest-stroll.mp3');
+  const tracks = {sunny:'assets/audio/easy-lemon.mp3', quiet:'assets/audio/dream-culture.mp3'};
+  let track = 'sunny';
+  try {
+    const savedTrack = localStorage.getItem('park_music_track');
+    if (Object.hasOwn(tracks, savedTrack)) track = savedTrack;
+  } catch {}
+  const audio = new Audio(tracks[track]);
   audio.loop = true;
   audio.preload = 'none';
   let enabled = false;
@@ -21,6 +28,7 @@
     try {
       localStorage.setItem('park_music_enabled', String(enabled));
       localStorage.setItem('park_music_volume', String(volume));
+      localStorage.setItem('park_music_track', track);
     } catch {}
   }
   function render() {
@@ -30,10 +38,13 @@
     button.setAttribute('aria-label', playing ? '暂停背景音乐' : '播放背景音乐');
     slider.value = Math.round(volume * 100);
     output.textContent = `${slider.value}%`;
+    if (trackSelect) trackSelect.value = track;
   }
   function adjustVolume() {
     const speech = window.speechSynthesis;
-    const reading = speech && ((speech.speaking && !speech.paused) || speech.pending);
+    const nativeReading = speech && ((speech.speaking && !speech.paused) || speech.pending);
+    const mmReading = typeof window.isMiniMaxSpeaking === "function" && window.isMiniMaxSpeaking();
+    const reading = nativeReading || mmReading;
     const target = volume * (reading ? .18 : 1);
     if (gain) gain.gain.setTargetAtTime(target, context.currentTime, .12);
     else audio.volume = target;
@@ -92,6 +103,17 @@
     volume = Number(slider.value) / 100;
     adjustVolume();
     save();
+    render();
+  });
+  trackSelect?.addEventListener('change', () => {
+    if (!Object.hasOwn(tracks, trackSelect.value)) return;
+    track = trackSelect.value;
+    stop();
+    audio.src = tracks[track];
+    audio.load();
+    interacted = true;
+    save();
+    start();
     render();
   });
   // Returning visitors may resume on their first gesture; new visitors opt in.

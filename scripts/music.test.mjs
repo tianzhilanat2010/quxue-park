@@ -14,7 +14,7 @@ function setup(saved = {}) {
       contains(node) { return node === this; },
     };
   }
-  const elements = Object.fromEntries(['musicToggle','musicLabel','musicVolume','musicVolumeValue','musicStatus'].map(id => [id,target()]));
+  const elements = Object.fromEntries(['musicToggle','musicLabel','musicVolume','musicVolumeValue','musicStatus','musicTrack'].map(id => [id,target()]));
   const control = target(), document = target(), window = target();
   document.hidden = false;
   document.getElementById = id => elements[id];
@@ -23,9 +23,10 @@ function setup(saved = {}) {
   const storage = new Map(Object.entries(saved));
   let audio, tick, gainValue, nextPlay;
   class Audio {
-    constructor() { audio = this; Object.assign(this,target()); this.paused = true; this.calls = 0; }
+    constructor(src) { audio = this; Object.assign(this,target()); this.src = src; this.paused = true; this.calls = 0; }
     play() { this.calls++; this.paused = false; return nextPlay ? nextPlay() : Promise.resolve(); }
     pause() { this.paused = true; }
+    load() { this.paused = true; }
   }
   const context = { state:'running', currentTime:0, destination:{},
     createMediaElementSource:() => ({connect(){}}),
@@ -81,4 +82,21 @@ test('stale play promise cannot undo a later pause or restart',async()=>{
   const h=setup();let resolve;h.setPlay(()=>new Promise(r=>{resolve=r;}));
   await h.click();await h.click();assert.equal(h.audio.paused,true);
   h.setPlay(null);await h.click();resolve();await h.flush();assert.equal(h.audio.paused,false);
+});
+
+test('changing instrumental tracks keeps the chosen volume and only plays when enabled',async()=>{
+  const h=setup();
+  assert.match(h.audio.src,/easy-lemon\.mp3$/);
+  h.elements.musicTrack.value='quiet';h.elements.musicTrack.fire('change');await h.flush();
+  assert.equal(h.audio.calls,0);assert.match(h.audio.src,/dream-culture\.mp3$/);
+  assert.equal(h.storage.get('park_music_track'),'quiet');
+  await h.click();h.elements.musicVolume.value=18;h.elements.musicVolume.fire('input');
+  h.elements.musicTrack.value='sunny';h.elements.musicTrack.fire('change');await h.flush();
+  assert.equal(h.audio.paused,false);assert.match(h.audio.src,/easy-lemon\.mp3$/);
+  assert.equal(h.gain(),.18);
+});
+
+test('an unknown saved track falls back to the default instrumental',()=>{
+  const h=setup({park_music_track:'obsolete-track'});
+  assert.match(h.audio.src,/easy-lemon\.mp3$/);assert.equal(h.elements.musicTrack.value,'sunny');
 });

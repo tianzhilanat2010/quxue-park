@@ -1,8 +1,8 @@
-# 熊猫成长乐园
+# 趣学习乐园
 
 一年级下册与二年级衔接数学互动页面。基于原始数学题库增加冒险乐园首页，使用原生 HTML、CSS、JavaScript。原数学题库与动画课堂仍从首页进入。
 
-线上地址：https://math-wonderland.netlify.app
+当前线上地址：https://quxuexi-9yp.pages.dev/
 
 Netlify 管理：https://app.netlify.com/projects/math-wonderland
 
@@ -18,6 +18,14 @@ npm run dev
 
 打开 http://localhost:5173，修改 `index.html` 后刷新页面即可。后续图片、音频等独立资源放在 `assets/` 下，构建时会一并复制。
 
+## 中国儿童百科全书
+
+百科全书位于 [china-kids-encyclopedia/](china-kids-encyclopedia/)，可独立预览和发布。它包含图文词条、科普视频、互动实验和 WebGL 翻页。预览时执行以下命令，再打开 http://127.0.0.1:5224。
+
+```sh
+python3 -m http.server 5224 --bind 127.0.0.1 --directory china-kids-encyclopedia
+```
+
 ## 构建与预览
 
 ```sh
@@ -26,6 +34,13 @@ npm run preview
 ```
 
 构建结果位于 `dist/`，Netlify 只发布这个目录，不会发布 Git 元数据与项目配置。
+
+## 部署到 Cloudflare Pages
+
+```sh
+npm run build
+npx wrangler@4 pages deploy dist --project-name quxuexi --branch main
+```
 
 ## 部署到 Netlify
 
@@ -52,10 +67,10 @@ npm run deploy
 git status
 git add index.html README.md
 git commit -m "描述本次修改"
-npm run deploy
+git push
 ```
 
-仅添加实际存在且本次修改的文件。当前是本地 Git 仓库；如以后连接 GitHub/GitLab，可在 Netlify 导入远程仓库，启用 push 后自动部署。本地提交本身不会自动发布。
+远程仓库为 [tianzhilanat2010/quxue-park](https://github.com/tianzhilanat2010/quxue-park)。语音服务从运行环境读取配置，变量名见 `.env.example`。
 
 ## 当前页面的依赖与数据
 
@@ -75,7 +90,7 @@ npm run deploy
 
 验收：页面及游戏脚本语法、唯一 DOM ID、本地页面路由、桌面与 390px 手机首页、游戏加载/答题加分/返回首页、五题挑战与成长图鉴。未运行全量题库测试。
 
-站点展示名称统一为“熊猫成长乐园”，栏目包括数学、语文（即将开放）与趣味游戏。当前访问地址仍为 https://math-wonderland.netlify.app 。
+站点现名“趣学习乐园”，包含数学、语文、英语和趣味游戏。
 
 ## 首页视觉更新（2026-11-05）
 

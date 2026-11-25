@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>登录系统设计预览 · 趣学习乐园</title>
+  <link rel="icon" href="assets/panda-wave-cover.webp" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --forest-deep: #1d443c;
+      --forest-main: #2b7357;
+      --forest-mid: #448c65;
+      --forest-soft: #e6f4ec;
+      --cream-bg: #fffef9;
+      --cream-warm: #fff8e7;
+      --gold-main: #e8a427;
+      --gold-soft: #fff2c6;
+      --coral-accent: #e86850;
+      --ink-main: #203d37;
+      --ink-muted: #647c73;
+      --border-soft: #dce8e0;
+      --shadow-card: 0 24px 60px rgba(29, 68, 60, 0.10), 0 4px 14px rgba(29, 68, 60, 0.05);
+      font-family: 'Noto Sans SC', 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      color: var(--ink-main);
+      background:
+        radial-gradient(circle at 12% 16%, rgba(255, 245, 206, 0.85) 0%, transparent 38%),
+        radial-gradient(circle at 88% 20%, rgba(212, 243, 228, 0.9) 0%, transparent 40%),
+        radial-gradient(circle at 80% 88%, rgba(255, 232, 214, 0.65) 0%, transparent 36%),
+        linear-gradient(180deg, #eef8f5 0%, #f7fbf5 55%, #edf5e8 100%);
+      overflow-x: hidden;
+    }
+
+    /* Ambient storybook sky background */
+    .sky-ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .cloud-puff {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.78);
+      border-radius: 999px;
+      filter: blur(0.5px);
+      box-shadow: 0 10px 30px rgba(43, 115, 87, 0.06);
+      animation: drift 42s linear infinite;
+    }
+    .cloud-puff::before, .cloud-puff::after {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+    }
+    .c1 { width: 150px; height: 46px; top: 11%; left: -12%; animation-duration: 54s; }
+    .c1::before { width: 64px; height: 64px; top: -28px; left: 24px; }
+    .c1::after { width: 48px; height: 48px; top: -18px; left: 76px; }
+    .c2 { width: 120px; height: 36px; top: 24%; left: -15%; opacity: 0.65; animation-duration: 66s; animation-delay: -26s; }
+    .c2::before { width: 52px; height: 52px; top: -22px; left: 18px; }
+    .c2::after { width: 38px; height: 38px; top: -14px; left: 58px; }
+    .c3 { width: 135px; height: 40px; bottom: 14%; left: -10%; opacity: 0.55; animation-duration: 60s; animation-delay: -12s; }
+    .c3::before { width: 56px; height: 56px; top: -24px; left: 22px; }
+    .c3::after { width: 42px; height: 42px; top: -16px; left: 68px; }
+
+    @keyframes drift {
+      0% { transform: translateX(-10vw) translateY(0); }
+      50% { transform: translateX(58vw) translateY(-10px); }
+      100% { transform: translateX(120vw) translateY(0); }
+    }
+
+    .sparkle-dot {
+      position: absolute;
+      color: #e8a427;
+      font-size: 18px;
+      text-shadow: 0 0 14px rgba(254, 240, 138, 0.95);
+      animation: twinkle 3.2s ease-in-out infinite;
+    }
+    .s1 { top: 14%; left: 16%; animation-delay: 0s; }
+    .s2 { top: 20%; right: 14%; animation-delay: -1.1s; font-size: 22px; }
+    .s3 { bottom: 22%; left: 9%; animation-delay: -2.1s; color: #448c65; }
+    .s4 { bottom: 18%; right: 12%; animation-delay: -0.6s; font-size: 16px; }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.35; transform: scale(0.8) rotate(-8deg); }
+      50% { opacity: 1; transform: scale(1.2) rotate(12deg); }
+    }
+
+    /* Top Preview Bar (for reviewing Fullscreen / Modal / Logged-in Header) */
+    .preview-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 253, 248, 0.88);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 10px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .preview-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--forest-deep);
+    }
+    .preview-brand .logo-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      background: #e7f3e6;
+      border: 1.5px solid #cde4cd;
+      overflow: hidden;
+      display: grid;
+      place-items: center;
+    }
+    .preview-brand .logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.45);
+      transform-origin: center 26%;
+    }
+    .preview-brand strong {
+      display: block;
+      font-size: 16px;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+    .preview-brand small {
+      display: block;
+      font-size: 10px;
+      color: var(--ink-muted);
+      letter-spacing: 1px;
+      margin-top: 2px;
+    }
+
+    .mode-switcher {
+      display: inline-flex;
+      background: #edf4ef;
+      border: 1px solid #d7e6dc;
+      border-radius: 999px;
+      padding: 4px;
+      gap: 4px;
+    }
+    .mode-btn {
+      border: 0;
+      background: transparent;
+      color: var(--ink-muted);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 7px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .mode-btn.active {
+      background: #ffffff;
+      color: var(--forest-deep);
+      box-shadow: 0 3px 10px rgba(29, 68, 60, 0.10);
+    }
+
+    /* Simulated Logged-In Top Account Pill */
+    .header-account-demo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      position: relative;
+    }
+    .account-pill-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 5px 14px 5px 6px;
+      border-radius: 999px;
+      border: 1.5px solid #d5e6dc;
+      background: #ffffff;
+      color: var(--forest-deep);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      box-shadow: 0 3px 10px rgba(29, 68, 60, 0.06);
+    }
+    .account-pill-btn:hover {
+      border-color: #96cbb1;
+      transform: translateY(-1px);
+    }
+    .account-avatar-mini {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fff3c4, #fde68a);
+      border: 2px solid #ffffff;
+      box-shadow: 0 2px 6px rgba(232, 164, 39, 0.25);
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+    .account-meta-mini {
+      text-align: left;
+      line-height: 1.15;
+    }
+    .account-meta-mini b {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 900;
+    }
+    .account-meta-mini span {
+      font-size: 10px;
+      color: var(--ink-muted);
+      font-weight: 700;
+    }
+    .account-dropdown {
+      position: absolute;
+      right: 0;
+      top: calc(100% + 10px);
+      width: 248px;
+      background: #fffef9;
+      border: 1.5px solid var(--border-soft);
+      border-radius: 22px;
+      padding: 14px;
+      box-shadow: 0 18px 44px rgba(29, 68, 60, 0.14);
+      display: none;
+      z-index: 80;
+    }
+    .account-dropdown.open { display: block; animation: popFade 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.1); }
+    @keyframes popFade {
+      from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .dd-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px dashed var(--border-soft);
+      margin-bottom: 10px;
+    }
+    .dd-badge {
+      font-size: 10px;
+      font-weight: 800;
+      background: #e6f4ec;
+      color: var(--forest-main);
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-block;
+      margin-top: 3px;
+    }
+    .dd-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 10px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--ink-main);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .dd-item:hover { background: #f1f7f3; }
+    .dd-item.danger { color: #c84534; }
+    .dd-item.danger:hover { background: #fff1ef; }
+
+    /* Main Stage Wrapper */
+    .stage-wrapper {
+      position: relative;
+      z-index: 10;
+      min-height: calc(100vh - 64px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 20px 44px;
+    }
+
+    /* Simulated Background Park when in Modal Mode */
+    .mock-park-backdrop {
+      display: none;
+      position: fixed;
+      inset: 62px 0 0 0;
+      z-index: 5;
+      background:
+        linear-gradient(180deg, rgba(23, 54, 48, 0.28), rgba(23, 54, 48, 0.42)),
+        url('assets/hero.jpg') center/cover no-repeat;
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+    }
+    body.preview-modal .mock-park-backdrop { display: block; }
+    body.preview-modal .passport-shell {
+      position: relative;
+      animation: modalRise 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+    }
+    @keyframes modalRise {
+      from { opacity: 0; transform: translateY(18px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* =====================================================================
+       Core Design: Storybook Passport Auth Shell (Split Dual-Column Card)
+       ===================================================================== */
+    .passport-shell {
+      width: 100%;
+      max-width: 1000px;
+      background: var(--cream-bg);
+      border: 3px solid #ffffff;
+      border-radius: 34px;
+      box-shadow: var(--shadow-card);
+      display: grid;
+      grid-template-columns: 1fr 1.15fr;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .modal-close-x {
+      display: none;
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      z-index: 20;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #dce8e0;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--ink-muted);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      place-items: center;
+      transition: all 0.15s;
+    }
+    .modal-close-x:hover { background: #fff; color: var(--forest-deep); transform: rotate(90deg); }
+    body.preview-modal .modal-close-x { display: grid; }
+
+    /* LEFT: Illustrated Storybook Welcome Column */
+    .passport-left {
+      position: relative;
+      padding: 36px 32px 30px;
+      background:
+        radial-gradient(circle at 50% 42%, #e8fbe9 0%, #e8fbe9ee 32%, rgba(232, 251, 233, 0.25) 56%, transparent 74%),
+        radial-gradient(circle at 18% 12%, rgba(255, 240, 184, 0.8), transparent 44%),
+        linear-gradient(155deg, #e5f7ed 0%, #f1fbf2 52%, #fff8de 100%);
+      border-right: 1.5px dashed #d3e5d9;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+    .passport-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      align-self: flex-start;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid #d1e6d8;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--forest-main);
+      letter-spacing: 1px;
+    }
+    .passport-kicker i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #448c65;
+      box-shadow: 0 0 0 4px rgba(68, 140, 101, 0.18);
+    }
+    .passport-hero-copy {
+      margin-top: 16px;
+    }
+    .passport-hero-copy h1 {
+      font-size: 28px;
+      line-height: 1.28;
+      font-weight: 900;
+      color: var(--forest-deep);
+      letter-spacing: 0.4px;
+    }
+    .passport-hero-copy h1 em {
+      font-style: normal;
+      color: var(--forest-mid);
+      position: relative;
+    }
+    .passport-hero-copy p {
+      margin-top: 8px;
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--ink-muted);
+    }
+
+    /* Mascot Centerpiece */
+    .mascot-stage {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 14px 0;
+    }
+    .mascot-speech-bubble {
+      background: #ffffff;
+      border: 2px solid #e1efe6;
+      border-radius: 18px;
+      padding: 9px 16px;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--forest-deep);
+      box-shadow: 0 8px 20px rgba(29, 68, 60, 0.08);
+      position: relative;
+      text-align: center;
+      max-width: 290px;
+      transition: transform 0.25s ease;
+    }
+    .mascot-speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 50%;
+      transform: translateX(-50%) rotate(45deg);
+      width: 14px;
+      height: 14px;
+      background: #ffffff;
+      border-right: 2px solid #e1efe6;
+      border-bottom: 2px solid #e1efe6;
+    }
+    .mascot-halo {
+      position: relative;
+      width: 210px;
+      height: 210px;
+      margin-top: 8px;
+      display: grid;
+      place-items: center;
+    }
+    .mascot-halo::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #e8fbe9 0%, #e8fbe9ee 56%, transparent 78%);
+      box-shadow: 0 0 34px rgba(255, 255, 255, 0.85);
+    }
+    .mascot-halo img {
+      position: relative;
+      z-index: 2;
+      width: 196px;
+      height: 196px;
+      object-fit: contain;
+      border-radius: 50%;
+      -webkit-mask-image: radial-gradient(ellipse 44% 46% at 50% 48%, #000 64%, rgba(0,0,0,0.6) 80%, transparent 96%);
+      mask-image: radial-gradient(ellipse 44% 46% at 50% 48%, #000 64%, rgba(0,0,0,0.6) 80%, transparent 96%);
+      animation: bob 3.8s ease-in-out infinite;
+    }
+    @keyframes bob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-7px); }
+    }
+    .orbit-chip {
+      position: absolute;
+      z-index: 3;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1.5px solid #fde68a;
+      font-size: 11px;
+      font-weight: 900;
+      color: #b4690e;
+      box-shadow: 0 6px 14px rgba(180, 105, 14, 0.12);
+      animation: floatChip 4.4s ease-in-out infinite;
+    }
+    .oc-1 { top: 14px; left: -6px; }
+    .oc-2 { top: 38px; right: -8px; border-color: #bae6fd; color: #0369a1; animation-delay: -1.5s; }
+    .oc-3 { bottom: 18px; left: 4px; border-color: #fbcfe8; color: #be185d; animation-delay: -2.8s; }
+    @keyframes floatChip {
+      0%, 100% { transform: translateY(0) rotate(-3deg); }
+      50% { transform: translateY(-7px) rotate(3deg); }
+    }
+
+    /* Feature Sync List */
+    .sync-perks {
+      display: grid;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .sync-perk-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(255, 255, 255, 0.95);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--forest-deep);
+    }
+    .sync-perk-item span.icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 9px;
+      background: #fff7d6;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    /* RIGHT: Interactive Auth Deck */
+    .passport-right {
+      padding: 34px 36px 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #fffef9;
+    }
+
+    /* Segmented Role Tabs */
+    .role-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f1f6f2;
+      border: 1.5px solid #e0ebe3;
+      border-radius: 18px;
+      padding: 5px;
+      gap: 5px;
+      margin-bottom: 22px;
+    }
+    .role-tab {
+      border: 0;
+      background: transparent;
+      padding: 11px 12px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      font-weight: 800;
+      color: var(--ink-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      transition: all 0.2s ease;
+    }
+    .role-tab.active {
+      background: #ffffff;
+      color: var(--forest-deep);
+      box-shadow: 0 4px 14px rgba(29, 68, 60, 0.09);
+    }
+
+    .panel-section { display: none; }
+    .panel-section.active { display: block; animation: fadeSlide 0.25s ease; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .section-heading h2 {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--forest-deep);
+    }
+    .section-heading button.link-action {
+      border: 0;
+      background: none;
+      color: var(--forest-main);
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    /* Child Explorer Profile Wall */
+    .explorer-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .explorer-card {
+      position: relative;
+      border: 2px solid #e3ece5;
+      border-radius: 20px;
+      background: #ffffff;
+      padding: 14px 14px 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .explorer-card:hover {
+      border-color: #9ed0b5;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(43, 115, 87, 0.09);
+    }
+    .explorer-card.selected {
+      border-color: var(--forest-main);
+      background: linear-gradient(135deg, #f2fbf6 0%, #fffdf4 100%);
+      box-shadow: 0 0 0 3px rgba(43, 115, 87, 0.14), 0 10px 20px rgba(43, 115, 87, 0.10);
+    }
+    .explorer-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--forest-main);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 900;
+      display: grid;
+      place-items: center;
+    }
+    .explorer-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      border: 2px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(29, 68, 60, 0.08);
+    }
+    .av-gold { background: linear-gradient(135deg, #fff3c4, #fde68a); }
+    .av-pink { background: linear-gradient(135deg, #ffe4e6, #fecdd3); }
+    .av-sky  { background: linear-gradient(135deg, #e0f2fe, #bae6fd); }
+    .av-mint { background: linear-gradient(135deg, #dcfce7, #bbf7d0); }
+
+    .explorer-info strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--forest-deep);
+    }
+    .explorer-info .grade-tag {
+      display: inline-block;
+      margin-top: 3px;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--forest-main);
+      background: #e6f4ec;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+    .explorer-info .stats-mini {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--ink-muted);
+      font-weight: 700;
+    }
+
+    .add-explorer-card {
+      border: 2px dashed #c7dcd0;
+      background: #f8fcf9;
+      justify-content: center;
+      flex-direction: column;
+      gap: 4px;
+      text-align: center;
+      color: var(--forest-main);
+      font-weight: 800;
+      font-size: 13px;
+      min-height: 82px;
+    }
+    .add-explorer-card:hover {
+      background: #edf7f1;
+      border-color: var(--forest-main);
+    }
+
+    /* Picture PIN Pad (4-icon fun lock for kids!) */
+    .pin-deck {
+      background: #f6faf7;
+      border: 1.5px solid #dfece4;
+      border-radius: 22px;
+      padding: 16px 18px;
+      margin-bottom: 18px;
+    }
+    .pin-deck-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .pin-deck-head span {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--forest-deep);
+    }
+    .pin-deck-head small {
+      font-size: 11px;
+      color: var(--ink-muted);
+      font-weight: 700;
+    }
+    .pin-slots {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .pin-slot {
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      border: 2px solid #d2e3d8;
+      background: #ffffff;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: inset 0 2px 5px rgba(29, 68, 60, 0.04);
+    }
+    .pin-slot.filled {
+      border-color: var(--forest-main);
+      background: #eefaf2;
+      transform: scale(1.06);
+    }
+    .pin-slot.error {
+      border-color: #e86850;
+      background: #fff1ef;
+      animation: shake 0.35s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .pin-key {
+      border: 1.5px solid #dfece4;
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 9px 4px;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 3px 0 #d5e5db;
+      transition: all 0.14s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .pin-key small {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--ink-muted);
+    }
+    .pin-key:hover {
+      background: #f0faf4;
+      border-color: #93cab0;
+      transform: translateY(-2px);
+    }
+    .pin-key:active {
+      transform: translateY(2px);
+      box-shadow: 0 1px 0 #d5e5db;
+    }
+    .pin-key.action-key {
+      background: #fff8e7;
+      border-color: #f3dba2;
+      box-shadow: 0 3px 0 #e6c67c;
+      font-size: 12px;
+      font-weight: 900;
+      color: #9c5b10;
+      justify-content: center;
+    }
+
+    /* Live Passport Card Preview (when creating a new child account) */
+    .live-passport-card {
+      border-radius: 22px;
+      padding: 16px 18px;
+      background:
+        radial-gradient(circle at 90% 15%, rgba(254, 240, 138, 0.55), transparent 42%),
+        linear-gradient(125deg, #215b46 0%, #2b7357 60%, #3d8e6b 100%);
+      color: #ffffff;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 28px rgba(33, 91, 70, 0.24);
+      position: relative;
+      overflow: hidden;
+    }
+    .live-passport-card::before {
+      content: 'QUXUEXI PASSPORT';
+      position: absolute;
+      right: -12px;
+      bottom: -8px;
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      opacity: 0.08;
+      pointer-events: none;
+    }
+    .lp-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      opacity: 0.85;
+      margin-bottom: 12px;
+    }
+    .lp-body {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .lp-avatar {
+      width: 54px;
+      height: 54px;
+      border-radius: 18px;
+      background: #fff8e7;
+      border: 2.5px solid #fde68a;
+      display: grid;
+      place-items: center;
+      font-size: 30px;
+    }
+    .lp-name {
+      font-size: 19px;
+      font-weight: 900;
+    }
+    .lp-meta {
+      font-size: 11.5px;
+      opacity: 0.9;
+      margin-top: 3px;
+    }
+    .lp-stamp {
+      margin-left: auto;
+      padding: 4px 10px;
+      border: 1.5px dashed rgba(254, 240, 138, 0.8);
+      border-radius: 10px;
+      font-size: 10.5px;
+      font-weight: 900;
+      color: #fef08a;
+      transform: rotate(-6deg);
+    }
+
+    /* Form Controls */
+    .field-group {
+      margin-bottom: 14px;
+    }
+    .field-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--forest-deep);
+      margin-bottom: 6px;
+    }
+    .input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      font-size: 15px;
+      pointer-events: none;
+    }
+    .text-input {
+      width: 100%;
+      padding: 12px 14px 12px 40px;
+      border: 2px solid #dfece4;
+      border-radius: 15px;
+      background: #ffffff;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink-main);
+      outline: none;
+      transition: all 0.18s ease;
+      font-family: inherit;
+    }
+    .text-input:focus {
+      border-color: var(--forest-main);
+      box-shadow: 0 0 0 4px rgba(43, 115, 87, 0.12);
+    }
+    .code-btn {
+      position: absolute;
+      right: 6px;
+      border: 0;
+      background: #e6f4ec;
+      color: var(--forest-main);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 7px 12px;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .code-btn:hover:not(:disabled) { background: #d4ecdf; }
+    .code-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* Avatar & Grade Pickers */
+    .picker-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .avatar-opt {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      border: 2px solid #dfece4;
+      background: #ffffff;
+      font-size: 22px;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: grid;
+      place-items: center;
+    }
+    .avatar-opt.active {
+      border-color: var(--forest-main);
+      background: #e8f7ee;
+      transform: scale(1.08);
+    }
+    .grade-opt {
+      border: 2px solid #dfece4;
+      background: #ffffff;
+      color: var(--ink-muted);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 7px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .grade-opt.active {
+      border-color: var(--forest-main);
+      background: var(--forest-main);
+      color: #ffffff;
+    }
+
+    /* Primary 3D Tactile CTA Button (Matches Park Aesthetic) */
+    .primary-cta {
+      width: 100%;
+      border: 1.5px solid #225c46;
+      background: linear-gradient(180deg, #378767 0%, #2b7357 100%);
+      color: #fffef5;
+      font-size: 15.5px;
+      font-weight: 900;
+      padding: 14px 20px;
+      border-radius: 16px;
+      box-shadow: 0 5px 0 #1b4d39, 0 10px 22px rgba(43, 115, 87, 0.22);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .primary-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 7px 0 #1b4d39, 0 14px 26px rgba(43, 115, 87, 0.28);
+    }
+    .primary-cta:active {
+      transform: translateY(3px);
+      box-shadow: 0 2px 0 #1b4d39;
+    }
+
+    .secondary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed #e0ebe3;
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+    .ghost-pill {
+      border: 1.5px solid #dce8e0;
+      background: #f7fbf8;
+      color: var(--forest-deep);
+      font-size: 12px;
+      font-weight: 800;
+      padding: 7px 13px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .ghost-pill:hover { background: #eaf5ee; border-color: #a9d5bc; }
+
+    /* Toast Notification */
+    .toast-banner {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1d443c;
+      color: #fffef5;
+      padding: 12px 22px;
+      border-radius: 999px;
+      font-size: 13.5px;
+      font-weight: 800;
+      box-shadow: 0 14px 36px rgba(29, 68, 60, 0.30);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast-banner.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Logged-in Preview Card (Mode 3) */
+    .loggedin-showcase {
+      display: none;
+      width: 100%;
+      max-width: 820px;
+      background: #fffef9;
+      border: 3px solid #ffffff;
+      border-radius: 30px;
+      padding: 32px;
+      box-shadow: var(--shadow-card);
+      text-align: center;
+    }
+    body.preview-header .passport-shell { display: none; }
+    body.preview-header .loggedin-showcase { display: block; animation: modalRise 0.3s ease; }
+
+    .mock-navbar-frame {
+      margin: 20px 0 24px;
+      padding: 14px 22px;
+      border-radius: 22px;
+      background: #fffdf8;
+      border: 1.5px solid #dce8e0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      box-shadow: 0 8px 24px rgba(29, 68, 60, 0.06);
+    }
+    .mock-nav-pills {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .mock-star-pill {
+      background: #fff7d6;
+      color: #89642c;
+      border: 1px solid #f0e6bd;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 12.5px;
+      font-weight: 800;
+    }
+    .design-notes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      text-align: left;
+      margin-top: 20px;
+    }
+    .note-box {
+      background: #f5faf6;
+      border: 1.5px solid #dfece4;
+      border-radius: 18px;
+      padding: 14px 16px;
+    }
+    .note-box strong {
+      display: block;
+      font-size: 13.5px;
+      color: var(--forest-deep);
+      margin-bottom: 5px;
+    }
+    .note-box p {
+      font-size: 12px;
+      line-height: 1.65;
+      color: var(--ink-muted);
+    }
+
+    @media (max-width: 860px) {
+      .passport-shell {
+        grid-template-columns: 1fr;
+        max-width: 520px;
+      }
+      .passport-left {
+        border-right: 0;
+        border-bottom: 1.5px dashed #d3e5d9;
+        padding: 26px 24px 20px;
+      }
+      .mascot-halo { width: 155px; height: 155px; }
+      .mascot-halo img { width: 145px; height: 145px; }
+      .sync-perks { display: none; }
+      .passport-right { padding: 24px 22px 26px; }
+      .design-notes-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body class="preview-fullscreen">
+
+  <!-- Ambient Sky Layer -->
+  <div class="sky-ambient" aria-hidden="true">
+    <div class="cloud-puff c1"></div>
+    <div class="cloud-puff c2"></div>
+    <div class="cloud-puff c3"></div>
+    <span class="sparkle-dot s1">✦</span>
+    <span class="sparkle-dot s2">★</span>
+    <span class="sparkle-dot s3">✧</span>
+    <span class="sparkle-dot s4">✦</span>
+  </div>
+
+  <!-- Simulated Backdrop for Modal Preview Mode -->
+  <div class="mock-park-backdrop" id="modalBackdrop"></div>
+
+  <!-- Design Review Top Toolbar -->
+  <header class="preview-toolbar">
+    <a href="index.html" class="preview-brand" title="返回趣学习乐园">
+      <span class="logo-box"><img src="assets/panda-wave-cover.webp" alt="熊猫博士" /></span>
+      <span>
+        <strong>趣学习乐园 · 登录设计预览</strong>
+        <small>EXPLORER PASSPORT UI PROTOTYPE</small>
+      </span>
+    </a>
+
+    <div class="mode-switcher" role="tablist" aria-label="预览展示形态">
+      <button class="mode-btn active" data-mode="fullscreen">🌿 独立迎宾登录页</button>
+      <button class="mode-btn" data-mode="modal">🪟 首页弹窗模式</button>
+      <button class="mode-btn" data-mode="header">✨ 登录后顶栏效果</button>
+    </div>
+
+    <div class="header-account-demo">
+      <button class="account-pill-btn" id="topAccountPill">
+        <span class="account-avatar-mini" id="topAvatar">🐼</span>
+        <span class="account-meta-mini">
+          <b id="topName">乐乐小博士</b>
+          <span id="topSub">二年级 · ⭐ 28 星</span>
+        </span>
+        <span style="font-size:11px;color:#647c73;margin-left:2px;">▾</span>
+      </button>
+      <div class="account-dropdown" id="topAccountDropdown">
+        <div class="dd-header">
+          <span class="account-avatar-mini" style="width:42px;height:42px;font-size:22px;" id="ddAvatar">🐼</span>
+          <div>
+            <strong style="font-size:14px;color:#1d443c;display:block;" id="ddName">乐乐小博士</strong>
+            <span class="dd-badge" id="ddGrade">二年级 · 探索家通行证</span>
+          </div>
+        </div>
+        <button class="dd-item" onclick="switchMode('fullscreen'); closeDropdown();"><span>🔄 切换宝贝档案</span><span>›</span></button>
+        <button class="dd-item" onclick="showToast('👨‍👩‍👧 家长中心：将展示该宝贝专属的学习周报与错题本')"><span>👨‍👩‍👧 家长成长报告</span><span>›</span></button>
+        <button class="dd-item" onclick="showToast('☁️ 已开启云端自动同步（模拟演示）')"><span>☁️ 同步学习进度</span><span style="color:#2b7357;">已同步</span></button>
+        <button class="dd-item danger" onclick="showToast('👋 已退出当前档案，可重新选择宝贝登录'); switchMode('fullscreen'); closeDropdown();"><span>🚪 退出登录</span><span>›</span></button>
+      </div>
+    </div>
+  </header>
+
+  <main class="stage-wrapper">
+
+    <!-- Main Split Storybook Passport Card -->
+    <section class="passport-shell" aria-label="趣学习乐园登录通行证">
+      <button class="modal-close-x" id="modalCloseBtn" title="切回独立页预览">✕</button>
+
+      <!-- LEFT COLUMN: Brand Storybook Stage -->
+      <div class="passport-left">
+        <div>
+          <span class="passport-kicker"><i></i> 趣学习乐园 · 小探索家通行证</span>
+          <div class="passport-hero-copy">
+            <h1>打开你的专属<br><em>成长护照</em>吧！</h1>
+            <p>记录每一颗闪亮的金星星、每一套语数模拟卷，让熊猫博士陪你每天进步一点点。</p>
+          </div>
+        </div>
+
+        <div class="mascot-stage">
+          <div class="mascot-speech-bubble" id="pandaSpeech">
+            “欢迎回来！点一下你的小头像，就能继续冒险啦～ ✨”
+          </div>
+          <div class="mascot-halo">
+            <span class="orbit-chip oc-1">⭐ 星星同步</span>
+            <span class="orbit-chip oc-2">📝 16套真题卷</span>
+            <span class="orbit-chip oc-3">🏆 专属勋章</span>
+            <img src="assets/panda-wave.webp" onerror="this.src='assets/panda-wave-cover.webp'" alt="熊猫博士挥手欢迎" />
+          </div>
+        </div>
+
+        <div class="sync-perks">
+          <div class="sync-perk-item">
+            <span class="icon">☁️</span>
+            <span>多设备自动保存星星成就、试卷草稿与错题本</span>
+          </div>
+          <div class="sync-perk-item">
+            <span class="icon">🎨</span>
+            <span>支持多宝贝独立档案，图案密码一秒轻松登录</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Interactive Auth Deck -->
+      <div class="passport-right">
+        <div>
+          <!-- Role Tabs -->
+          <div class="role-tabs" role="tablist">
+            <button class="role-tab active" data-role="kid">🎒 小探索家登录</button>
+            <button class="role-tab" data-role="parent">👨‍👩‍👧 家长账号登录</button>
+          </div>
+
+          <!-- TAB 1: KID EXPLORER LOGIN -->
+          <div class="panel-section active" id="panelKid">
+            <!-- Sub-view 1A: Existing Explorer Profiles + Picture PIN -->
+            <div id="kidSelectView">
+              <div class="section-heading">
+                <h2>选择宝贝小档案</h2>
+                <button class="link-action" id="togglePinModeBtn">🔓 切换免密进入</button>
+              </div>
+
+              <div class="explorer-grid" id="explorerGrid">
+                <button type="button" class="explorer-card selected" data-id="lele" data-name="乐乐小博士" data-grade="二年级" data-avatar="🐼" data-stars="28" data-pin="🐼,🍎,🚀,⭐">
+                  <span class="explorer-avatar av-gold">🐼</span>
+                  <span class="explorer-info">
+                    <strong>乐乐小博士</strong>
+                    <span class="grade-tag">二年级</span>
+                    <span class="stats-mini">⭐ 28星 · 连续7天</span>
+                  </span>
+                </button>
+                <button type="button" class="explorer-card" data-id="duoduo" data-name="朵朵小画家" data-grade="一年级" data-avatar="🐰" data-stars="14" data-pin="🐰,🌸,🌈,⭐">
+                  <span class="explorer-avatar av-pink">🐰</span>
+                  <span class="explorer-info">
+                    <strong>朵朵小画家</strong>
+                    <span class="grade-tag">一年级</span>
+                    <span class="stats-mini">⭐ 14星 · 连续3天</span>
+                  </span>
+                </button>
+                <button type="button" class="explorer-card add-explorer-card" id="openCreateKidBtn" style="grid-column: 1 / -1;">
+                  <span style="font-size:20px;">＋</span>
+                  <span>新建小探索家通行证</span>
+                </button>
+              </div>
+
+              <!-- Fun 4-Icon Picture PIN Pad -->
+              <div class="pin-deck" id="pinDeck">
+                <div class="pin-deck-head">
+                  <span>🔐 趣味图案密码</span>
+                  <small id="pinHintText">演示密码：🐼 🍎 🚀 ⭐</small>
+                </div>
+                <div class="pin-slots" id="pinSlots">
+                  <div class="pin-slot"></div>
+                  <div class="pin-slot"></div>
+                  <div class="pin-slot"></div>
+                  <div class="pin-slot"></div>
+                </div>
+                <div class="pin-keypad">
+                  <button type="button" class="pin-key" data-symbol="🐼">🐼<small>熊猫</small></button>
+                  <button type="button" class="pin-key" data-symbol="🍎">🍎<small>苹果</small></button>
+                  <button type="button" class="pin-key" data-symbol="🚀">🚀<small>火箭</small></button>
+                  <button type="button" class="pin-key" data-symbol="⭐">⭐<small>星星</small></button>
+                  <button type="button" class="pin-key" data-symbol="🐰">🐰<small>白兔</small></button>
+                  <button type="button" class="pin-key" data-symbol="🌸">🌸<small>花朵</small></button>
+                  <button type="button" class="pin-key" data-symbol="🌈">🌈<small>彩虹</small></button>
+                  <button type="button" class="pin-key action-key" id="pinClearBtn">⌫ 清除</button>
+                </div>
+              </div>
+
+              <button type="button" class="primary-cta" id="kidEnterBtn">
+                <span>开启今日学习冒险</span>
+                <span>↗</span>
+              </button>
+            </div>
+
+            <!-- Sub-view 1B: Create New Explorer Passport -->
+            <div id="kidCreateView" style="display:none;">
+              <div class="section-heading">
+                <h2>制作新探索家护照</h2>
+                <button class="link-action" id="backToSelectKidBtn">‹ 返回选择档案</button>
+              </div>
+
+              <!-- Live Passport Card -->
+              <div class="live-passport-card">
+                <div class="lp-top">
+                  <span>QUXUEXI LEARNING PARK · NO.2026-08</span>
+                  <span>OFFICIAL PASS</span>
+                </div>
+                <div class="lp-body">
+                  <div class="lp-avatar" id="lpAvatar">🐼</div>
+                  <div>
+                    <div class="lp-name" id="lpName">小探索家</div>
+                    <div class="lp-meta" id="lpGrade">二年级 · 新晋冒险家</div>
+                  </div>
+                  <div class="lp-stamp">待盖章</div>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <label class="field-label" for="newKidName"><span>宝贝昵称</span><span style="color:#647c73;font-weight:600;">将显示在试卷和奖状上</span></label>
+                <div class="input-wrap">
+                  <span class="input-icon">✏️</span>
+                  <input id="newKidName" class="text-input" type="text" maxlength="10" placeholder="例如：小宇、甜甜、糖果博士" />
+                </div>
+              </div>
+
+              <div class="field-group">
+                <span class="field-label">选择专属萌宠头像</span>
+                <div class="picker-row" id="avatarPicker">
+                  <button type="button" class="avatar-opt active" data-av="🐼">🐼</button>
+                  <button type="button" class="avatar-opt" data-av="🐰">🐰</button>
+                  <button type="button" class="avatar-opt" data-av="🦊">🦊</button>
+                  <button type="button" class="avatar-opt" data-av="🐻">🐻</button>
+                  <button type="button" class="avatar-opt" data-av="🦉">🦉</button>
+                  <button type="button" class="avatar-opt" data-av="🦕">🦕</button>
+                </div>
+              </div>
+
+              <div class="field-group">
+                <span class="field-label">当前年级</span>
+                <div class="picker-row" id="gradePicker">
+                  <button type="button" class="grade-opt" data-gr="一年级">一年级</button>
+                  <button type="button" class="grade-opt active" data-gr="二年级">二年级</button>
+                  <button type="button" class="grade-opt" data-gr="三年级">三年级</button>
+                </div>
+              </div>
+
+              <button type="button" class="primary-cta" id="createPassportSubmitBtn">
+                <span>✨ 盖章签发护照并进入乐园</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- TAB 2: PARENT ACCOUNT LOGIN / REGISTER -->
+          <div class="panel-section" id="panelParent">
+            <div class="section-heading">
+              <h2 id="parentFormTitle">家长账号登录</h2>
+              <button class="link-action" id="switchParentModeBtn">使用密码登录</button>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="parentPhone"><span>手机号 / 邮箱</span><span style="color:#647c73;font-weight:600;">未注册将自动创建家庭账号</span></label>
+              <div class="input-wrap">
+                <span class="input-icon">📱</span>
+                <input id="parentPhone" class="text-input" type="text" placeholder="请输入 11 位手机号或邮箱" />
+              </div>
+            </div>
+
+            <!-- SMS Code Field -->
+            <div class="field-group" id="smsCodeGroup">
+              <label class="field-label" for="parentSmsCode"><span>短信验证码</span><span style="color:#647c73;font-weight:600;">演示可输入任意 6 位数字</span></label>
+              <div class="input-wrap">
+                <span class="input-icon">🔑</span>
+                <input id="parentSmsCode" class="text-input" type="text" maxlength="6" placeholder="请输入 6 位验证码" style="padding-right:112px;" />
+                <button type="button" class="code-btn" id="sendSmsBtn">获取验证码</button>
+              </div>
+            </div>
+
+            <!-- Password Field (Hidden by default) -->
+            <div class="field-group" id="passwordGroup" style="display:none;">
+              <label class="field-label" for="parentPassword"><span>登录密码</span><span style="color:#2b7357;cursor:pointer;" onclick="showToast('💡 演示模式：支持通过手机号验证码快捷重置密码')">忘记密码？</span></label>
+              <div class="input-wrap">
+                <span class="input-icon">🔒</span>
+                <input id="parentPassword" class="text-input" type="password" placeholder="请输入 6-20 位密码" />
+              </div>
+            </div>
+
+            <button type="button" class="primary-cta" id="parentLoginBtn" style="margin-top:8px;">
+              <span>登录家长账号 · 同步家庭学习数据</span>
+              <span>→</span>
+            </button>
+
+            <div style="margin-top:14px;display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:14px;background:#f4faf6;border:1px solid #dcebe2;font-size:12px;color:#48665b;line-height:1.6;">
+              <span style="font-size:18px;">🛡️</span>
+              <span>一个家长账号最多可管理 <strong>3 个宝贝小档案</strong>，本地已做的模拟试卷和星星记录将自动合并同步。</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom Secondary Actions -->
+        <div class="secondary-row">
+          <button type="button" class="ghost-pill" id="guestTryBtn">🌱 先以游客身份体验</button>
+          <span style="font-size:11px;">登录即代表同意《儿童隐私保护指引》</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MODE 3: Logged-in Header Integration Preview -->
+    <section class="loggedin-showcase" aria-label="登录后顶栏接入效果预览">
+      <span class="passport-kicker" style="margin:0 auto 12px;"><i></i> 接入后顶部导航栏效果预览</span>
+      <h2 style="font-size:24px;font-weight:900;color:#1d443c;">轻盈融入原有“趣学习乐园”顶栏</h2>
+      <p style="font-size:13.5px;color:#647c73;margin-top:6px;">不破坏首页清新的森林绘本布局，右上角展示当前宝贝的护照徽章，点击即可切换宝贝或打开家长报告。</p>
+
+      <div class="mock-navbar-frame">
+        <div class="preview-brand">
+          <span class="logo-box"><img src="assets/panda-wave-cover.webp" alt="熊猫博士" /></span>
+          <span style="text-align:left;">
+            <strong>趣学习乐园</strong>
+            <small>QUXUEXI LEARNING PARK</small>
+          </span>
+        </div>
+        <div class="mock-nav-pills">
+          <span class="mock-star-pill">⭐ <b id="mockNavStars">28</b> 星星</span>
+          <button type="button" class="account-pill-btn" onclick="switchMode('modal')">
+            <span class="account-avatar-mini" id="mockNavAvatar">🐼</span>
+            <span class="account-meta-mini">
+              <b id="mockNavName">乐乐小博士</b>
+              <span id="mockNavGrade">二年级 · 点击切换</span>
+            </span>
+            <span style="font-size:11px;color:#647c73;">▾</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="design-notes-grid">
+        <div class="note-box">
+          <strong>1. 双轨身份设计</strong>
+          <p>孩子用“萌宠档案 + 4格图案密码”一秒进入，无需记复杂账号；家长用手机号/密码管理多孩档案与云端同步。</p>
+        </div>
+        <div class="note-box">
+          <strong>2. 零打扰渐进接入</strong>
+          <p>支持“游客先体验”，做完试卷或收集星星后点击登录，当前浏览器的全部本地进度无缝迁移至新账号。</p>
+        </div>
+        <div class="note-box">
+          <strong>3. 情感化互动细节</strong>
+          <p>熊猫博士实时对话反馈、制作新档案时动态生成《探索家护照卡》、以及丝滑的弹窗与顶栏微动效。</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div class="toast-banner" id="toastBanner"></div>
+
+  <script>
+    // State for interactive preview
+    let currentRole = 'kid';
+    let pinEnabled = true;
+    let enteredPin = [];
+    let selectedKid = {
+      id: 'lele',
+      name: '乐乐小博士',
+      grade: '二年级',
+      avatar: '🐼',
+      stars: 28,
+      pin: ['🐼', '🍎', '🚀', '⭐']
+    };
+    let parentUsePassword = false;
+    let smsTimer = null;
+
+    const pandaSpeech = document.getElementById('pandaSpeech');
+    const toastBanner = document.getElementById('toastBanner');
+    let toastTimer = null;
+
+    function sayPanda(text) {
+      pandaSpeech.textContent = text;
+      pandaSpeech.style.transform = 'scale(1.03)';
+      setTimeout(() => { pandaSpeech.style.transform = 'scale(1)'; }, 220);
+    }
+
+    function showToast(msg) {
+      toastBanner.textContent = msg;
+      toastBanner.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastBanner.classList.remove('show'), 2800);
+    }
+
+    // Preview Mode Switcher (Fullscreen / Modal / Logged-in Header)
+    function switchMode(mode) {
+      document.body.classList.remove('preview-fullscreen', 'preview-modal', 'preview-header');
+      document.body.classList.add('preview-' + mode);
+      document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === mode);
+      });
+    }
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchMode(btn.dataset.mode));
+    });
+    document.getElementById('modalCloseBtn').addEventListener('click', () => switchMode('fullscreen'));
+    document.getElementById('modalBackdrop').addEventListener('click', () => switchMode('fullscreen'));
+
+    // Top Account Dropdown
+    const topDropdown = document.getElementById('topAccountDropdown');
+    function closeDropdown() { topDropdown.classList.remove('open'); }
+    document.getElementById('topAccountPill').addEventListener('click', (e) => {
+      e.stopPropagation();
+      topDropdown.classList.toggle('open');
+    });
+    document.addEventListener('click', closeDropdown);
+
+    function syncLoggedInUI(profile) {
+      document.getElementById('topAvatar').textContent = profile.avatar;
+      document.getElementById('topName').textContent = profile.name;
+      document.getElementById('topSub').textContent = `${profile.grade} · ⭐ ${profile.stars} 星`;
+      document.getElementById('ddAvatar').textContent = profile.avatar;
+      document.getElementById('ddName').textContent = profile.name;
+      document.getElementById('ddGrade').textContent = `${profile.grade} · 探索家通行证`;
+      document.getElementById('mockNavAvatar').textContent = profile.avatar;
+      document.getElementById('mockNavName').textContent = profile.name;
+      document.getElementById('mockNavGrade').textContent = `${profile.grade} · 点击切换`;
+      document.getElementById('mockNavStars').textContent = profile.stars;
+    }
+
+    // Role Tab Switcher (Kid / Parent)
+    document.querySelectorAll('.role-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        currentRole = tab.dataset.role;
+        document.querySelectorAll('.role-tab').forEach(t => t.classList.toggle('active', t === tab));
+        document.getElementById('panelKid').classList.toggle('active', currentRole === 'kid');
+        document.getElementById('panelParent').classList.toggle('active', currentRole === 'parent');
+        if (currentRole === 'kid') {
+          sayPanda('“点选你的萌宠小档案，输入图案密码就能出发啦！✨”');
+        } else {
+          sayPanda('“家长您好！登录后可跨设备同步宝贝的试卷、星星与学习周报～ ☁️”');
+        }
+      });
+    });
+
+    // Explorer Profile Selection
+    function bindExplorerCards() {
+      document.querySelectorAll('.explorer-card[data-id]').forEach(card => {
+        card.onclick = () => {
+          document.querySelectorAll('.explorer-card[data-id]').forEach(c => c.classList.remove('selected'));
+          card.classList.add('selected');
+          selectedKid = {
+            id: card.dataset.id,
+            name: card.dataset.name,
+            grade: card.dataset.grade,
+            avatar: card.dataset.avatar,
+            stars: Number(card.dataset.stars) || 0,
+            pin: card.dataset.pin.split(',')
+          };
+          enteredPin = [];
+          renderPinSlots();
+          document.getElementById('pinHintText').textContent = '演示密码：' + selectedKid.pin.join(' ');
+          sayPanda(`“嗨，${selectedKid.name}！${pinEnabled ? '点出你的4个秘密图案吧～' : '点击下方按钮直接开始冒险吧！'}”`);
+        };
+      });
+    }
+    bindExplorerCards();
+
+    // Toggle Picture PIN On/Off
+    document.getElementById('togglePinModeBtn').addEventListener('click', (e) => {
+      pinEnabled = !pinEnabled;
+      document.getElementById('pinDeck').style.display = pinEnabled ? 'block' : 'none';
+      e.target.textContent = pinEnabled ? '🔓 切换免密进入' : '🔐 开启图案密码';
+      sayPanda(pinEnabled ? '“图案密码已开启，保护好你的星星宝藏哦！🔐”' : '“已切换为免密模式，点一下直接进乐园！🚀”');
+    });
+
+    // Picture PIN Keypad Logic
+    function renderPinSlots(isError = false) {
+      const slots = document.querySelectorAll('#pinSlots .pin-slot');
+      slots.forEach((slot, i) => {
+        slot.textContent = enteredPin[i] || '';
+        slot.classList.toggle('filled', Boolean(enteredPin[i]));
+        slot.classList.toggle('error', isError);
+      });
+    }
+
+    document.querySelectorAll('.pin-key[data-symbol]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (enteredPin.length >= 4) return;
+        enteredPin.push(btn.dataset.symbol);
+        renderPinSlots();
+        if (enteredPin.length === 4) {
+          const ok = enteredPin.join(',') === selectedKid.pin.join(',');
+          if (ok) {
+            sayPanda(`“密码全对！欢迎回来，${selectedKid.name}！🎉”`);
+            syncLoggedInUI(selectedKid);
+            showToast(`🎉 登录成功！欢迎 ${selectedKid.avatar} ${selectedKid.name} 回到趣学习乐园`);
+            setTimeout(() => switchMode('header'), 700);
+          } else {
+            renderPinSlots(true);
+            sayPanda(`“哎呀，图案不太对哦～提示是：${selectedKid.pin.join(' ')}”`);
+            setTimeout(() => { enteredPin = []; renderPinSlots(); }, 650);
+          }
+        }
+      });
+    });
+
+    document.getElementById('pinClearBtn').addEventListener('click', () => {
+      enteredPin.pop();
+      renderPinSlots();
+    });
+
+    document.getElementById('kidEnterBtn').addEventListener('click', () => {
+      if (pinEnabled && enteredPin.join(',') !== selectedKid.pin.join(',')) {
+        renderPinSlots(true);
+        sayPanda(`“请先依次点击4个图案密码：${selectedKid.pin.join(' ')}，或点右上角切换免密进入～”`);
+        setTimeout(() => renderPinSlots(false), 500);
+        return;
+      }
+      syncLoggedInUI(selectedKid);
+      showToast(`🚀 欢迎 ${selectedKid.avatar} ${selectedKid.name} 进入趣学习乐园！`);
+      switchMode('header');
+    });
+
+    // Create New Explorer Passport Sub-view
+    document.getElementById('openCreateKidBtn').addEventListener('click', () => {
+      document.getElementById('kidSelectView').style.display = 'none';
+      document.getElementById('kidCreateView').style.display = 'block';
+      sayPanda('“哇！来给自己定制一张独一无二的探索家护照吧！🎨”');
+    });
+    document.getElementById('backToSelectKidBtn').addEventListener('click', () => {
+      document.getElementById('kidCreateView').style.display = 'none';
+      document.getElementById('kidSelectView').style.display = 'block';
+      sayPanda('“挑一个宝贝档案，马上继续学习冒险吧！✨”');
+    });
+
+    let draftAvatar = '🐼';
+    let draftGrade = '二年级';
+    const newKidNameInput = document.getElementById('newKidName');
+    newKidNameInput.addEventListener('input', () => {
+      const val = newKidNameInput.value.trim();
+      document.getElementById('lpName').textContent = val || '小探索家';
+      if (val) sayPanda(`“${val} 这个名字真好听！再选一个喜欢的头像吧～”`);
+    });
+
+    document.querySelectorAll('#avatarPicker .avatar-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#avatarPicker .avatar-opt').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        draftAvatar = btn.dataset.av;
+        document.getElementById('lpAvatar').textContent = draftAvatar;
+      });
+    });
+
+    document.querySelectorAll('#gradePicker .grade-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#gradePicker .grade-opt').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        draftGrade = btn.dataset.gr;
+        document.getElementById('lpGrade').textContent = `${draftGrade} · 新晋冒险家`;
+      });
+    });
+
+    document.getElementById('createPassportSubmitBtn').addEventListener('click', () => {
+      const name = newKidNameInput.value.trim() || '新晋小博士';
+      const newProfile = {
+        id: 'kid_' + Date.now(),
+        name,
+        grade: draftGrade,
+        avatar: draftAvatar,
+        stars: 3,
+        pin: [draftAvatar, '⭐', '🚀', '🌈']
+      };
+      syncLoggedInUI(newProfile);
+      showToast(`✨ 护照签发成功！赠送 ${draftAvatar} ${name} 3 颗启航金星！`);
+      sayPanda(`“恭喜 ${name} 成为趣学习乐园的正式小探索家！🎉”`);
+      setTimeout(() => switchMode('header'), 650);
+    });
+
+    // Parent Login Logic
+    document.getElementById('switchParentModeBtn').addEventListener('click', (e) => {
+      parentUsePassword = !parentUsePassword;
+      document.getElementById('smsCodeGroup').style.display = parentUsePassword ? 'none' : 'block';
+      document.getElementById('passwordGroup').style.display = parentUsePassword ? 'block' : 'none';
+      e.target.textContent = parentUsePassword ? '使用验证码登录' : '使用密码登录';
+    });
+
+    document.getElementById('sendSmsBtn').addEventListener('click', (e) => {
+      const btn = e.target;
+      let sec = 60;
+      btn.disabled = true;
+      btn.textContent = `${sec}s 后重发`;
+      showToast('📩 模拟验证码已发送：123456（演示模式任意6位均可）');
+      clearInterval(smsTimer);
+      smsTimer = setInterval(() => {
+        sec--;
+        if (sec <= 0) {
+          clearInterval(smsTimer);
+          btn.disabled = false;
+          btn.textContent = '获取验证码';
+        } else {
+          btn.textContent = `${sec}s 后重发`;
+        }
+      }, 1000);
+    });
+
+    document.getElementById('parentLoginBtn').addEventListener('click', () => {
+      const phone = document.getElementById('parentPhone').value.trim();
+      if (!phone) {
+        showToast('📱 请先输入手机号或邮箱（演示可随意填写）');
+        document.getElementById('parentPhone').focus();
+        return;
+      }
+      showToast('✅ 家长账号登录成功！已自动关联家庭宝贝档案');
+      syncLoggedInUI(selectedKid);
+      setTimeout(() => switchMode('header'), 550);
+    });
+
+    document.getElementById('guestTryBtn').addEventListener('click', () => {
+      syncLoggedInUI({ name: '小小游客', grade: '本地体验中', avatar: '🌱', stars: 0 });
+      showToast('🌱 已进入游客体验模式，学习记录将暂存在当前浏览器');
+      switchMode('header');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+Background music attribution
+
+"Easy Lemon" Kevin MacLeod (incompetech.com)
+"Dream Culture" Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 4.0 License
+https://creativecommons.org/licenses/by/4.0/
+
+Source catalog: https://incompetech.com/music/royalty-free/pieces.json
+Easy Lemon: ISRC USUAN1200076
+Dream Culture: ISRC USUAN1300046
+
+Changes: MP3 re-encoding to 128 kbit/s, loudness normalization and gentle
+fade-in/fade-out. Full compositions retained. The Chinese mood labels in the
+player describe the listening experience; the original titles and composer
+remain credited in the player and in the file metadata.
+
+forest-stroll.mp3 is the earlier original project soundtrack, retained for
+source history and not used by the new player.

@@ -1,0 +1,8 @@
+/* 限制横向边界手势；纵向滚动和缩放由浏览器正常处理。 */
+html, body {
+  overscroll-behavior-x: none;
+  touch-action: pan-y pinch-zoom;
+}
+body * {
+  overscroll-behavior-x: none;
+}

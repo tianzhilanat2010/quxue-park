@@ -1,0 +1,76 @@
+.practice-record-entry {display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #c7dbc9;background:#f6fbf4;color:#37654b;border-radius:12px;padding:9px 14px;font-size:13px;font-weight:800;cursor:pointer}
+.exam-banner-actions .practice-record-entry {width:100%}
+.practice-record-summary {font-size:11px;color:#6b8271;text-align:center;line-height:1.6}
+.practice-save-status {margin:8px 0;padding:10px 14px;border-radius:12px;background:#fff2d9;color:#895322;font-size:12px;line-height:1.7}
+.practice-save-status[hidden] {display:none}
+.practice-record-dialog {box-sizing:border-box;width:min(900px,calc(100vw - 28px));max-height:90dvh;padding:0;border:2px solid #fff;border-radius:26px;background:#f8faf3;color:#294c3b;box-shadow:0 22px 100px #163f3940;overflow:hidden}
+.practice-record-dialog::backdrop {background:#17392b80;backdrop-filter:blur(5px)}
+.practice-record-dialog-header {display:flex;justify-content:space-between;align-items:center;padding:19px 26px;border-bottom:1px solid #dfE7d7;background:#fffdf5}
+.practice-record-dialog-header h2 {font-size:18px;font-weight:900;margin:0}
+.practice-record-dialog-header button {height:34px;width:34px;border:0;border-radius:50%;background:#eaf0e5;color:#426b50;font-size:20px;cursor:pointer}
+.practice-record-content {box-sizing:border-box;max-height:calc(90dvh - 78px);overflow-y:auto;padding:26px;overscroll-behavior:contain}
+.practice-record-content button {font:inherit;cursor:pointer}
+.practice-eyebrow {display:block;color:#7f927c;font-size:11px;font-weight:700;letter-spacing:.7px;margin-bottom:6px}
+.practice-record-intro {margin-bottom:22px}
+.practice-record-intro h3,.practice-detail-head h3 {font-size:26px;line-height:1.4;font-weight:900;margin:0 0 7px;overflow-wrap:anywhere}
+.practice-record-intro p,.practice-detail-head p {font-size:13px;color:#768776;margin:0;line-height:1.7}
+.practice-paper-grid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.practice-paper-card {padding:18px;border:1px solid #dce4d4;border-radius:18px;background:#fffef9;min-width:0}
+.practice-paper-card.is-done {background:linear-gradient(130deg,#f0f7e9,#fffef9);border-color:#c8dbb7}
+.practice-paper-card-head {display:flex;gap:12px;align-items:center}
+.practice-paper-letter {width:42px;height:48px;border-radius:10px 10px 16px 10px;display:grid;place-items:center;background:#edf1e7;border:1px solid #dce3d1;color:#819275;font-size:23px;font-weight:900;flex-shrink:0}
+.is-done .practice-paper-letter {background:#e0eed3;color:#4b7543}
+.practice-paper-card h4 {font-size:14px;font-weight:900;margin:0 0 4px}
+.practice-paper-state {font-size:11px;line-height:1.7;color:#66845d}
+.practice-paper-card p {font-size:11px;color:#85917e;margin:12px 0 15px;line-height:1.6}
+.practice-card-actions {display:flex;gap:9px;flex-wrap:wrap}
+.practice-primary,.practice-secondary {border:1px solid #c5d8b7;border-radius:10px;padding:8px 12px;font-size:12px!important;font-weight:800!important;line-height:1.5}
+.practice-primary {color:#fff;background:#54805b;border-color:#54805b}
+.practice-secondary {color:#52714c;background:#f7faf2}
+.practice-section-title {display:flex;justify-content:space-between;font-size:15px;font-weight:900;margin:26px 0 12px}
+.practice-section-title small {font-size:11px;color:#8a9785;font-weight:500}
+.practice-attempt-list {display:grid;gap:9px}
+.practice-attempt {display:flex;align-items:center;gap:13px;width:100%;text-align:left;padding:16px;background:#fffef9;border:1px solid #e0e5d8;border-radius:16px}
+.practice-attempt:hover,.practice-secondary:hover {background:#eef5e6}
+.practice-attempt-icon {font-size:27px;flex-shrink:0}
+.practice-attempt-copy {display:grid;gap:4px;min-width:0;flex:1}
+.practice-attempt-copy strong {font-size:13px;font-weight:800}
+.practice-attempt-copy small {font-size:11px;color:#899381}
+.practice-attempt-copy>span {font-size:11px;color:#578255}
+.practice-attempt-score {font-size:26px;font-weight:900;color:#52805a;white-space:nowrap}
+.practice-attempt-score small,.practice-detail-score small {font-size:12px;font-weight:500;margin-left:3px}
+.practice-record-note {font-size:11px;color:#95a08d;line-height:1.8;margin:22px 0 0;text-align:center}
+.practice-back {background:none;border:0;padding:0;margin-bottom:20px;font-size:12px!important;color:#6d8766}
+.practice-detail-head {display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+.practice-detail-score {font-size:48px;font-weight:900;color:#55845b;white-space:nowrap}
+.practice-review-filter {display:flex;gap:6px;background:#eaf0e1;border-radius:12px;padding:5px;width:fit-content;margin-bottom:17px}
+.practice-review-filter button {border:0;border-radius:9px;padding:8px 13px;font-size:12px;background:none;color:#72866a}
+.practice-review-filter button[aria-pressed=true] {background:#fffef9;color:#365d3c;box-shadow:0 2px 5px #385c2010;font-weight:800}
+.practice-review-list {display:grid;gap:13px}
+.practice-review-question {border:1px solid #e4ded1;border-left:4px solid #dfa879;border-radius:15px;background:#fffefa;padding:18px}
+.practice-review-question.is-correct {border-left-color:#92b783}
+.practice-review-top {display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;color:#9a754f}
+.is-correct .practice-review-top {color:#618255}
+.practice-review-top button {background:#f1f5e9;color:#668158;border:1px solid #d9e4cd;border-radius:8px;padding:5px 8px;font-size:11px}
+.practice-review-prompt {font-size:15px;font-weight:800;line-height:1.9;margin:13px 0;white-space:pre-line;overflow-wrap:anywhere}
+.practice-answer-pair {display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.practice-answer-pair>div {border-radius:10px;background:#fcf1e7;padding:11px 13px;display:grid;gap:5px;min-width:0}
+.practice-answer-pair>div+div {background:#eff5e8}
+.practice-answer-pair small {font-size:10px;color:#9b836b}
+.practice-answer-pair strong {font-size:13px;line-height:1.8;font-weight:800;overflow-wrap:anywhere;color:#a36e4f}
+.practice-answer-pair>div+div small,.practice-answer-pair>div+div strong {color:#5b7d4d}
+.practice-review-explanation {font-size:12px;line-height:1.8;color:#7b886d;margin:12px 0 0}
+.practice-empty {padding:32px 20px;border-radius:15px;border:1px dashed #d7dfcc;text-align:center;color:#839277;font-size:13px;line-height:1.8}
+@media(max-width:600px) {
+  .practice-record-dialog {width:calc(100vw - 16px);border-radius:20px}
+  .practice-record-dialog-header {padding:15px 18px}
+  .practice-record-content {padding:20px 15px}
+  .practice-record-intro h3,.practice-detail-head h3 {font-size:22px}
+  .practice-paper-grid {grid-template-columns:1fr}
+  .practice-detail-head {flex-wrap:wrap;gap:10px}
+  .practice-detail-head>div {flex:1;min-width:0}
+  .practice-detail-score {font-size:38px}
+  .practice-answer-pair {grid-template-columns:1fr}
+  .practice-review-question {padding:15px}
+}
+@media print {.practice-record-entry,.practice-record-summary,.practice-save-status,.practice-record-dialog {display:none!important}}

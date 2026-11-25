@@ -1,8 +1,8 @@
 {
-  "name": "math-wonderland",
+  "name": "quxuexi",
   "version": "1.0.0",
   "private": true,
-  "description": "熊猫成长乐园：一年级下册与二年级衔接",
+  "description": "趣学习乐园：一年级下册与二年级衔接",
   "type": "module",
   "engines": {
     "node": ">=22.13.0"
@@ -11,7 +11,8 @@
     "dev": "node scripts/serve.mjs",
     "build": "node scripts/build.mjs",
     "preview": "node scripts/serve.mjs dist",
-    "deploy": "npm run build && netlify deploy --prod --no-build --dir=dist"
+    "deploy": "node scripts/configure-speech.mjs && npm run build && netlify deploy --prod --no-build --dir=dist",
+    "configure:speech": "node scripts/configure-speech.mjs"
   },
   "devDependencies": {
     "netlify-cli": "27.16.2"

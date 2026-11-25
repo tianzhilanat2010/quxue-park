@@ -4,326 +4,341 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <link rel="icon" href="../assets/panda-wave-cover.webp">
-  <title>熊猫博士跳跳乐 · 熊猫成长乐园</title>
+  <title>熊猫博士跳跳乐 3D · 浮空仙岛大冒险</title>
   <script src="vendor/three.min.js"></script>
   <script src="panda-world.js"></script>
-  <link rel="stylesheet" href="panda-game.css">
+  <script src="math-questions.js?v=20261114a"></script>
+  <script src="../assets/speech-client.js?v=20261114-teacher"></script>
+  <link rel="stylesheet" href="panda-game.css?v=20261114-difficulty">
+  <link rel="stylesheet" href="../assets/navigation-guard.css?v=20261114a">
+  <script src="../assets/navigation-guard.js?v=20261114a" defer></script>
 </head>
-<body>
-  <div id="canvas-container" aria-label="熊猫博士在云朵花园中跳跃"></div>
+<body data-biome="garden">
+  <div id="canvas-container" aria-label="熊猫博士在奇幻浮空仙岛中跳跃闯关"></div>
   <div id="damage-overlay" aria-hidden="true"></div>
   <div id="floating-text-container" aria-live="polite"></div>
+
+  <!-- Top Navigation & Status Header -->
   <header class="game-header">
-    <a class="home-link" href="../index.html" aria-label="返回熊猫成长乐园">‹ 返回乐园</a>
-    <div class="game-brand"><img class="brand-icon" src="../assets/panda-wave-cover.webp" alt="熊猫博士"><div><strong>熊猫博士跳跳乐</strong><small>PANDA'S GARDEN ADVENTURE</small></div></div>
-    <div class="game-stats"><span id="hearts-display" aria-label="爱心">❤️❤️❤️</span><span>星光积分 <b id="score-display">100</b></span><span class="streak-label">连对 <b id="streak-display">x0</b></span></div>
-    <button id="sound-btn" title="音效开关" aria-label="切换游戏音效">🔊</button>
-    <details class="game-settings"><summary>⚙ 设置</summary><div class="settings-panel">
-      <label for="mode-select">练习内容</label><select id="mode-select">
-        <option value="grade2_term1">二年级上 · 加减与乘法</option><option value="grade2_mixed">二年级进阶 · 综合运算</option><option value="mul_add_sub">乘加与乘减</option><option value="chain_100">连加减与括号</option><option value="mul_div_adv">乘除法与逆运算</option>
-      </select>
-      <label for="char-select">博士的新衣服</label><select id="char-select"><option value="blue">天空蓝博士</option><option value="mint">薄荷绿博士</option><option value="peach">蜜桃粉博士</option></select>
-      <label for="speed-select">思考时间</label><select id="speed-select"><option value="30">30 秒 · 轻快挑战</option><option value="45">45 秒 · 慢慢思考</option><option value="20">20 秒 · 进阶挑战</option></select>
-    </div></details>
-  </header>
-  <section id="question-card" class="question-card">
-    <div class="question-meta"><span id="level-badge">花园第 1 站</span><span id="mode-badge">数学小冒险</span><span id="timer-text">30.0s</span></div>
-    <div id="question-text">准备好一起出发了吗？</div>
-    <div class="timer-track"><div id="timer-bar"></div></div>
-    <p>找到正确答案，陪熊猫博士跳到下一座小岛</p>
-  </section>
-  <div class="garden-caption"><span>✦ 云朵花园</span><small>一步一步，把好奇变成小小的进步</small></div>
-  <footer class="answer-dock">
-    <p>点小岛或选下面的答案 <span>· 键盘 1–5 也能跳跃</span></p>
-    <div class="answer-grid">
-<button id="opt-btn-0" onclick="handleChoice(0)"><small>小岛 1</small><strong id="opt-val-0">?</strong><span>跳这里 ↗</span></button>
-<button id="opt-btn-1" onclick="handleChoice(1)"><small>小岛 2</small><strong id="opt-val-1">?</strong><span>跳这里 ↗</span></button>
-<button id="opt-btn-2" onclick="handleChoice(2)"><small>小岛 3</small><strong id="opt-val-2">?</strong><span>跳这里 ↗</span></button>
-<button id="opt-btn-3" onclick="handleChoice(3)"><small>小岛 4</small><strong id="opt-val-3">?</strong><span>跳这里 ↗</span></button>
-<button id="opt-btn-4" onclick="handleChoice(4)"><small>小岛 5</small><strong id="opt-val-4">?</strong><span>跳这里 ↗</span></button>
+    <a class="home-link" href="../index.html" aria-label="返回趣学习乐园">‹ 返回乐园</a>
+    <div class="game-brand">
+      <img class="brand-icon" src="../assets/panda-wave-cover.webp" alt="熊猫博士">
+      <div>
+        <strong>熊猫博士跳跳乐 3D</strong>
+        <small>FLOATING SKY ISLAND ADVENTURE</small>
+      </div>
     </div>
-    <small class="game-rule">答错或超时扣 25 分，回到原地再试一次；爱心用完会补满。</small>
+    <span id="rank-badge" class="rank-pill">🌱 萌芽探险家</span>
+    <div class="game-stats">
+      <span id="hearts-display" aria-label="爱心">❤️❤️❤️</span>
+      <span>🪙 金币 <b id="coins-display">0</b></span>
+      <span>⭐ 积分 <b id="score-display">100</b></span>
+      <span class="streak-label">🔥 连击 <b id="streak-display">x0</b></span>
+    </div>
+    <button id="speak-q-btn" class="icon-action-btn" title="语音读题">🔊 读题</button>
+    <button id="sound-btn" class="icon-action-btn" title="音效开关" aria-label="切换游戏音效">🎵</button>
+    <details class="game-settings">
+      <summary>⚙ 难度设置</summary>
+      <div class="settings-panel">
+        <label for="difficulty-select">🌱 练习难度</label>
+        <select id="difficulty-select" aria-describedby="difficulty-description">
+          <option value="grade2" selected>二年级基础（默认）</option>
+          <option value="starter">入门练习 · 更轻松</option>
+        </select>
+        <p id="difficulty-description" class="settings-help" role="status">100以内两数加减、1～9乘法口诀、表内整除。</p>
+        <label for="mode-select">📚 想练什么</label>
+        <select id="mode-select">
+          <option value="mixed" selected>🌟 基础综合 · 加减与口诀乘除</option>
+          <option value="add_sub">➕ 加减法</option>
+          <option value="multiplication">✖️ 乘法口诀</option>
+          <option value="division">➗ 简单除法（没有余数）</option>
+        </select>
+        <p class="settings-help">宝箱关也按当前难度出题。切换难度或题型后重新开始本轮。</p>
+        <label for="char-select">🐼 熊猫博士换装衣橱</label>
+        <select id="char-select">
+          <option value="blue">🎓 天空蓝博士服</option>
+          <option value="mint">🎋 翡翠竹林侠客装</option>
+          <option value="peach">🌸 蜜桃粉春日礼服</option>
+          <option value="royal">👑 金冠小学霸状元服</option>
+          <option value="cosmic">🚀 星际宇航探索服</option>
+        </select>
+        <label for="speed-select">⏱️ 每题思考时间</label>
+        <select id="speed-select">
+          <option value="35">35 秒 · 轻松思考（默认）</option>
+          <option value="50">50 秒 · 慢慢读题不着急</option>
+          <option value="22">22 秒 · 极速闪电挑战</option>
+        </select>
+      </div>
+    </details>
+  </header>
+
+  <!-- Center Question & Stage Progress Card -->
+  <section id="question-card" class="question-card">
+    <div class="question-meta">
+      <span id="level-badge">🌸 第 1 站</span>
+      <span id="mode-badge">100以内加减 · 口诀乘除</span>
+      <span id="timer-text">35.0s</span>
+    </div>
+    <div id="stage-nodes-bar" class="stage-nodes" aria-label="本轮宝箱进度"></div>
+    <div id="question-text">准备好陪熊猫博士出发了吗？</div>
+    <div class="timer-track"><div id="timer-bar"></div></div>
+    <div class="question-hint-row">
+      <div id="hint-box">💡 遇到难题可以点右侧“博士锦囊”或使用左边魔法道具哦！</div>
+      <button id="show-hint-btn" class="mini-pill-btn">💡 博士口诀锦囊 (H)</button>
+    </div>
+  </section>
+
+  <!-- Left Magic Power-Ups Dock -->
+  <aside class="powerup-dock" aria-label="魔法辅助道具栏">
+    <button id="pw-wand-btn" class="powerup-btn" title="快捷键 Q：消除 2 个错误答案小岛">
+      <span class="p-icon">🪄</span>
+      <div class="p-info"><strong>排除魔法棒</strong><small>去掉2个错误岛 (Q)</small></div>
+      <span id="pw-wand-count" class="p-count">3</span>
+    </button>
+    <button id="pw-freeze-btn" class="powerup-btn" title="快捷键 W：倒计时增加 15 秒并暂停流逝">
+      <span class="p-icon">⏳</span>
+      <div class="p-info"><strong>时间冰冻钟</strong><small>+15秒并定格 (W)</small></div>
+      <span id="pw-freeze-count" class="p-count">3</span>
+    </button>
+    <button id="pw-shield-btn" class="powerup-btn" title="快捷键 E：开启竹叶金光护盾，抵挡一次失误">
+      <span class="p-icon">🛡️</span>
+      <div class="p-info"><strong>博士金光盾</strong><small>免除一次失误 (E)</small></div>
+      <span id="pw-shield-count" class="p-count">2</span>
+    </button>
+  </aside>
+
+  <!-- Right 3D Biome Switcher -->
+  <aside class="biome-dock" aria-label="切换3D奇幻地图">
+    <button data-biome="garden" class="biome-btn active">🌸 云朵仙境</button>
+    <button data-biome="bamboo" class="biome-btn">🎋 翡翠竹林</button>
+    <button data-biome="candy" class="biome-btn">🍭 彩虹糖果岛</button>
+    <button data-biome="cosmos" class="biome-btn">🌌 星际极光</button>
+  </aside>
+
+  <!-- Bottom 5-Island Answer Dock -->
+  <footer class="answer-dock">
+    <p>点击 3D 浮空仙岛或下方按钮跳跃 <span>· 键盘 1–5 选岛 · Q/W/E 用道具 · 每过 5 站开启黄金宝箱！</span></p>
+    <div class="answer-grid">
+      <button id="opt-btn-0" onclick="handleChoice(0)"><small>1号仙岛</small><strong id="opt-val-0">?</strong><span>跳这里 ↗</span></button>
+      <button id="opt-btn-1" onclick="handleChoice(1)"><small>2号仙岛</small><strong id="opt-val-1">?</strong><span>跳这里 ↗</span></button>
+      <button id="opt-btn-2" onclick="handleChoice(2)"><small>3号仙岛</small><strong id="opt-val-2">?</strong><span>跳这里 ↗</span></button>
+      <button id="opt-btn-3" onclick="handleChoice(3)"><small>4号仙岛</small><strong id="opt-val-3">?</strong><span>跳这里 ↗</span></button>
+      <button id="opt-btn-4" onclick="handleChoice(4)"><small>5号仙岛</small><strong id="opt-val-4">?</strong><span>跳这里 ↗</span></button>
+    </div>
+    <small class="game-rule">✨ 每答对 5 题击败守关大魔王可获双倍金币与道具补给！历史最高分：<b id="best-score-label">100</b></small>
   </footer>
+
   <script>
     /**************************************************************
-     * 1. 强化版 Web Audio 合成音效 (含倒计时急促滴答、雷击爆炸声)
+     * 1. 强化版 Web Audio 合成音效 + 语音播报支持
      **************************************************************/
     class SoundEffects {
       constructor() {
         this.ctx = null;
         this.enabled = true;
       }
-
       init() {
         if (!this.ctx) {
           const AudioCtx = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioCtx();
+          if (AudioCtx) this.ctx = new AudioCtx();
         }
-        if (this.ctx && this.ctx.state === 'suspended') {
-          this.ctx.resume();
-        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
       }
-
       playJump() {
         if (!this.enabled) return;
         this.init();
+        if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
-        osc.frequency.setValueAtTime(260, now);
-        osc.frequency.exponentialRampToValueAtTime(680, now + 0.16);
-        gain.gain.setValueAtTime(0.22, now);
+        osc.frequency.setValueAtTime(280, now);
+        osc.frequency.exponentialRampToValueAtTime(720, now + 0.16);
+        gain.gain.setValueAtTime(0.2, now);
         gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.18);
       }
-
+      playMagic() {
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        [587.33, 880, 1174.66, 1567.98].forEach((freq, i) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, now + i * 0.045);
+          gain.gain.setValueAtTime(0.14, now + i * 0.045);
+          gain.gain.exponentialRampToValueAtTime(0.005, now + i * 0.045 + 0.22);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(now + i * 0.045);
+          osc.stop(now + i * 0.045 + 0.23);
+        });
+      }
       playTick(urgent = false) {
         if (!this.enabled) return;
         this.init();
+        if (!this.ctx) return;
         const now = this.ctx.currentTime;
         const osc = this.ctx.createOscillator();
         const gain = this.ctx.createGain();
         osc.type = 'sine';
         osc.frequency.setValueAtTime(urgent ? 880 : 520, now);
         osc.frequency.exponentialRampToValueAtTime(urgent ? 440 : 300, now + 0.06);
-        gain.gain.setValueAtTime(urgent ? 0.07 : 0.04, now);
+        gain.gain.setValueAtTime(urgent ? 0.06 : 0.035, now);
         gain.gain.exponentialRampToValueAtTime(0.005, now + 0.065);
         osc.connect(gain);
         gain.connect(this.ctx.destination);
         osc.start(now);
         osc.stop(now + 0.07);
       }
-
-      playSuccess(streak = 1) {
+      playSuccess(streak = 1, isBoss = false) {
         if (!this.enabled) return;
         this.init();
+        if (!this.ctx) return;
         const now = this.ctx.currentTime;
-        const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5];
-        const boost = Math.min(streak * 20, 220);
-
+        const notes = isBoss
+          ? [523.25, 659.25, 783.99, 1046.5, 1318.5, 1567.98]
+          : [523.25, 659.25, 783.99, 1046.5, 1318.5];
+        const boost = Math.min(streak * 18, 200);
         notes.forEach((freq, idx) => {
           const osc = this.ctx.createOscillator();
           const gain = this.ctx.createGain();
           osc.type = 'triangle';
           osc.frequency.setValueAtTime(freq + boost, now + idx * 0.055);
-          gain.gain.setValueAtTime(0.22, now + idx * 0.055);
-          gain.gain.exponentialRampToValueAtTime(0.008, now + idx * 0.055 + 0.28);
+          gain.gain.setValueAtTime(0.2, now + idx * 0.055);
+          gain.gain.exponentialRampToValueAtTime(0.008, now + idx * 0.055 + 0.3);
           osc.connect(gain);
           gain.connect(this.ctx.destination);
           osc.start(now + idx * 0.055);
-          osc.stop(now + idx * 0.055 + 0.3);
+          osc.stop(now + idx * 0.055 + 0.31);
         });
       }
-
       playThunderPenalty() {
-        if(!this.enabled)return;this.init();
-        [392,330].forEach((f,i)=>{const o=this.ctx.createOscillator(),g=this.ctx.createGain(),t=this.ctx.currentTime+i*.12;o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.09,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.connect(g);g.connect(this.ctx.destination);o.start(t);o.stop(t+.31);});
+        if (!this.enabled) return;
+        this.init();
+        if (!this.ctx) return;
+        [392, 330].forEach((f, i) => {
+          const o = this.ctx.createOscillator(), g = this.ctx.createGain(), t = this.ctx.currentTime + i * .12;
+          o.type = 'sine'; o.frequency.value = f;
+          g.gain.setValueAtTime(.09, t);
+          g.gain.exponentialRampToValueAtTime(.001, t + .3);
+          o.connect(g); g.connect(this.ctx.destination);
+          o.start(t); o.stop(t + .31);
+        });
       }
     }
 
     const sfx = new SoundEffects();
 
+    const gameSpeech = window.PandaSpeech.create({isEnabled: () => sfx.enabled});
+    function speakGameText(text) {
+      return gameSpeech.speak(String(text).replace(/[□❓?]/g, '几'), 'zh-CN');
+    }
+
     /**************************************************************
-     * 2. 二年级数学高迷惑度5选项题库生成器
+     * 2. 宽间距扇形弧线 5 仙岛排布 + 基础计算题库
+     *    彻底解决小岛粘连问题：宽间距 + 扇形深度错落 + 高度错落！
      **************************************************************/
     const NUM_LANES = 5;
-    let laneSpacing=window.innerWidth<650?2.15:2.9;
-    const LANE_X = [-2,-1,0,1,2].map(i=>i*laneSpacing);
-    let pendingRecovery=null;
-    const ROW_SPACING = 9.6;
+    let laneSpacing = window.innerWidth < 650 ? 2.75 : 3.85;
+    const LANE_X = [-2, -1, 0, 1, 2].map(i => i * laneSpacing);
+    // Crescent fan offsets so the 5 islands form a scenic archipelago arc instead of a fused bar!
+    const LANE_Z_OFFSET = [1.85, 0.55, -0.45, 0.55, 1.85];
+    const LANE_Y_OFFSET = [0.55, 0.32, 0.18, 0.32, 0.55];
+    let pendingRecovery = null;
+    const ROW_SPACING = 9.8;
 
-    let currentMode = 'grade2_term1';
-    let score = 100; // 初始100分，方便直观感受扣分惩罚
+    let currentMode = 'mixed';
+    let currentDifficulty = window.HopMath.defaultDifficulty;
+    let currentBiome = 'garden';
+    let score = 100;
+    let bestScore = 100;
+    let coins = 0;
     let streak = 0;
     let hearts = 3;
     let currentStep = 0;
     let currentQuestion = null;
     let isAnimating = false;
 
-    // 倒计时状态
-    let maxTimePerQuestion = 30;
-    let timeRemaining = 30;
-    let lastTickSecond = 30;
+    const powerups = {
+      wand: 3,
+      freeze: 3,
+      shield: 2,
+      shieldActive: false,
+      freezeRemain: 0
+    };
+
+    try {
+      const savedBest = localStorage.getItem('panda_hop_best_score');
+      if (savedBest) bestScore = Math.max(100, parseInt(savedBest, 10) || 100);
+      const savedCoins = localStorage.getItem('panda_hop_coins');
+      if (savedCoins) coins = Math.max(0, parseInt(savedCoins, 10) || 0);
+    } catch (e) {}
+
+    let maxTimePerQuestion = 35;
+    let timeRemaining = 35;
+    let lastTickSecond = 35;
 
     function randInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-
-    // 根据正确答案生成 4 个极具迷惑性的干扰项（防一眼排除）
-    function buildSmartOptions(answer) {
-      const distractors = new Set();
-      const smartOffsets = [-10, 10, -2, 2, -1, 1, -3, 3, -4, 4, -6, 6, -8, 8, -9, 9, -12, 12];
-
-      while (distractors.size < NUM_LANES - 1) {
-        const offset = smartOffsets[randInt(0, smartOffsets.length - 1)];
-        const candidate = answer + offset;
-        if (candidate > 0 && candidate < 180 && candidate !== answer) {
-          distractors.add(candidate);
-        }
-      }
-
-      const options = [answer, ...Array.from(distractors)];
-      for (let i = options.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [options[i], options[j]] = [options[j], options[i]];
-      }
-      return options;
+    function pickOne(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function generateGrade2Problem(mode) {
-      let subMode = mode;
-      if (mode === 'grade2_mixed') {
-        const pool = ['mul_add_sub', 'chain_100', 'mul_div_adv'];
-        subMode = pool[randInt(0, pool.length - 1)];
-      }
+    function buildSmartOptions(answer) {
+      return window.HopMath.createOptions(answer, currentQuestion?.optionMax ?? 100);
+    }
 
-      let questionText = '';
-      let answer = 0;
-      let modeLabel = '';
-
-      if (subMode === 'grade2_term1') {
-        // 二年级上学期核心知识点：
-        // 1. 100以内两位数加减法（一步计算，含进位/退位）
-        // 2. 表内乘法（2~9的乘法口诀直接算）
-        // 3. 简单的1~6表内乘加/乘减（加减数控制在1~10以内）
-        // 4. 整十数或简单的加减两步（不带复杂括号）
-        const type = randInt(0, 3);
-        if (type === 0) {
-          modeLabel = '二上·100以内加减';
-          if (Math.random() < 0.55) {
-            const a = randInt(15, 58);
-            const b = randInt(12, 39);
-            answer = a + b;
-            questionText = `${a} + ${b} = ?`;
-          } else {
-            const a = randInt(42, 95);
-            const b = randInt(14, a - 12);
-            answer = a - b;
-            questionText = `${a} - ${b} = ?`;
-          }
-        } else if (type === 1) {
-          modeLabel = '二上·表内乘法口诀';
-          const a = randInt(2, 9);
-          const b = randInt(2, 9);
-          answer = a * b;
-          questionText = `${a} × ${b} = ?`;
-        } else if (type === 2) {
-          modeLabel = '二上·基础乘加乘减';
-          const a = randInt(2, 6);
-          const b = randInt(2, 6);
-          const c = randInt(2, 9);
-          if (Math.random() < 0.6) {
-            answer = a * b + c;
-            questionText = `${a} × ${b} + ${c} = ?`;
-          } else {
-            const subC = randInt(1, Math.min(9, a * b - 2));
-            answer = a * b - subC;
-            questionText = `${a} × ${b} - ${subC} = ?`;
-          }
-        } else {
-          modeLabel = '二上·简单连加连减';
-          const a = randInt(20, 45);
-          const b = randInt(10, 25);
-          const c = randInt(5, 18);
-          if (Math.random() < 0.5) {
-            answer = a + b + c;
-            questionText = `${a} + ${b} + ${c} = ?`;
-          } else {
-            answer = a + b - c;
-            questionText = `${a} + ${b} - ${c} = ?`;
-          }
-        }
-      } else if (subMode === 'mul_add_sub') {
-        modeLabel = '乘加/乘减混合';
-        const a = randInt(3, 9);
-        const b = randInt(3, 9);
-        const prod = a * b;
-        const type = randInt(0, 2);
-        if (type === 0) {
-          const c = randInt(12, 45);
-          answer = prod + c;
-          questionText = `${a} × ${b} + ${c} = ?`;
-        } else if (type === 1) {
-          const c = randInt(8, prod - 5);
-          answer = prod - c;
-          questionText = `${a} × ${b} - ${c} = ?`;
-        } else {
-          const c = randInt(15, 48);
-          answer = c + prod;
-          questionText = `${c} + ${a} × ${b} = ?`;
-        }
-      } else if (subMode === 'chain_100') {
-        modeLabel = '连加连减与括号';
-        const type = randInt(0, 2);
-        if (type === 0) {
-          const a = randInt(26, 58);
-          const b = randInt(18, 42);
-          const c = randInt(15, a + b - 12);
-          answer = a + b - c;
-          questionText = `${a} + ${b} - ${c} = ?`;
-        } else if (type === 1) {
-          const b = randInt(14, 34);
-          const c = randInt(13, 29);
-          const a = randInt(b + c + 12, 98);
-          answer = a - (b + c);
-          questionText = `${a} - (${b} + ${c}) = ?`;
-        } else {
-          const a = randInt(52, 95);
-          const b = randInt(18, 39);
-          const c = randInt(14, 36);
-          answer = a - b + c;
-          questionText = `${a} - ${b} + ${c} = ?`;
-        }
-      } else {
-        modeLabel = '乘除进阶逆运算';
-        const type = randInt(0, 2);
-        if (type === 0) {
-          const b = randInt(3, 9);
-          const q = randInt(3, 9);
-          const a = b * q;
-          const c = randInt(2, 8);
-          answer = q * c;
-          questionText = `${a} ÷ ${b} × ${c} = ?`;
-        } else if (type === 1) {
-          const c = randInt(2, 6);
-          const k = randInt(2, 5);
-          const a = c * k;
-          const b = randInt(3, 8);
-          answer = (a * b) / c;
-          questionText = `${a} × ${b} ÷ ${c} = ?`;
-        } else {
-          const b = randInt(4, 9);
-          const q = randInt(4, 9);
-          const a = b * q;
-          const c = randInt(18, 56);
-          answer = q + c;
-          questionText = `${a} ÷ ${b} + ${c} = ?`;
-        }
-      }
-
-      const options = buildSmartOptions(answer);
-      return {
-        questionText,
-        answer,
-        options,
-        correctIndex: options.indexOf(answer),
-        modeLabel
-      };
+    function generateGrade2Problem(mode, isBossStage = false) {
+      return window.HopMath.createProblem({difficulty: currentDifficulty, mode, isBossStage});
     }
 
     /**************************************************************
-     * 3. 卡通花园场景与熊猫博士
+     * 3. 3D 浮空仙岛场景、瀑布、水晶、立牌数字与星光拱桥
      **************************************************************/
+    const BIOME_THEMES = {
+      garden: {
+        grass: 0x4ade80,
+        soil: 0x8d6e63,
+        ring: 0xfde047,
+        flower: 0xfef08a,
+        crystal: 0xc084fc
+      },
+      bamboo: {
+        grass: 0x10b981,
+        soil: 0x78716c,
+        ring: 0x6ee7b7,
+        flower: 0xfde047,
+        crystal: 0x38bdf8
+      },
+      candy: {
+        grass: 0xf472b6,
+        soil: 0xa855f7,
+        ring: 0xfef08a,
+        flower: 0xffffff,
+        crystal: 0x60a5fa
+      },
+      cosmos: {
+        grass: 0x38bdf8,
+        soil: 0x475569,
+        ring: 0xfacc15,
+        flower: 0xfde047,
+        crystal: 0xe879f9
+      }
+    };
+
     const container = document.getElementById('canvas-container');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xe4f2e9);
-    scene.fog = new THREE.Fog(0xe4f2e9, 32, 100);
+    // Transparent scene background so the multi-layered CSS moon/nebula/sky shines through!
+    scene.fog = new THREE.FogExp2(0x7c9ae8, 0.0085);
 
-    const camera = new THREE.PerspectiveCamera(window.innerWidth<650?60:50, window.innerWidth / window.innerHeight, 0.1, 160);
+    const camera = new THREE.PerspectiveCamera(window.innerWidth < 650 ? 58 : 46, window.innerWidth / window.innerHeight, 0.1, 180);
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -333,119 +348,336 @@
 
     renderer.outputEncoding = THREE.sRGBEncoding;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.12;
-    const ambientLight = new THREE.HemisphereLight(0xfffcf1, 0x94b9a5, .85);
+    renderer.toneMappingExposure = 1.15;
+    const ambientLight = new THREE.HemisphereLight(0xffffff, 0x64748b, 0.92);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xfff3d3, 1.1);
-    dirLight.position.set(-8, 16, 12);
+    const dirLight = new THREE.DirectionalLight(0xfffbeb, 1.15);
+    dirLight.position.set(-10, 18, 14);
     dirLight.castShadow = true;
     dirLight.shadow.mapSize.width = 1024;
     dirLight.shadow.mapSize.height = 1024;
-    dirLight.shadow.camera.left=-18; dirLight.shadow.camera.right=18;
-    dirLight.shadow.camera.top=18; dirLight.shadow.camera.bottom=-18;
-    dirLight.shadow.bias=-.001; scene.add(dirLight);
+    dirLight.shadow.camera.left = -22; dirLight.shadow.camera.right = 22;
+    dirLight.shadow.camera.top = 22; dirLight.shadow.camera.bottom = -22;
+    dirLight.shadow.bias = -.001;
+    scene.add(dirLight);
 
-    const playerLight = new THREE.PointLight(0xfff1cf, .18, 14);
+    const playerLight = new THREE.PointLight(0xfef08a, 0.35, 16);
     scene.add(playerLight);
-    const lightningLight = new THREE.PointLight(0xffd5ae, 0, 12);
-    scene.add(lightningLight);
-    function createNumberTexture(text, state = 'normal') {
-      const canvas=document.createElement('canvas');canvas.width=512;canvas.height=512;
-      const ctx=canvas.getContext('2d');
-      const palettes={normal:['#fff9e5','#43634a'],start:['#e2f0d2','#42654d'],urgent:['#fff0d1','#b47737'],correct:['#dff2c9','#3c7851']};
-      const [bg,ink]=palettes[state]||palettes.normal;
-      ctx.fillStyle=bg;ctx.fillRect(0,0,512,512);
-      ctx.strokeStyle='#d6dfb5';ctx.lineWidth=12;ctx.beginPath();ctx.roundRect(22,22,468,468,80);ctx.stroke();
-      ctx.fillStyle=ink;ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`900 ${String(text).length>3?100:220}px sans-serif`;ctx.fillText(String(text),256,264);
-      const tex=new THREE.CanvasTexture(canvas);tex.encoding=THREE.sRGBEncoding;tex.anisotropy=4;return tex;
+
+    // 3D Starfield Sky Particles (450 twinkling stars in the sky!)
+    const starGeo = new THREE.BufferGeometry();
+    const starPositions = new Float32Array(450 * 3);
+    for (let i = 0; i < 450; i++) {
+      starPositions[i * 3] = (Math.random() - 0.5) * 140;
+      starPositions[i * 3 + 1] = Math.random() * 45 - 6;
+      starPositions[i * 3 + 2] = -Math.random() * 140 + 20;
     }
-    let player=buildPandaRig('blue');scene.add(player);
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const starField = new THREE.Points(
+      starGeo,
+      new THREE.PointsMaterial({ color: 0xfef08a, size: 0.45, transparent: true, opacity: 0.85 })
+    );
+    scene.add(starField);
+
+    // Create Upright Floating 3D Billboard Texture so numbers face the camera and never look squashed!
+    function createSignpostTexture(text, islandIdx = -1, state = 'normal') {
+      const canvas = document.createElement('canvas');
+      canvas.width = 512;
+      canvas.height = 384;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, 512, 384);
+
+      const palettes = {
+        normal: ['#ffffff', '#1e3a34', '#f59e0b', '#fef3c7'],
+        start: ['#ecfdf5', '#047857', '#10b981', '#d1fae5'],
+        urgent: ['#fff1f2', '#be123c', '#f43f5e', '#ffe4e6'],
+        correct: ['#dcfce7', '#15803d', '#22c55e', '#bbf7d0'],
+        boss: ['#fef9c3', '#b45309', '#f59e0b', '#fde047']
+      };
+      const [bg, ink, border, badgeBg] = palettes[state] || palettes.normal;
+
+      // Glowing rounded badge card
+      ctx.fillStyle = bg;
+      ctx.strokeStyle = border;
+      ctx.lineWidth = 18;
+      ctx.beginPath();
+      ctx.roundRect(36, 44, 440, 296, 68);
+      ctx.fill();
+      ctx.stroke();
+
+      // Top Island Number Pill (#1 ~ #5)
+      if (islandIdx >= 0) {
+        ctx.fillStyle = badgeBg;
+        ctx.beginPath();
+        ctx.roundRect(156, 16, 200, 58, 29);
+        ctx.fill();
+        ctx.strokeStyle = border;
+        ctx.lineWidth = 8;
+        ctx.stroke();
+        ctx.fillStyle = '#92400e';
+        ctx.font = '900 32px "Noto Sans SC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(`★ ${islandIdx + 1}号仙岛`, 256, 46);
+      }
+
+      // Big crisp answer number facing the player
+      ctx.fillStyle = ink;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = `900 ${String(text).length > 3 ? 110 : 170}px "Noto Sans SC", sans-serif`;
+      ctx.fillText(String(text), 256, 204);
+
+      const tex = new THREE.CanvasTexture(canvas);
+      tex.encoding = THREE.sRGBEncoding;
+      return tex;
+    }
+
+    let player = buildPandaRig('blue');
+    scene.add(player);
+
     function switchCharacterModel(type) {
-      const old=player;player=buildPandaRig(type);player.position.copy(old.position);player.rotation.copy(old.rotation);
-      scene.remove(old);disposeGardenObject(old);scene.add(player);
+      const old = player;
+      player = buildPandaRig(type);
+      player.position.copy(old.position);
+      player.rotation.copy(old.rotation);
+      if (player.userData.shieldRing) {
+        player.userData.shieldRing.visible = powerups.shieldActive;
+      }
+      scene.remove(old);
+      disposeGardenObject(old);
+      scene.add(player);
     }
-    function setRobotMood(mood) { player.userData.mood=mood; }
+
+    function setRobotMood(mood) {
+      player.userData.mood = mood;
+    }
+
     const activeTiles = [];
+    const activeBridges = [];
     const particles = [];
     const shockwaves = [];
-    const lightningBolts = [];
     const ambientShapes = [];
 
     function initAmbientShapes() {
-      for(let i=0;i<22;i++) {
-        const cloud=i%3!==0,mesh=makeGardenProp(cloud?'cloud':'tree',i);
-        mesh.position.set((i%2?-1:1)*(10+(i%4)*2.7),cloud?2+(i%4)*1.1:-2,-Math.floor(i/2)*10-4);
-        mesh.userData.baseY=mesh.position.y;mesh.userData.phase=i;mesh.userData.cloud=cloud;
-        mesh.scale.setScalar(cloud?1.1+(i%3)*.3:1.5);
-        scene.add(mesh);ambientShapes.push(mesh);
+      const kinds = ['cloud', 'tree', 'cloud', 'balloon', 'cloud', 'castle'];
+      for (let i = 0; i < 28; i++) {
+        const kind = kinds[i % kinds.length];
+        const mesh = makeGardenProp(kind, i);
+        const side = i % 2 ? -1 : 1;
+        const dist = kind === 'castle' ? 18 + (i % 3) * 4 : kind === 'balloon' ? 14 + (i % 4) * 3 : 11 + (i % 5) * 3.2;
+        const yPos = kind === 'balloon' ? 5 + (i % 3) * 1.6 : kind === 'castle' ? 2.5 + (i % 2) * 1.5 : kind === 'cloud' ? -2.2 + (i % 4) * 1.4 : -1.8;
+        mesh.position.set(side * dist, yPos, -Math.floor(i / 2) * 9 - 2);
+        mesh.userData.baseY = mesh.position.y;
+        mesh.userData.phase = i * 0.7;
+        mesh.scale.setScalar(kind === 'castle' ? 1.35 : kind === 'cloud' ? 1.25 + (i % 3) * .35 : 1.2);
+        scene.add(mesh);
+        ambientShapes.push(mesh);
       }
     }
     initAmbientShapes();
-    function createTile(x,z,label,isStart=false,optionIndex=-1) {
-      const group=new THREE.Group();group.position.set(x,0,z);group.scale.setScalar(window.innerWidth<650?.72:1);
-      const cream=pandaMaterial(0xe8d8b1),grass=pandaMaterial(0x9fc982),soil=pandaMaterial(0xc7ad85);
-      const topMat=pandaMaterial(0xffffff,{map:createNumberTexture(label,isStart?'start':'normal')});
-      const boxMesh=new THREE.Mesh(new THREE.BoxGeometry(2.08,.16,2.08),[cream,cream,topMat,cream,cream,cream]);
-      boxMesh.position.y=-.08;boxMesh.receiveShadow=true;group.add(boxMesh);
-      const edge=new THREE.Mesh(new THREE.CylinderGeometry(1.55,1.47,.34,48),grass);edge.position.y=-.30;edge.receiveShadow=true;edge.castShadow=true;group.add(edge);
-      const rock=new THREE.Mesh(new THREE.CylinderGeometry(1.46,.82,.85,9),soil);rock.position.y=-.84;group.add(rock);
-      const glowMesh=new THREE.Mesh(new THREE.TorusGeometry(1.46,.045,8,48),pandaMaterial(0xd3e6b6));
-      glowMesh.rotation.x=Math.PI/2;glowMesh.position.y=-.12;group.add(glowMesh);
-      const pylons=new THREE.Group(),pylonMat=pandaMaterial(0xffe6a1);group.add(pylons);
-      for(const side of [-1,1]) {
-        const flower=new THREE.Group();flower.position.set(side*1.15,0,-.72);
-        pandaBall(flower,pandaMaterial(0x6a9e65),[0,.08,0],[.04,.15,.04]);
-        for(let j=0;j<5;j++){const a=j*Math.PI*2/5;pandaBall(flower,pylonMat,[Math.cos(a)*.11,.23,Math.sin(a)*.11],[.08,.045,.08]);}
-        pandaBall(flower,pandaMaterial(0xe4b44b),[0,.25,0],[.07,.05,.07]);pylons.add(flower);
-      }
-      group.userData={boxMesh,glowMesh,pylons,pylonMat,topMat,label,optionIndex,broken:false,urgentMode:false,phase:0};
-      scene.add(group);activeTiles.push(group);return group;
+
+    function applyBiomeTheme(biomeKey) {
+      currentBiome = biomeKey;
+      document.body.dataset.biome = biomeKey;
+      document.querySelectorAll('.biome-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.biome === biomeKey);
+      });
     }
+
+    // Build a Lush Floating Sky-Island (matching game-cover.webp!) with Craggy Rock, Waterfall, Crystals & Upright Number Totem!
+    function createTile(x, y, z, label, isStart = false, optionIndex = -1, isBoss = false) {
+      const theme = BIOME_THEMES[currentBiome] || BIOME_THEMES.garden;
+      const group = new THREE.Group();
+      group.position.set(x, y, z);
+      group.scale.setScalar(window.innerWidth < 650 ? .76 : 1);
+
+      const grassMat = pandaMaterial(isBoss ? 0xfbbf24 : theme.grass);
+      const soilMat = pandaMaterial(theme.soil);
+      const darkRockMat = pandaMaterial(0x645851);
+      const crystalMat = pandaMaterial(theme.crystal, { roughness: 0.2, metalness: 0.25, emissive: theme.crystal, emissiveIntensity: 0.35 });
+
+      // 1. Lush Grass Island Top Cap (radius = 1.18 so islands have plenty of open sky between them!)
+      const boxMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.18, 1.12, 0.32, 32), grassMat);
+      boxMesh.position.y = -0.14;
+      boxMesh.receiveShadow = true;
+      boxMesh.castShadow = true;
+      group.add(boxMesh);
+
+      // Soft inner stone landing pad
+      const padMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.88, 0.88, 0.06, 28), pandaMaterial(0xfef9e7));
+      padMesh.position.y = 0.03;
+      padMesh.receiveShadow = true;
+      group.add(padMesh);
+
+      // 2. Multi-faceted Floating Craggy Rock Base (like game-cover.webp!)
+      const mainRock = new THREE.Mesh(new THREE.ConeGeometry(1.12, 1.55, 7), soilMat);
+      mainRock.rotation.x = Math.PI;
+      mainRock.position.y = -1.02;
+      group.add(mainRock);
+
+      for (let r = 0; r < 3; r++) {
+        const ang = (r * Math.PI * 2) / 3 + 0.4;
+        const subRock = new THREE.Mesh(new THREE.ConeGeometry(0.48, 0.95, 6), darkRockMat);
+        subRock.rotation.x = Math.PI;
+        subRock.position.set(Math.cos(ang) * 0.62, -0.78, Math.sin(ang) * 0.62);
+        group.add(subRock);
+      }
+
+      // 3. Cascading Mini Waterfall on Island Edge (like game-cover.webp!)
+      if (!isStart) {
+        const waterfall = new THREE.Mesh(
+          new THREE.BoxGeometry(0.32, 1.25, 0.08),
+          pandaMaterial(0x38bdf8, { transparent: true, opacity: 0.82, emissive: 0x0284c7, emissiveIntensity: 0.4 })
+        );
+        waterfall.position.set(0.38, -0.68, 0.92);
+        waterfall.rotation.x = 0.18;
+        group.add(waterfall);
+      }
+
+      // 4. Glowing Crystal Cluster & Flowers on Rim
+      const pylons = new THREE.Group();
+      const pylonMat = pandaMaterial(theme.flower);
+      group.add(pylons);
+
+      const crys1 = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.48, 6), crystalMat);
+      crys1.position.set(-0.88, 0.22, -0.35);
+      crys1.rotation.z = 0.22;
+      pylons.add(crys1);
+
+      const crys2 = new THREE.Mesh(new THREE.ConeGeometry(0.10, 0.34, 6), crystalMat);
+      crys2.position.set(-0.74, 0.16, -0.48);
+      crys2.rotation.z = -0.18;
+      pylons.add(crys2);
+
+      for (const side of [-1, 1]) {
+        const flower = new THREE.Group();
+        flower.position.set(side * 0.86, 0.02, 0.45);
+        for (let j = 0; j < 5; j++) {
+          const a = (j * Math.PI * 2) / 5;
+          pandaBall(flower, pylonMat, [Math.cos(a) * .09, .08, Math.sin(a) * .09], [.06, .035, .06]);
+        }
+        pandaBall(flower, pandaMaterial(0xf59e0b), [0, .09, 0], [.05, .04, .05]);
+        pylons.add(flower);
+      }
+
+      // 5. Golden Orbiting Starlight Ring around the Floating Island
+      const glowMesh = new THREE.Mesh(
+        new THREE.TorusGeometry(1.32, 0.038, 10, 48),
+        pandaMaterial(isBoss ? 0xfacc15 : theme.ring, { emissive: 0xf59e0b, emissiveIntensity: 0.35 })
+      );
+      glowMesh.rotation.x = Math.PI / 2 + 0.08;
+      glowMesh.position.y = -0.06;
+      group.add(glowMesh);
+
+      // 6. Upright Floating 3D Number Billboard (Sprite) so answer numbers are super clear and never squashed!
+      const texState = isStart ? 'start' : isBoss ? 'boss' : 'normal';
+      const signTex = createSignpostTexture(label, optionIndex, texState);
+      const signMat = new THREE.SpriteMaterial({ map: signTex, transparent: true });
+      const signSprite = new THREE.Sprite(signMat);
+      signSprite.position.set(0, isStart ? 0.85 : 1.52, 0);
+      signSprite.scale.set(isStart ? 1.4 : 2.15, isStart ? 1.05 : 1.62, 1);
+      signSprite.visible = !isStart;
+      group.add(signSprite);
+
+      // Floating 3D Star above Boss / Bonus islands
+      let bonusStar = null;
+      if (isBoss && !isStart) {
+        bonusStar = pandaStar(pandaMaterial(0xfbbf24, { roughness: 0.25, metalness: 0.35, emissive: 0xd97706, emissiveIntensity: 0.3 }), .22);
+        bonusStar.position.set(0, 2.55, 0);
+        group.add(bonusStar);
+      }
+
+      group.userData = {
+        boxMesh,
+        glowMesh,
+        pylons,
+        pylonMat,
+        signSprite,
+        bonusStar,
+        label,
+        optionIndex,
+        baseY: y,
+        broken: false,
+        urgentMode: false
+      };
+      scene.add(group);
+      activeTiles.push(group);
+      return group;
+    }
+
+    // Create Golden Starlight Arc Trail from current island to each candidate island (like game-cover.webp!)
+    function clearStarBridges() {
+      while (activeBridges.length > 0) {
+        const b = activeBridges.pop();
+        scene.remove(b);
+        disposeGardenObject(b);
+      }
+    }
+
+    function createStarBridges(fromPos, targetTiles) {
+      clearStarBridges();
+      const goldTrailMat = new THREE.MeshBasicMaterial({
+        color: 0xfef08a,
+        transparent: true,
+        opacity: 0.38
+      });
+      targetTiles.forEach(tile => {
+        const toPos = new THREE.Vector3(tile.position.x, tile.userData.baseY, tile.position.z);
+        const midPos = new THREE.Vector3(
+          (fromPos.x + toPos.x) * 0.5,
+          Math.max(fromPos.y, toPos.y) + 1.35,
+          (fromPos.z + toPos.z) * 0.5
+        );
+        const curve = new THREE.CatmullRomCurve3([
+          new THREE.Vector3(fromPos.x, fromPos.y + 0.1, fromPos.z),
+          midPos,
+          new THREE.Vector3(toPos.x, toPos.y + 0.1, toPos.z)
+        ]);
+        const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 20, 0.032, 6, false), goldTrailMat);
+        scene.add(tube);
+        activeBridges.push(tube);
+      });
+    }
+
     function spawnParticles(pos, colorHex, count = 35, isShatter = false) {
       for (let i = 0; i < count; i++) {
-        const size = isShatter ? randInt(24, 48) / 100 : randInt(14, 28) / 100;
-        const geo = isShatter
-          ? new THREE.DodecahedronGeometry(size, 0)
-          : new THREE.OctahedronGeometry(size, 0);
-
+        const size = isShatter ? randInt(22, 42) / 100 : randInt(14, 28) / 100;
+        const geo = isShatter ? new THREE.DodecahedronGeometry(size, 0) : new THREE.OctahedronGeometry(size, 0);
         const palette = isShatter
-          ? [0xe7b87c, 0xdc2626, 0x1e293b, 0xfca5a5, 0xf97316]
-          : [0x34d399, 0x8bbbae, 0xfbbf24, 0xe879f9, 0xa7f3d0];
-
+          ? [0xe7b87c, 0xdc2626, 0xfca5a5, 0xf97316]
+          : [0x34d399, 0xfbbf24, 0x38bdf8, 0xf472b6, 0xa7f3d0];
         const mat = new THREE.MeshStandardMaterial({
           color: colorHex || palette[i % palette.length],
-          roughness: 0.85,
-          metalness: 0,
-          emissive: isShatter ? 0x7f1d1d : 0x064e3b,
-          emissiveIntensity: 0.4
+          roughness: 0.75,
+          metalness: 0.1,
+          emissive: isShatter ? 0x7f1d1d : 0x065f46,
+          emissiveIntensity: 0.45
         });
-
         const mesh = new THREE.Mesh(geo, mat);
         mesh.position.copy(pos);
-        mesh.position.x += (Math.random() - 0.5) * 1.5;
+        mesh.position.x += (Math.random() - 0.5) * 1.4;
         mesh.position.y += (Math.random() - 0.2) * 0.6;
-        mesh.position.z += (Math.random() - 0.5) * 1.5;
-
+        mesh.position.z += (Math.random() - 0.5) * 1.4;
         const velocity = new THREE.Vector3(
-          (Math.random() - 0.5) * (isShatter ? 0.34 : 0.3),
-          isShatter ? Math.random() * 0.28 + 0.08 : Math.random() * 0.32 + 0.14,
-          (Math.random() - 0.5) * (isShatter ? 0.34 : 0.3)
+          (Math.random() - 0.5) * 0.32,
+          Math.random() * 0.32 + 0.12,
+          (Math.random() - 0.5) * 0.32
         );
-
         scene.add(mesh);
         particles.push({
           mesh,
           velocity,
           rotSpeed: new THREE.Vector3(Math.random() * 0.25, Math.random() * 0.25, Math.random() * 0.25),
           life: 1.0,
-          decay: isShatter ? 0.015 : 0.018
+          decay: isShatter ? 0.016 : 0.018
         });
       }
     }
 
     function spawnShockwave(pos, colorHex = 0x34d399) {
-      const geo = new THREE.RingGeometry(0.45, 0.78, 36);
+      const geo = new THREE.RingGeometry(0.45, 0.82, 36);
       const mat = new THREE.MeshBasicMaterial({
         color: colorHex,
         side: THREE.DoubleSide,
@@ -454,7 +686,7 @@
       });
       const mesh = new THREE.Mesh(geo, mat);
       mesh.rotation.x = Math.PI / 2;
-      mesh.position.set(pos.x, 0.05, pos.z);
+      mesh.position.set(pos.x, pos.y + 0.06, pos.z);
       scene.add(mesh);
       shockwaves.push({ mesh, scale: 1, alpha: 0.95 });
     }
@@ -462,28 +694,71 @@
     function showFloatingReward(text, isPositive = true) {
       const container = document.getElementById('floating-text-container');
       const el = document.createElement('div');
-      el.className = `floating-reward ${isPositive?'positive':'retry'}`;
+      el.className = `floating-reward ${isPositive ? 'positive' : 'retry'}`;
       el.innerText = text;
       container.appendChild(el);
-      setTimeout(() => el.remove(), 1250);
+      setTimeout(() => el.remove(), 1300);
     }
 
     /**************************************************************
-     * 4. 答题、计分与重新尝试
+     * 4. 答题、道具技能、Boss 关与段位系统
      **************************************************************/
     let currentRowTiles = [];
 
+    function getRankTitle(sc) {
+      if (sc >= 600) return '👑 熊猫数学大宗师';
+      if (sc >= 400) return '💎 钻石全能小学霸';
+      if (sc >= 260) return '🏆 黄金计算小达人';
+      if (sc >= 160) return '🧭 白银好奇探索家';
+      return '🌱 萌芽探险家';
+    }
+
+    function updateSignSprite(tile, label, state) {
+      const newTex = createSignpostTexture(label, tile.userData.optionIndex, state);
+      tile.userData.signSprite.material.map.dispose();
+      tile.userData.signSprite.material.map = newTex;
+    }
+
     function updateHUD() {
-      const scoreEl = document.getElementById('score-display');
-      scoreEl.innerText = score;
+      if (score > bestScore) {
+        bestScore = score;
+        try { localStorage.setItem('panda_hop_best_score', String(bestScore)); } catch (e) {}
+      }
+      try { localStorage.setItem('panda_hop_coins', String(coins)); } catch (e) {}
+
+      document.getElementById('score-display').innerText = score;
+      document.getElementById('coins-display').innerText = coins;
+      document.getElementById('best-score-label').innerText = bestScore;
       document.getElementById('streak-display').innerText = `x${streak}`;
       document.getElementById('hearts-display').innerText = '❤️'.repeat(hearts) + '🖤'.repeat(Math.max(0, 3 - hearts));
-      document.getElementById('level-badge').innerText = `花园第 ${currentStep + 1} 站`;
+      document.getElementById('rank-badge').innerText = getRankTitle(score);
+
+      const isBoss = (currentStep + 1) % 5 === 0;
+      document.getElementById('level-badge').innerText = isBoss
+        ? `👑 第 ${currentStep + 1} 站 · 宝箱魔王关`
+        : `🌸 第 ${currentStep + 1} 站`;
+
+      const posInCycle = currentStep % 5;
+      const nodesBar = document.getElementById('stage-nodes-bar');
+      nodesBar.innerHTML = [0, 1, 2, 3, 4].map(idx => {
+        const cls = idx < posInCycle ? 'done' : idx === posInCycle ? 'current' : idx === 4 ? 'boss' : '';
+        return `<span class="stage-node ${cls}"></span>`;
+      }).join('');
+
+      document.getElementById('pw-wand-count').innerText = powerups.wand;
+      document.getElementById('pw-freeze-count').innerText = powerups.freeze;
+      document.getElementById('pw-shield-count').innerText = powerups.shield;
+      document.getElementById('pw-wand-btn').disabled = powerups.wand <= 0;
+      document.getElementById('pw-freeze-btn').disabled = powerups.freeze <= 0;
+      document.getElementById('pw-shield-btn').disabled = powerups.shield <= 0 && !powerups.shieldActive;
+      document.getElementById('pw-shield-btn').classList.toggle('active-shield', powerups.shieldActive);
+      if (player && player.userData.shieldRing) {
+        player.userData.shieldRing.visible = powerups.shieldActive;
+      }
     }
 
     function reshuffleCurrentRowOptions() {
       if (!currentQuestion || currentRowTiles.length === 0) return;
-
       const freshOptions = buildSmartOptions(currentQuestion.answer);
       currentQuestion.options = freshOptions;
       currentQuestion.correctIndex = freshOptions.indexOf(currentQuestion.answer);
@@ -494,13 +769,8 @@
         tile.userData.broken = false;
         tile.userData.urgentMode = false;
         tile.visible = true;
-        tile.position.y = -2.2;
-        const newTex = createNumberTexture(val, 'normal');
-        tile.userData.boxMesh.material[2].map.dispose();
-        tile.userData.boxMesh.material[2].map = newTex;
-        tile.userData.boxMesh.material[2].emissiveMap = newTex;
-        tile.userData.pylonMat.color.setHex(0xffe6a1);
-        tile.userData.glowMesh.material.color.setHex(0xd3e6b6);
+        tile.position.y = tile.userData.baseY - 2.2;
+        updateSignSprite(tile, val, currentQuestion.isBossStage ? 'boss' : 'normal');
 
         const btnVal = document.getElementById(`opt-val-${idx}`);
         const btn = document.getElementById(`opt-btn-${idx}`);
@@ -510,20 +780,37 @@
     }
 
     function spawnNextQuestionRow() {
-      currentQuestion = generateGrade2Problem(currentMode);
+      gameSpeech.stop();
+      const isBoss = (currentStep + 1) % 5 === 0;
+      currentQuestion = generateGrade2Problem(currentMode, isBoss);
       timeRemaining = maxTimePerQuestion;
       lastTickSecond = Math.ceil(timeRemaining);
+      powerups.freezeRemain = 0;
 
-      document.getElementById('question-text').innerText = currentQuestion.questionText;
+      const qTextEl = document.getElementById('question-text');
+      qTextEl.innerText = currentQuestion.questionText;
+      qTextEl.classList.toggle('text-long', currentQuestion.questionText.length > 14);
       document.getElementById('mode-badge').innerText = currentQuestion.modeLabel;
-      document.getElementById('question-card').classList.remove('urgent-card');
 
-      const nextZ = -(currentStep + 1) * ROW_SPACING;
+      const qCard = document.getElementById('question-card');
+      qCard.classList.remove('urgent-card');
+      qCard.classList.toggle('boss-card', isBoss);
+
+      const hintBox = document.getElementById('hint-box');
+      hintBox.className = '';
+      hintBox.innerText = isBoss
+        ? '👑 守关宝箱题！答对可获双倍积分、金币与魔法道具补给！'
+        : '💡 遇到难题可点右侧“博士口诀锦囊”或使用左侧魔法道具哦！';
+
+      const baseNextZ = -(currentStep + 1) * ROW_SPACING;
       currentRowTiles = [];
 
       currentQuestion.options.forEach((val, idx) => {
-        const tile = createTile(LANE_X[idx], nextZ, val, false, idx);
-        tile.position.y = -2.8;
+        const ix = LANE_X[idx];
+        const iy = LANE_Y_OFFSET[idx];
+        const iz = baseNextZ + LANE_Z_OFFSET[idx];
+        const tile = createTile(ix, iy, iz, val, false, idx, isBoss);
+        tile.position.y = iy - 2.8;
         currentRowTiles.push(tile);
 
         const btnVal = document.getElementById(`opt-val-${idx}`);
@@ -532,18 +819,72 @@
         if (btn) btn.disabled = false;
       });
 
-      while (activeTiles.length > 22) {
+      createStarBridges(player.position, currentRowTiles);
+
+      while (activeTiles.length > 18) {
         const old = activeTiles.shift();
-        scene.remove(old);disposeGardenObject(old);
+        scene.remove(old);
+        disposeGardenObject(old);
       }
 
       updateHUD();
     }
 
-    let gameEpoch=0;
+    function useMagicWand() {
+      if (isAnimating || powerups.wand <= 0 || !currentQuestion) return;
+      const candidates = currentRowTiles
+        .map((t, i) => ({ t, i }))
+        .filter(item => item.i !== currentQuestion.correctIndex && !item.t.userData.broken);
+      if (candidates.length === 0) return;
+
+      powerups.wand--;
+      sfx.playMagic();
+      const toBreak = candidates.sort(() => Math.random() - 0.5).slice(0, Math.min(2, candidates.length));
+      toBreak.forEach(({ t, i }) => {
+        t.userData.broken = true;
+        t.visible = false;
+        spawnParticles(t.position, 0xfbbf24, 16, true);
+        const btn = document.getElementById(`opt-btn-${i}`);
+        if (btn) btn.disabled = true;
+      });
+      showFloatingReward('🪄 排除魔法棒发动！已消除 2 座错误仙岛！', true);
+      updateHUD();
+    }
+
+    function useTimeFreeze() {
+      if (isAnimating || powerups.freeze <= 0 || !currentQuestion) return;
+      powerups.freeze--;
+      powerups.freezeRemain = 8;
+      timeRemaining = Math.min(maxTimePerQuestion + 15, timeRemaining + 15);
+      sfx.playMagic();
+      document.getElementById('timer-bar').classList.add('frozen');
+      showFloatingReward('⏳ 时间冰冻钟！+15秒并定格倒计时！', true);
+      updateHUD();
+    }
+
+    function useBambooShield() {
+      if (powerups.shieldActive || powerups.shield <= 0) return;
+      powerups.shield--;
+      powerups.shieldActive = true;
+      sfx.playMagic();
+      showFloatingReward('🛡️ 博士金光盾已开启！可免除一次失误！', true);
+      updateHUD();
+    }
+
+    function revealDoctorHint() {
+      if (!currentQuestion) return;
+      sfx.playMagic();
+      const hintBox = document.getElementById('hint-box');
+      hintBox.className = 'revealed';
+      hintBox.innerText = `💡 博士锦囊：${currentQuestion.hint}`;
+      speakGameText(currentQuestion.hint);
+    }
+
+    let gameEpoch = 0;
     function resetGame() {
       gameEpoch++;
-      jumpAnim=null;pendingRecovery=null;
+      jumpAnim = null;
+      pendingRecovery = null;
       score = 100;
       streak = 0;
       hearts = 3;
@@ -551,68 +892,71 @@
       isAnimating = false;
       setRobotMood('normal');
 
-      activeTiles.forEach(t => {scene.remove(t);disposeGardenObject(t);});
+      clearStarBridges();
+      activeTiles.forEach(t => { scene.remove(t); disposeGardenObject(t); });
       activeTiles.length = 0;
 
-      createTile(0, 0, '出发', true, -1);
+      createTile(0, 0, 0, '出发', true, -1, false);
       player.position.set(0, 0, 0);
-      player.rotation.set(0, Math.PI, 0);
+      player.rotation.set(0, Math.PI * 0.78, 0);
 
       spawnNextQuestionRow();
     }
 
     function executeHeavyPenalty(strikePos, returnPos, reasonText) {
-      streak = 0;
-      const penaltyPoints = 25;
-      score = Math.max(0, score - penaltyPoints);
-      hearts = Math.max(0, hearts - 1);
+      if (powerups.shieldActive) {
+        powerups.shieldActive = false;
+        sfx.playMagic();
+        showFloatingReward('🛡️ 金光盾成功抵挡失误！不扣分不掉心！', true);
+        updateHUD();
+      } else {
+        streak = 0;
+        const penaltyPoints = 20;
+        score = Math.max(0, score - penaltyPoints);
+        hearts = Math.max(0, hearts - 1);
+        sfx.playThunderPenalty();
+        setRobotMood('shocked');
 
-      sfx.playThunderPenalty();
-      setRobotMood('shocked');
+        const overlay = document.getElementById('damage-overlay');
+        overlay.style.opacity = '1';
+        setTimeout(() => { overlay.style.opacity = '0'; }, 600);
 
+        if (hearts === 0) {
+          showFloatingReward(`加油再试一次！爱心已自动补满 ❤️❤️❤️`, false);
+          hearts = 3;
+        } else {
+          showFloatingReward(`${reasonText} · 看看博士锦囊再跳吧！`, false);
+        }
+        revealDoctorHint();
+        updateHUD();
+      }
 
       spawnParticles(strikePos, 0xf3cb83, 18, false);
       spawnShockwave(strikePos, 0xf3cb83);
 
-
-      const overlay = document.getElementById('damage-overlay');
-      overlay.style.opacity = '1';
-      setTimeout(() => {
-
-        overlay.style.opacity = '0';
-      }, 650);
-
-      if (hearts === 0) {
-        showFloatingReward(`再试一次！-${penaltyPoints}分 · 爱心补满`, false);
-        hearts = 3;
-      } else {
-        showFloatingReward(`${reasonText} -${penaltyPoints}分！选项已重排`, false);
-      }
-
-      updateHUD();
-
-      const epoch=gameEpoch;
-      pendingRecovery={strikePos,returnPos};
-      const recoveryYaw=player.rotation.y;
-      const returnHeading=strikePos.distanceTo(returnPos)>.01?pandaHeading(strikePos,returnPos):Math.PI;
+      const epoch = gameEpoch;
+      pendingRecovery = { strikePos, returnPos };
+      const recoveryYaw = player.rotation.y;
+      const returnHeading = strikePos.distanceTo(returnPos) > .01 ? pandaHeading(strikePos, returnPos) : Math.PI * 0.78;
       let fallT = 0;
       const recoverInterval = setInterval(() => {
-        if(epoch!==gameEpoch){clearInterval(recoverInterval);return;}
+        if (epoch !== gameEpoch) { clearInterval(recoverInterval); return; }
         fallT += 0.065;
         if (fallT < 0.55) {
-          player.position.y = Math.sin(fallT / .55 * Math.PI) * .35;
+          player.position.y = strikePos.y + Math.sin((fallT / .55) * Math.PI) * .35;
           player.rotation.z = Math.sin(fallT * 14) * .06;
-          player.rotation.y=pandaTurn(recoveryYaw,returnHeading,Math.min(fallT/.45,1));
+          player.rotation.y = pandaTurn(recoveryYaw, returnHeading, Math.min(fallT / .45, 1));
         } else if (fallT < 1.0) {
           const t = (fallT - 0.55) / 0.45;
           player.position.lerpVectors(strikePos, returnPos, t);
-          player.position.y = 4*1.2*t*(1-t);
+          player.position.y += 4 * 1.2 * t * (1 - t);
           player.rotation.set(0, returnHeading, 0);
         } else {
-          clearInterval(recoverInterval);pendingRecovery=null;
+          clearInterval(recoverInterval);
+          pendingRecovery = null;
           player.position.copy(returnPos);
           player.rotation.set(0, returnHeading, 0);
-          player.userData.landing=1;
+          player.userData.landing = 1;
           setRobotMood('normal');
           spawnShockwave(returnPos, 0x8bbbae);
 
@@ -636,7 +980,7 @@
       sfx.playJump();
 
       const startPos = player.position.clone();
-      const endPos = new THREE.Vector3(targetTile.position.x, 0, targetTile.position.z);
+      const endPos = new THREE.Vector3(targetTile.position.x, targetTile.userData.baseY, targetTile.position.z);
       const isCorrect = optionIdx === currentQuestion.correctIndex;
 
       jumpAnim = {
@@ -647,8 +991,8 @@
         isCorrect,
         progress: 0,
         startYaw: player.rotation.y,
-        heading: pandaHeading(startPos,endPos),
-        duration: 0.95
+        heading: pandaHeading(startPos, endPos),
+        duration: 0.92
       };
     };
 
@@ -657,75 +1001,99 @@
 
       if (isCorrect) {
         streak++;
-        const speedBonus = Math.ceil(timeRemaining * 2);
-        const gained = 20 + streak * 5 + speedBonus;
+        const isBoss = currentQuestion.isBossStage;
+        const speedBonus = Math.ceil(timeRemaining * 1.5);
+        const baseGain = 25 + streak * 5 + speedBonus;
+        const gained = isBoss ? baseGain * 2 : baseGain;
         score += gained;
+        coins += isBoss ? 15 : 5;
         currentStep++;
 
-        sfx.playSuccess(streak);
+        if (isBoss) {
+          powerups.wand++;
+          powerups.freeze++;
+          if (hearts < 3) hearts++;
+          const biomeOrder = ['garden', 'bamboo', 'candy', 'cosmos'];
+          const nextBiome = biomeOrder[Math.floor(currentStep / 5) % biomeOrder.length];
+          applyBiomeTheme(nextBiome);
+        }
+
+        sfx.playSuccess(streak, isBoss);
         setRobotMood('happy');
-        const okTex = createNumberTexture(targetTile.userData.label, 'correct');
-        targetTile.userData.boxMesh.material[2].map.dispose();
-        targetTile.userData.boxMesh.material[2].map = okTex;
-        targetTile.userData.boxMesh.material[2].emissiveMap = okTex;
+        if (targetTile.userData.signSprite) targetTile.userData.signSprite.visible = false;
         targetTile.userData.pylonMat.color.setHex(0x34d399);
         targetTile.userData.glowMesh.material.color.setHex(0x10b981);
 
-        spawnParticles(endPos, null, 38, false);
-        spawnShockwave(endPos, 0x34d399);
-        showFloatingReward(`+${gained}分 (含极速奖+${speedBonus}) 🔥x${streak}`, true);
-
-        ambientShapes.forEach(mesh => {
-          if (mesh.position.z > player.position.z + 14) {
-            mesh.position.z -= 110;
+        // Hide the other unused islands from this row so the sky stays clean!
+        currentRowTiles.forEach(t => {
+          if (t !== targetTile) {
+            t.userData.broken = true;
+            t.visible = false;
           }
         });
 
-        const epoch=gameEpoch;
+        spawnParticles(endPos, null, isBoss ? 55 : 38, false);
+        spawnShockwave(endPos, isBoss ? 0xfbbf24 : 0x34d399);
+
+        if (isBoss) {
+          showFloatingReward(`👑 击败守关魔王！+${gained}分 · 🎁 魔法道具+1！`, true);
+        } else {
+          showFloatingReward(`+${gained}分 · 🪙+5金币 🔥连击x${streak}`, true);
+        }
+
+        ambientShapes.forEach(mesh => {
+          if (mesh.position.z > player.position.z + 16) {
+            mesh.position.z -= 120;
+          }
+        });
+
+        const epoch = gameEpoch;
         setTimeout(() => {
-          if(epoch!==gameEpoch)return;
+          if (epoch !== gameEpoch) return;
           setRobotMood('normal');
           spawnNextQuestionRow();
           isAnimating = false;
-        }, 240);
+        }, 250);
       } else {
         targetTile.userData.broken = true;
         targetTile.visible = false;
-        executeHeavyPenalty(endPos, startPos, '再想一想');
+        executeHeavyPenalty(endPos, startPos, '跳错仙岛啦');
       }
     }
 
     function onTimerExpired() {
       if (isAnimating) return;
       isAnimating = true;
-
       currentRowTiles.forEach(tile => {
         tile.userData.broken = true;
         tile.visible = false;
         spawnParticles(tile.position, 0xe7b87c, 10, true);
       });
-
       const currentPos = player.position.clone();
-      executeHeavyPenalty(currentPos, currentPos, '慢慢来，再试一次');
+      executeHeavyPenalty(currentPos, currentPos, '时间到啦');
     }
 
     /**************************************************************
-     * 5. 交互控制与快捷键绑定 (1-5 数字键)
+     * 5. 交互控制与快捷键绑定 (点击3D小岛或立牌均可跳跃)
      **************************************************************/
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
 
     window.addEventListener('pointerdown', (e) => {
-      if (e.target.closest('button,select,a,details')) return;
+      if (e.target.closest('button,select,a,details,aside,header,section,footer')) return;
       pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
       pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(pointer, camera);
 
-      const meshes = currentRowTiles
-        .filter(t => !t.userData.broken)
-        .map(t => t.userData.boxMesh);
+      const targets = [];
+      currentRowTiles.forEach(t => {
+        if (!t.userData.broken) {
+          targets.push(t.userData.boxMesh);
+          if (t.userData.signSprite) targets.push(t.userData.signSprite);
+        }
+      });
 
-      const intersects = raycaster.intersectObjects(meshes);
+      const intersects = raycaster.intersectObjects(targets);
       if (intersects.length > 0) {
         const hitGroup = intersects[0].object.parent;
         if (hitGroup && hitGroup.userData.optionIndex !== undefined) {
@@ -738,11 +1106,46 @@
       if (e.target.closest('select,input,button,summary') || e.repeat) return;
       if (['1', '2', '3', '4', '5'].includes(e.key)) {
         handleChoice(parseInt(e.key, 10) - 1);
+      } else if (e.key.toLowerCase() === 'q') {
+        useMagicWand();
+      } else if (e.key.toLowerCase() === 'w') {
+        useTimeFreeze();
+      } else if (e.key.toLowerCase() === 'e') {
+        useBambooShield();
+      } else if (e.key.toLowerCase() === 'h') {
+        revealDoctorHint();
       }
+    });
+
+    document.getElementById('pw-wand-btn').addEventListener('click', useMagicWand);
+    document.getElementById('pw-freeze-btn').addEventListener('click', useTimeFreeze);
+    document.getElementById('pw-shield-btn').addEventListener('click', useBambooShield);
+    document.getElementById('show-hint-btn').addEventListener('click', revealDoctorHint);
+    document.getElementById('speak-q-btn').addEventListener('click', () => {
+      if (currentQuestion) speakGameText(currentQuestion.questionText);
+    });
+
+    document.querySelectorAll('.biome-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sfx.playMagic();
+        applyBiomeTheme(btn.dataset.biome);
+      });
     });
 
     document.getElementById('mode-select').addEventListener('change', (e) => {
       currentMode = e.target.value;
+      resetGame();
+    });
+
+    function syncGameDifficultyControls() {
+      const profile = window.HopMath.profiles.find(item => item.id === currentDifficulty);
+      document.getElementById('difficulty-select').value = currentDifficulty;
+      document.getElementById('mode-select').value = currentMode;
+      document.getElementById('difficulty-description').textContent = profile.description;
+    }
+    document.getElementById('difficulty-select').addEventListener('change', (e) => {
+      currentDifficulty = e.target.value;
+      syncGameDifficultyControls();
       resetGame();
     });
 
@@ -757,26 +1160,32 @@
 
     document.getElementById('sound-btn').addEventListener('click', (e) => {
       sfx.enabled = !sfx.enabled;
-      e.currentTarget.innerText = sfx.enabled ? '🔊' : '🔇';
+      if (!sfx.enabled) gameSpeech.stop();
+      e.currentTarget.innerText = sfx.enabled ? '🎵' : '🔇';
     });
 
+    window.addEventListener('pagehide', () => gameSpeech.stop());
     window.addEventListener('resize', () => {
-      const spacing=window.innerWidth<650?2.15:2.9,factor=spacing/laneSpacing;
-      if(factor!==1) {
-        laneSpacing=spacing;LANE_X.forEach((_,i)=>LANE_X[i]=(i-2)*spacing);
-        activeTiles.forEach(tile=>{tile.position.x*=factor;tile.scale.setScalar(window.innerWidth<650?.72:1);});
-        player.position.x*=factor;
-        if(jumpAnim){jumpAnim.startPos.x*=factor;jumpAnim.endPos.x*=factor;}
-        if(pendingRecovery){new Set([pendingRecovery.strikePos,pendingRecovery.returnPos]).forEach(pos=>pos.x*=factor);}
+      const spacing = window.innerWidth < 650 ? 2.75 : 3.85, factor = spacing / laneSpacing;
+      if (factor !== 1) {
+        laneSpacing = spacing;
+        LANE_X.forEach((_, i) => LANE_X[i] = (i - 2) * spacing);
+        activeTiles.forEach(tile => {
+          tile.position.x *= factor;
+          tile.scale.setScalar(window.innerWidth < 650 ? .76 : 1);
+        });
+        player.position.x *= factor;
+        if (jumpAnim) { jumpAnim.startPos.x *= factor; jumpAnim.endPos.x *= factor; }
+        if (pendingRecovery) { new Set([pendingRecovery.strikePos, pendingRecovery.returnPos]).forEach(pos => pos.x *= factor); }
       }
       camera.aspect = window.innerWidth / window.innerHeight;
-      camera.fov=window.innerWidth<650?60:50;
+      camera.fov = window.innerWidth < 650 ? 58 : 46;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
 
     /**************************************************************
-     * 6. 主渲染循环 (含紧迫倒计时系统与 3D 物理动态)
+     * 6. 主渲染循环 (含浮空仙岛呼吸悬浮、星海跟随与彩虹尾迹)
      **************************************************************/
     const clock = new THREE.Clock();
 
@@ -786,43 +1195,39 @@
       const elapsed = clock.getElapsedTime();
 
       if (!isAnimating && currentQuestion && !document.hidden && !document.querySelector('.game-settings').open) {
-        timeRemaining = Math.max(0, timeRemaining - dt);
-        const pct = (timeRemaining / maxTimePerQuestion) * 100;
+        if (powerups.freezeRemain > 0) {
+          powerups.freezeRemain = Math.max(0, powerups.freezeRemain - dt);
+          if (powerups.freezeRemain === 0) {
+            document.getElementById('timer-bar').classList.remove('frozen');
+          }
+        } else {
+          timeRemaining = Math.max(0, timeRemaining - dt);
+        }
+
+        const pct = Math.min(100, (timeRemaining / maxTimePerQuestion) * 100);
         const timerBar = document.getElementById('timer-bar');
         const timerText = document.getElementById('timer-text');
         const qCard = document.getElementById('question-card');
 
         timerBar.style.width = `${pct}%`;
-        timerText.innerText = `${timeRemaining.toFixed(1)}s`;
+        timerText.innerText = powerups.freezeRemain > 0 ? `❄️ ${timeRemaining.toFixed(1)}s` : `${timeRemaining.toFixed(1)}s`;
 
         const ceilSec = Math.ceil(timeRemaining);
-        if (ceilSec !== lastTickSecond && ceilSec > 0) {
+        if (ceilSec !== lastTickSecond && ceilSec > 0 && powerups.freezeRemain <= 0) {
           lastTickSecond = ceilSec;
-          if (ceilSec <= 5) {
-            sfx.playTick(true);
-          } else if (ceilSec <= 10) {
-            sfx.playTick(false);
-          }
+          if (ceilSec <= 5) sfx.playTick(true);
+          else if (ceilSec <= 10) sfx.playTick(false);
         }
 
-        if (timeRemaining <= 10) {
-          timerBar.className = 'h-full rounded-full bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 transition-all duration-75';
-          timerText.className = 'text-rose-400 font-mono text-sm font-black animate-ping';
+        if (timeRemaining <= 10 && powerups.freezeRemain <= 0) {
           qCard.classList.add('urgent-card');
-
           currentRowTiles.forEach(tile => {
             if (!tile.userData.broken && !tile.userData.urgentMode) {
               tile.userData.urgentMode = true;
-              const urgTex = createNumberTexture(tile.userData.label, 'urgent');
-              tile.userData.boxMesh.material[2].map.dispose();
-              tile.userData.boxMesh.material[2].map = urgTex;
-              tile.userData.boxMesh.material[2].emissiveMap = urgTex;
-              tile.userData.glowMesh.material.color.setHex(0xe7b87c);
+              updateSignSprite(tile, tile.userData.label, 'urgent');
+              tile.userData.glowMesh.material.color.setHex(0xf43f5e);
             }
           });
-        } else {
-          timerBar.className = 'h-full rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-indigo-400 transition-all duration-75';
-          timerText.className = 'text-amber-300 font-mono text-sm';
         }
 
         if (timeRemaining <= 0) {
@@ -830,44 +1235,48 @@
         }
       }
 
-      if(!jumpAnim&&!isAnimating)player.rotation.y=pandaTurn(player.rotation.y,Math.PI,1-Math.exp(-dt*5));
-      animatePanda(player,elapsed,dt,jumpAnim?jumpAnim.progress:null,isAnimating&&!jumpAnim);
+      if (!jumpAnim && !isAnimating) player.rotation.y = pandaTurn(player.rotation.y, Math.PI * 0.78, 1 - Math.exp(-dt * 5));
+      animatePanda(player, elapsed, dt, jumpAnim ? jumpAnim.progress : null, isAnimating && !jumpAnim);
+
       if (jumpAnim) {
         jumpAnim.progress += dt / jumpAnim.duration;
         const t = Math.min(jumpAnim.progress, 1);
+        const flight = Math.max(0, (t - .16) / .84);
+        player.position.lerpVectors(jumpAnim.startPos, jumpAnim.endPos, flight);
+        player.position.y += 4 * 1.85 * flight * (1 - flight);
+        const turn = Math.min(t / .16, 1);
+        player.rotation.y = pandaTurn(jumpAnim.startYaw, jumpAnim.heading, turn * turn * (3 - 2 * turn));
 
-        const flight=Math.max(0,(t-.16)/.84);
-        const travel=flight;
-        player.position.lerpVectors(jumpAnim.startPos,jumpAnim.endPos,travel);
-        player.position.y=4*1.55*flight*(1-flight);
-        const turn=Math.min(t/.16,1);
-        player.rotation.y=pandaTurn(jumpAnim.startYaw,jumpAnim.heading,turn*turn*(3-2*turn));
+        if (Math.random() < 0.5) {
+          spawnParticles(player.position, null, 1, false);
+        }
+
         if (t >= 1) {
           player.position.copy(jumpAnim.endPos);
           player.rotation.set(0, jumpAnim.heading, 0);
-          player.userData.pelvis.rotation.set(0,0,0);
-          player.userData.landing=1;
+          player.userData.pelvis.rotation.set(0, 0, 0);
+          player.userData.landing = 1;
           const finished = jumpAnim;
           jumpAnim = null;
           onJumpLanded(finished);
         }
       }
 
-      activeTiles.forEach(tile=>{
-        if(!tile.userData.broken){tile.position.y+=(0-tile.position.y)*Math.min(1,dt*10);}
-      });
-      for (let i = lightningBolts.length - 1; i >= 0; i--) {
-        const b = lightningBolts[i];
-        b.life -= 0.06;
-        b.mesh.material.opacity = Math.max(0, b.life);
-        if (b.life <= 0) {
-          scene.remove(b.mesh);
-          lightningBolts.splice(i, 1);
+      // Gentle floating bob for each sky-island + rotating star rings
+      activeTiles.forEach((tile, idx) => {
+        if (!tile.userData.broken) {
+          const targetY = (tile.userData.baseY || 0) + Math.sin(elapsed * 2.1 + idx * 1.1) * 0.08;
+          tile.position.y += (targetY - tile.position.y) * Math.min(1, dt * 8);
+          tile.userData.glowMesh.rotation.z = elapsed * 0.8;
+          if (tile.userData.bonusStar) {
+            tile.userData.bonusStar.rotation.y = elapsed * 2.5;
+            tile.userData.bonusStar.position.y = 2.55 + Math.sin(elapsed * 3.5) * 0.15;
+          }
         }
-      }
-      if (lightningLight.intensity > 0) {
-        lightningLight.intensity = Math.max(0, lightningLight.intensity - 0.35);
-      }
+      });
+
+      starField.position.z = player.position.z;
+      starField.rotation.z = elapsed * 0.015;
 
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -895,26 +1304,29 @@
         }
       }
 
-      ambientShapes.forEach(mesh=>{
-        mesh.position.y=mesh.userData.baseY+Math.sin(elapsed*.35+mesh.userData.phase)*.18;
-        if(mesh.position.z>player.position.z+20)mesh.position.z-=110;
+      ambientShapes.forEach(mesh => {
+        mesh.position.y = mesh.userData.baseY + Math.sin(elapsed * .45 + mesh.userData.phase) * .24;
+        if (mesh.position.z > player.position.z + 22) mesh.position.z -= 125;
       });
+
       const desiredCamPos = new THREE.Vector3(
-        player.position.x * 0.38,
-        window.innerWidth < 650 ? 8.5 : 7.6,
-        player.position.z + (window.innerWidth < 650 ? 15.5 : 10.8)
+        player.position.x * 0.32,
+        player.position.y + (window.innerWidth < 650 ? 8.4 : 7.4),
+        player.position.z + (window.innerWidth < 650 ? 15.8 : 11.8)
       );
       camera.position.lerp(desiredCamPos, 0.08);
-      camera.lookAt(player.position.x * 0.22, window.innerWidth < 650 ? 1 : 1.35, player.position.z - 2.4);
-      dirLight.position.set(player.position.x-8,16,player.position.z+12);dirLight.target.position.copy(player.position);dirLight.target.updateMatrixWorld();
-
+      camera.lookAt(player.position.x * 0.18, player.position.y + 0.72, player.position.z - 3.8);
+      dirLight.position.set(player.position.x - 10, 18, player.position.z + 14);
+      dirLight.target.position.copy(player.position);
+      dirLight.target.updateMatrixWorld();
       playerLight.position.set(player.position.x, player.position.y + 4.5, player.position.z);
 
       renderer.render(scene, camera);
     }
 
+    syncGameDifficultyControls();
     resetGame();
-    camera.position.set(0,window.innerWidth<650?8.5:7.6,window.innerWidth<650?15.5:10.8);
+    camera.position.set(0, window.innerWidth < 650 ? 8.4 : 7.4, window.innerWidth < 650 ? 15.8 : 11.8);
     animate();
   </script>
 </body>
