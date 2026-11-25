@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>中国儿童百科全书 · 会动的互动百科馆</title>
+  <link rel="stylesheet" href="styles.css?v=20261125.8" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#top">
+        <img class="brand-emblem" src="assets/book/leaf-mark.webp" alt="" width="40" height="40" />
+        <span><strong>中国儿童百科全书</strong><small>探索世界 · 认识自己</small></span>
+      </a>
+      <a id="topContents" class="quiet-link top-contents" href="#shelf"><span class="contents-icon" aria-hidden="true"></span> 目录</a>
+      <form class="search-wrap" role="search" id="entrySearch">
+        <label class="sr-only" for="searchInput">搜索百科图鉴</label>
+        <input id="searchInput" type="search" placeholder="搜索：地球、火山、恐龙、植物…" autocomplete="off" />
+        <button type="submit" aria-label="搜索"><span class="search-icon" aria-hidden="true"></span></button>
+      </form>
+      <button id="openBookmarksBtn" class="quiet-link top-bookmarks" type="button"><span class="bookmark-icon" aria-hidden="true"></span> 我的书签</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero main-wrap" aria-labelledby="heroTitle">
+      <div class="hero-frame">
+        <div class="cover-wrap" aria-hidden="true">
+          <div class="book-cover">
+            <div class="cover-stamp">中国儿童百科全书</div>
+            <img class="hero-cover" src="assets/illustrations/earth-layers.webp" alt="" fetchpriority="high" />
+            <span class="cover-line"></span>
+            <span class="cover-caption">图解百科</span>
+          </div>
+        </div>
+        <div class="hero-header">
+          <h1 id="heroTitle" class="hero-title">中国儿童<br />百科全书</h1>
+          <p class="hero-subtitle">从地球深处到遥远星空。<br />打开书页，观察世界。</p>
+          <div class="hero-actions">
+            <a class="hero-primary" href="#shelf">翻开百科</a>
+            <button class="hero-secondary" data-open="earth-layers" type="button">探索地球内部</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="shelf" class="main-wrap shelf-section" aria-labelledby="shelfTitle">
+      <h2 id="shelfTitle" tabindex="-1" class="folio-heading">四册目录</h2>
+      <div id="volumeCards" class="volume-cards" aria-label="按分册浏览"></div>
+
+      <section id="entries" aria-labelledby="entriesTitle">
+        <div class="section-head">
+          <div>
+            <h2 id="entriesTitle" tabindex="-1">全部篇目</h2>
+            <p id="entryCount" class="entry-count" aria-live="polite"></p>
+          </div>
+          <div class="filter-extras">
+            <div id="volumeTabs" class="volume-tabs" aria-label="筛选分册"></div>
+            <label class="motion-filter">
+              <input id="onlyMotionCheck" type="checkbox" />
+              <span>只看有动画的篇目</span>
+            </label>
+          </div>
+        </div>
+        <div id="entryGrid" class="entry-grid"></div>
+        <div id="emptyState" class="empty-state hidden">
+          <p>没有找到匹配的篇目，可以换个关键词。</p>
+          <button id="resetFilterBtn" class="btn-primary" type="button">查看全部篇目</button>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <section id="readerModal" class="reader-screen hidden" aria-labelledby="readerTitle">
+    <div class="reader-sheet">
+      <canvas class="reader-page-stack" aria-hidden="true" data-html2canvas-ignore></canvas>
+      <span class="corner corner-tl" aria-hidden="true"></span>
+      <span class="corner corner-tr" aria-hidden="true"></span>
+      <span class="corner corner-bl" aria-hidden="true"></span>
+      <span class="corner corner-br" aria-hidden="true"></span>
+      <div class="reader-book-frame">
+        <div class="reader-page-surface">
+          <div class="reader-body">
+            <div class="reader-spread">
+              <img class="reader-engraving" alt="" aria-hidden="true" />
+              <div class="reader-intro">
+                <div class="reader-crumb"><span id="readerVolumeBadge" class="vol-pill"></span><span id="readerCategory" class="cat-pill"></span></div>
+                <h2 id="readerTitle" class="reader-title" tabindex="-1"></h2>
+                <div class="reader-rule" aria-hidden="true"><i></i></div>
+                <div id="readerLead" class="reader-lead"></div>
+                <figure id="readerInset" class="reader-inset hidden">
+                  <img src="assets/book/volcano-section.webp" alt="火山剖面图，标出火山口、岩浆、岩浆通道和岩浆库" width="332" height="180" />
+                  <figcaption><strong>图 · 火山的内部结构</strong><span>地壳下的岩浆在压力下向上涌动，最后从火山口喷发出来。</span></figcaption>
+                </figure>
+                <aside id="readerTeaser" class="reader-teaser">
+                  <strong id="readerTeaserTitle"></strong>
+                  <p id="readerTeaserBody"></p>
+                </aside>
+              </div>
+              <div class="reader-visual-col">
+                <div id="platePane" class="visual-pane">
+                  <figure class="plate-stage">
+                    <img id="plateImg" class="plate-image" alt="" fetchpriority="high" />
+                    <div id="motionPane" class="plate-motion" aria-hidden="true" data-html2canvas-ignore>
+                      <video id="entryMotion" class="entry-motion" muted playsinline preload="none" aria-label="科普动画" aria-describedby="motionCaption"></video>
+                      <img id="entrySprite" class="entry-motion hidden" alt="" />
+                      <p id="motionCaption" class="motion-caption"></p>
+                    </div>
+                    <button id="platePlayBtn" type="button" class="plate-play" aria-controls="motionPane">看动画</button>
+                    <p id="motionError" class="motion-error hidden" role="status">动画暂时无法播放。</p>
+                  </figure>
+                </div>
+                <div id="labPane" class="visual-pane hidden">
+                  <div id="labCanvasHost" class="lab-host"></div>
+                  <div id="labControls" class="lab-controls"></div>
+                  <button class="reader-media-return" type="button">返回插画</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <nav class="reader-pagination" aria-label="翻页">
+            <div class="folio-step folio-prev"><button id="prevEntryBtn" type="button">上一页</button></div>
+            <button id="backToContentsBtn" type="button"><span class="contents-icon" aria-hidden="true"></span> 目录</button>
+            <div class="folio-step folio-next"><button id="nextEntryBtn" type="button">下一页</button></div>
+            <span id="readerPageNumber" class="sr-only" aria-live="polite"></span>
+          </nav>
+        </div>
+        <div class="book-turn-layer" aria-hidden="true" data-html2canvas-ignore hidden></div>
+      </div>
+    </div>
+
+    <section class="reader-companion" aria-labelledby="readerCompanionTitle">
+      <div class="reader-companion-head">
+        <h3 id="readerCompanionTitle">延伸阅读</h3>
+        <div class="reader-tools">
+          <button id="bookmarkEntryBtn" class="btn-speak" type="button" aria-pressed="false">加入书签</button>
+          <button id="speakBtn" class="btn-speak" type="button">朗读</button>
+        </div>
+      </div>
+      <div class="visual-tabs" aria-label="观察方式">
+        <button id="tabPlate" class="vtab active" type="button">观察插画</button>
+        <button id="tabMotion" class="vtab hidden" type="button">看动画</button>
+        <button id="tabLab" class="vtab" type="button">动手实验</button>
+      </div>
+      <div class="reader-extra-grid">
+        <div class="reader-text-col">
+          <div id="readerSections" class="reader-sections"></div>
+          <aside class="fun-fact-box">
+            <h4 class="fun-fact-head">你知道吗？</h4>
+            <p id="readerFunFact"></p>
+          </aside>
+        </div>
+        <div>
+          <div id="plateNotes">
+            <div id="hotspotLayer" class="fact-options" aria-label="知识卡片"></div>
+            <div id="hotspotCard" class="hotspot-card" aria-live="polite"></div>
+          </div>
+          <section class="quiz-box" aria-labelledby="quizHeading">
+            <div class="quiz-head">
+              <h4 id="quizHeading">读完考考你</h4>
+              <span id="quizStatus" class="quiz-status">答对点亮探索徽章</span>
+            </div>
+            <p id="quizQuestion" class="quiz-q"></p>
+            <div id="quizOptions" class="quiz-options"></div>
+            <div id="quizFeedback" class="quiz-feedback hidden" role="status"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <dialog id="bookmarksDialog" class="bookmarks-dialog" aria-labelledby="bookmarksTitle">
+    <header>
+      <h2 id="bookmarksTitle">我的书签</h2>
+      <form method="dialog"><button class="quiet-link" type="submit" aria-label="关闭书签">✕</button></form>
+    </header>
+    <div id="bookmarkList" class="bookmark-list"></div>
+  </dialog>
+
+  <!-- 探索徽章墙弹窗 -->
+  <div id="badgesModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close-modal="badgesModal"></div>
+    <div class="dialog-sheet">
+      <header class="dialog-head">
+        <h3>🏅 小小百科探索家 · 徽章墙</h3>
+        <button class="btn-close" data-close-modal="badgesModal" type="button">✕</button>
+      </header>
+      <div class="dialog-body">
+        <div class="progress-banner">
+          <div class="progress-text">
+            <strong id="progressSummary">已探索 0 / 12 篇百科</strong>
+            <small>每读完并答对一道百科小闯关，即可点亮对应的探索徽章！</small>
+          </div>
+          <div class="progress-bar-track"><div id="progressBarFill" class="progress-bar-fill"></div></div>
+        </div>
+        <div id="badgeGrid" class="badge-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Banana 插图与 2×2 动图工坊弹窗 -->
+  <div id="studioModal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close-modal="studioModal"></div>
+    <div class="dialog-sheet studio-sheet">
+      <header class="dialog-head">
+        <h3>🎨 Banana 插图与动图工坊</h3>
+        <button class="btn-close" data-close-modal="studioModal" type="button">✕</button>
+      </header>
+      <div class="dialog-body">
+        <p class="studio-intro">
+          你可以将对话中用 <strong>Nano Banana</strong> 生成的高清插图或 <strong>2×2 四格序列图</strong>直接拖到这里，网页会自动识别四格序列图并切成会动的动画，永久保存在本机浏览器中！
+        </p>
+        <div class="studio-form">
+          <label>
+            <span>1. 选择要替换的百科词条：</span>
+            <select id="studioEntrySelect"></select>
+          </label>
+          <label class="studio-check">
+            <input id="studioIsSprite" type="checkbox" />
+            <span>这是一张 2×2 四格序列图（自动切片循环播放动画）</span>
+          </label>
+          <div id="studioDropzone" class="dropzone">
+            <input id="studioFileInput" type="file" accept="image/*" hidden />
+            <div class="drop-icon">🖼️</div>
+            <strong>点击选择或拖入 Banana 图片</strong>
+            <small>支持 JPG / PNG / GIF / WebP</small>
+          </div>
+          <div id="studioMsg" class="studio-msg hidden"></div>
+        </div>
+        <div class="studio-footer-actions">
+          <button id="clearCustomArtBtn" class="btn-secondary" type="button">恢复默认内置插图与动图</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+
+  <footer class="site-footer">
+    <span>中国儿童百科全书</span>
+    <div class="footer-tools">
+      <button id="openBadgesBtn" class="quiet-link" type="button">探索徽章 <span id="badgeCount" class="badge-pill">0/12</span></button>
+      <button id="openStudioBtn" class="quiet-link" type="button">插画工坊</button>
+    </div>
+  </footer>
+
+  <script src="data.js"></script>
+  <script src="labs.js"></script>
+  <script src="page-curl.js"></script>
+  <script src="book-shape.js?v=20261125.6"></script>
+  <script src="book-turn.js?v=20261125.8"></script>
+  <script src="app.js?v=20261125.8"></script>
+</body>
+</html>
